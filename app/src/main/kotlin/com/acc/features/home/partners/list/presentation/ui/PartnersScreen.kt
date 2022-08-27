@@ -21,53 +21,60 @@ import com.acc.common.components.AppRowActions
 import com.acc.common.ui.mediumPadding
 import com.acc.common.ui.rowHeight
 import com.acc.common.ui.smallPadding
-import com.acc.features.home.navigation.Partners
+import com.acc.di.AppComponent
+import com.acc.features.di.ViewModel
 import com.acc.features.home.partners.list.presentation.viewmodel.PartnersViewModel
-import com.navigation.produce
+import javax.inject.Inject
 
-@Composable
-fun PartnersScreen(
-    viewModel: PartnersViewModel = produce(Partners),
-    navigateAddPartner: () -> Unit
-) {
+class PartnersScreen(appComponent: AppComponent) {
 
-    val partners by viewModel.partners.collectAsState(initial = emptyList())
-    val selectedPartner by viewModel.selectedPartner.collectAsState()
+    init {
+        appComponent.inject(this)
+    }
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = navigateAddPartner) {
-                AppIcon(imageVector = Icons.Default.Add)
+    @Inject lateinit var viewModel: PartnersViewModel
+
+    @Composable
+    fun PartnersScreen(navigateAddPartner: () -> Unit) {
+
+        val partners by viewModel.partners.collectAsState(initial = emptyList())
+        val selectedPartner by viewModel.selectedPartner.collectAsState()
+
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(onClick = navigateAddPartner) {
+                    AppIcon(imageVector = Icons.Default.Add)
+                }
             }
-        }
-    ) {
-        LazyColumn {
-            itemsIndexed(partners) { index, item ->
+        ) {
+            LazyColumn {
+                itemsIndexed(partners) { index, item ->
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(mediumPadding),
-                    modifier = Modifier
-                        .clickable { viewModel.selectPartner(item) }
-                        .fillMaxWidth()
-                        .height(rowHeight)
-                        .background(
-                            MaterialTheme.colors.surface.copy(
-                                if (selectedPartner?.id == item.id) 0.1f
-                                else if (index % 2 == 0) 0.8f
-                                else 0.5f
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(mediumPadding),
+                        modifier = Modifier
+                            .clickable { viewModel.selectPartner(item) }
+                            .fillMaxWidth()
+                            .height(rowHeight)
+                            .background(
+                                MaterialTheme.colors.surface.copy(
+                                    if (selectedPartner?.id == item.id) 0.1f
+                                    else if (index % 2 == 0) 0.8f
+                                    else 0.5f
+                                )
+
                             )
-
+                    ) {
+                        Text(text = item.name, modifier = Modifier.padding(start = smallPadding))
+                        Text(text = item.address)
+                        Text(text = item.phoneNumber)
+                        Spacer(modifier = Modifier.weight(1f))
+                        AppRowActions(
+                            selected = selectedPartner?.id == item.id,
+                            onDelete = { viewModel.deletePartner(item.id) }
                         )
-                ) {
-                    Text(text = item.name, modifier = Modifier.padding(start = smallPadding))
-                    Text(text = item.address)
-                    Text(text = item.phoneNumber)
-                    Spacer(modifier = Modifier.weight(1f))
-                    AppRowActions(
-                        selected = selectedPartner?.id == item.id,
-                        onDelete = { viewModel.deletePartner(item.id) }
-                    )
+                    }
                 }
             }
         }

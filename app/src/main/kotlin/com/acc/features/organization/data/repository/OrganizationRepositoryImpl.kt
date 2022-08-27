@@ -4,8 +4,9 @@ import com.acc.features.organization.data.local.dao.OrganizationDao
 import com.acc.features.organization.model.Organization
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class OrganizationRepositoryImpl(private val dao: OrganizationDao): OrganizationRepository {
+class OrganizationRepositoryImpl @Inject constructor(private val dao: OrganizationDao): OrganizationRepository {
 
     override suspend fun insertOrganization(organization: Organization) {
         dao.insertOrganization(organization)

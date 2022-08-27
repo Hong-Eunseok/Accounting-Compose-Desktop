@@ -3,8 +3,9 @@ package com.acc.features.home.partners.data.repository
 import com.acc.features.home.partners.data.local.dao.PartnersDao
 import com.acc.features.home.partners.model.Partner
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class PartnersRepository(private val dao: PartnersDao) {
+class PartnersRepository @Inject constructor(private val dao: PartnersDao) {
 
     suspend fun insertPartner(name: String, address: String, phoneNumber: String, organizationId: String) {
         dao.insertPartner(name, address, phoneNumber, organizationId)

@@ -5,17 +5,22 @@ import com.acc.features.organization.data.repository.OrganizationRepository
 import com.acc.features.organization.model.Organization
 import com.navigation.Entry
 import com.utils.DateUtils
+import com.utils.DateUtilsImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class CreateOrganizationViewModel(
+@Singleton
+class CreateOrganizationViewModel @Inject constructor(
     private val repository: OrganizationRepository,
-    private val dateUtils: DateUtils,
     private val ioCoroutineScope: CoroutineScope
 ) : Entry {
+
+    private val dateUtils: DateUtils = DateUtilsImpl()
 
     private val _result: MutableStateFlow<CreateOrganizationResult> = MutableStateFlow(CreateOrganizationResult.IDLE)
     val result: StateFlow<CreateOrganizationResult> = _result

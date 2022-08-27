@@ -3,8 +3,11 @@ package com.acc.features.home.expenses.add.presentation.viewmodel
 import com.acc.features.home.partners.data.repository.PartnersRepository
 import com.navigation.Entry
 import kotlinx.coroutines.flow.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AddExpenseViewModel(
+@Singleton
+class AddExpenseViewModel @Inject constructor(
     private val partnersRepository: PartnersRepository
 ) : Entry {
 

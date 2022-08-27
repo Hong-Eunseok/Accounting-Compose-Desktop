@@ -2,18 +2,23 @@ package com.acc.features.home.partners.data.local.dao
 
 import com.acc.features.home.partners.data.local.dao.PartnersDao.Companion.table
 import com.acc.features.home.partners.model.Partner
+import com.database.DatabaseConnection
 import com.utils.DateUtils
+import com.utils.DateUtilsImpl
 import com.utils.UuidUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map
 import java.sql.Connection
+import javax.inject.Inject
 
-class PartnersDaoImpl(
-    private val connection: Connection,
-    private val uuidUtils: UuidUtils,
-    private val dateUtils: DateUtils
+class PartnersDaoImpl @Inject constructor(
+    private val db: DatabaseConnection,
+
 ) : PartnersDao {
+
+    private val uuidUtils: UuidUtils = UuidUtils()
+    private val dateUtils: DateUtils = DateUtilsImpl()
 
     init {
         createTableIfMissing()
@@ -31,7 +36,7 @@ class PartnersDaoImpl(
             created_on integer NOT NULL
             )
             """
-        val statement = connection.createStatement()
+        val statement = db.connection.createStatement()
         statement.execute(createTableStatement)
         statement.close()
     }
@@ -42,7 +47,7 @@ class PartnersDaoImpl(
 
     override suspend fun insertPartner(name: String, address: String, phoneNumber: String, organizationId: String) {
         val insertPartnerStatement = "INSERT INTO $table values(?,?,?,?,?,?)"
-        val prepareStatement = connection.prepareStatement(insertPartnerStatement)
+        val prepareStatement = db.connection.prepareStatement(insertPartnerStatement)
         prepareStatement.setString(1, uuidUtils.getUuid())
         prepareStatement.setString(2, name)
         prepareStatement.setString(3, address)
@@ -56,7 +61,7 @@ class PartnersDaoImpl(
 
     override suspend fun deletePartner(id: String) {
         val deletePartnerStatement = "DELETE FROM $table WHERE id=?"
-        val prepareStatement = connection.prepareStatement(deletePartnerStatement)
+        val prepareStatement = db.connection.prepareStatement(deletePartnerStatement)
         prepareStatement.setString(1, id)
         prepareStatement.executeUpdate()
         prepareStatement.close()
@@ -65,7 +70,7 @@ class PartnersDaoImpl(
 
     override suspend fun getPartnerById(id: String): Partner? {
         val getPartnerStatement = "SELECT * FROM $table WHERE id=?"
-        val prepareStatement = connection.prepareStatement(getPartnerStatement)
+        val prepareStatement = db.connection.prepareStatement(getPartnerStatement)
         prepareStatement.setString(1, id)
         val resultStatement = prepareStatement.executeQuery()
         if (!resultStatement.next()) return null
@@ -87,7 +92,7 @@ class PartnersDaoImpl(
     override fun getPartners(): Flow<List<Partner>> {
         return updatePartners.map {
             val query = "SELECT * FROM $table"
-            val statement = connection.createStatement()
+            val statement = db.connection.createStatement()
             val resultSet = statement.executeQuery(query)
             val chartOfAccounts = buildList {
                 while (resultSet.next()) {

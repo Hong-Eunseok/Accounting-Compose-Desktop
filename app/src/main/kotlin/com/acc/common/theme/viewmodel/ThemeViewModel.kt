@@ -7,8 +7,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ThemeViewModel(
+@Singleton
+class ThemeViewModel @Inject constructor(
     private val preferences: Preferences,
     private val ioCoroutineScope: CoroutineScope
 ) : Entry {

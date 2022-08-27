@@ -6,8 +6,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class HomeViewModel(
+@Singleton
+class HomeViewModel @Inject constructor(
     organizationRepository: OrganizationRepository,
     ioCoroutineScope: CoroutineScope
 ) : Entry {

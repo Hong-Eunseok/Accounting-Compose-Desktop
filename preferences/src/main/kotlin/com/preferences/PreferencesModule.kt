@@ -1,7 +1,10 @@
 package com.preferences
 
-import org.koin.dsl.module
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
-val preferencesModule = module {
-    single { Preferences() }
+@Module class PreferencesModule {
+    @Provides @Singleton fun providePreferences(): Preferences = Preferences()
 }
+

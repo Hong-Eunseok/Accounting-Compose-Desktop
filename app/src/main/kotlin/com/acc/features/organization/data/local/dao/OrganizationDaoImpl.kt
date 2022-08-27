@@ -1,18 +1,20 @@
 package com.acc.features.organization.data.local.dao
 
 import com.acc.features.organization.model.Organization
+import com.database.DatabaseConnection
 import com.utils.UuidUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map
-import java.sql.Connection
+import javax.inject.Inject
 
-class OrganizationDaoImpl(
-    private val connection: Connection,
-    private val uuidUtils: UuidUtils
+class OrganizationDaoImpl @Inject constructor(
+    private val db: DatabaseConnection,
 ) : OrganizationDao {
 
     private val table = "organization"
+
+    private val uuidUtils: UuidUtils = UuidUtils()
 
     init {
         createTableIfMissing()
@@ -31,7 +33,7 @@ class OrganizationDaoImpl(
             created_on integer NOT NULL
             )
             """
-        val statement = connection.createStatement()
+        val statement = db.connection.createStatement()
         statement.execute(createTableStatement)
     }
 
@@ -41,7 +43,7 @@ class OrganizationDaoImpl(
 
     override suspend fun insertOrganization(organization: Organization) {
         val insertOrganizationStatement = "INSERT INTO $table values(?,?,?,?,?,?,?)"
-        val prepareStatement = connection.prepareStatement(insertOrganizationStatement)
+        val prepareStatement = db.connection.prepareStatement(insertOrganizationStatement)
         prepareStatement.setString(1, uuidUtils.getUuid())
         prepareStatement.setString(2, organization.organizationId)
         prepareStatement.setString(3, organization.name)
@@ -57,7 +59,7 @@ class OrganizationDaoImpl(
         return updateOrganizations
             .map {
                 val query = "SELECT * FROM $table"
-                val statement = connection.createStatement()
+                val statement = db.connection.createStatement()
                 val resultSet = statement.executeQuery(query)
                 val organizationList = buildList {
                     while (resultSet.next()) {
@@ -84,7 +86,7 @@ class OrganizationDaoImpl(
 
     override suspend fun unselectOrganizations() {
         val unselectOrganizationQuery = "UPDATE $table SET selected = 0"
-        val statement = connection.createStatement()
+        val statement = db.connection.createStatement()
         statement.execute(unselectOrganizationQuery)
         statement.close()
         updateOrganizations.emit(Unit)
@@ -93,7 +95,7 @@ class OrganizationDaoImpl(
     override suspend fun selectOrganization(organizationId: String) {
         unselectOrganizations()
         val selectOrganizationQuery = "UPDATE $table SET selected = 1 WHERE organizationId = ?"
-        val preparedStatement = connection.prepareStatement(selectOrganizationQuery)
+        val preparedStatement = db.connection.prepareStatement(selectOrganizationQuery)
         preparedStatement.setString(1, organizationId)
         preparedStatement.executeUpdate()
         preparedStatement.close()

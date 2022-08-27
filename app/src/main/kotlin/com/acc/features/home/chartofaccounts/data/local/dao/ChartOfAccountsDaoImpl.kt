@@ -2,21 +2,25 @@ package com.acc.features.home.chartofaccounts.data.local.dao
 
 import com.acc.features.home.chartofaccounts.model.ChartAccount
 import com.acc.features.home.partners.data.local.dao.PartnersDao
+import com.database.DatabaseConnection
 import com.utils.DateUtils
+import com.utils.DateUtilsImpl
 import com.utils.UuidUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map
 import java.sql.Connection
+import javax.inject.Inject
 
-class ChartOfAccountsDaoImpl(
-    private val connection: Connection,
+class ChartOfAccountsDaoImpl @Inject constructor(
+    private val db: DatabaseConnection,
     private val partnerDao: PartnersDao,
-    private val uuidUtils: UuidUtils,
-    private val dateUtils: DateUtils
 ) : ChartOfAccountsDao {
 
     private val table = "chart_account"
+
+    private val uuidUtils: UuidUtils = UuidUtils()
+    private val dateUtils: DateUtils = DateUtilsImpl()
 
     init {
         createTableIfMissing()
@@ -34,7 +38,7 @@ class ChartOfAccountsDaoImpl(
             created_on number NOT NULL
             )
             """
-        val statement = connection.createStatement()
+        val statement = db.connection.createStatement()
         statement.execute(createTableStatement)
         statement.close()
     }
@@ -45,7 +49,7 @@ class ChartOfAccountsDaoImpl(
 
     override suspend fun insertAccount(number: String, description: String, partnerId: String, organizationId: String) {
         val insertAccountStatement = "INSERT INTO $table values(?,?,?,?,?,?)"
-        val prepareStatement = connection.prepareStatement(insertAccountStatement)
+        val prepareStatement = db.connection.prepareStatement(insertAccountStatement)
         prepareStatement.setString(1, uuidUtils.getUuid())
         prepareStatement.setString(2, number)
         prepareStatement.setString(3, description)
@@ -59,7 +63,7 @@ class ChartOfAccountsDaoImpl(
 
     override suspend fun deleteAccount(id: String) {
         val deleteAccountStatement = "DELETE FROM $table WHERE id=?"
-        val prepareStatement = connection.prepareStatement(deleteAccountStatement)
+        val prepareStatement = db.connection.prepareStatement(deleteAccountStatement)
         prepareStatement.setString(1, id)
         prepareStatement.executeUpdate()
         prepareStatement.close()
@@ -69,7 +73,7 @@ class ChartOfAccountsDaoImpl(
     override fun getChartOfAccounts(): Flow<List<ChartAccount>> {
         return updateAccounts.map {
             val query = "SELECT * FROM $table"
-            val statement = connection.createStatement()
+            val statement = db.connection.createStatement()
             val resultSet = statement.executeQuery(query)
             val chartOfAccounts = buildList {
                 while (resultSet.next()) {

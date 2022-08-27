@@ -1,7 +1,9 @@
 package com.database
 
-import org.koin.dsl.module
+import dagger.Provides
+import dagger.Module
+import javax.inject.Singleton
 
-val databaseModule = module {
-    single { DatabaseConnection().connection }
+@Module class DatabaseModule {
+    @Provides @Singleton fun provideDatabaseConnection(): DatabaseConnection = DatabaseConnection()
 }

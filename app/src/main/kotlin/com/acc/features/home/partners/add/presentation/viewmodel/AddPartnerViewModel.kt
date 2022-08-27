@@ -8,8 +8,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AddPartnerViewModel(
+@Singleton
+class AddPartnerViewModel @Inject constructor(
     private val repository: PartnersRepository,
     private val organizationRepository: OrganizationRepository,
     private val ioCoroutineScope: CoroutineScope

@@ -20,52 +20,60 @@ import com.acc.common.components.AppIcon
 import com.acc.common.components.AppRowActions
 import com.acc.common.ui.rowHeight
 import com.acc.common.ui.smallPadding
+import com.acc.di.AppComponent
+import com.acc.features.di.ViewModel
 import com.acc.features.home.chartofaccounts.list.presentation.viewmodel.ChartOfAccountsViewModel
-import com.acc.features.home.navigation.CharOfAccounts
-import com.navigation.produce
+import javax.inject.Inject
 
-@Composable
-fun ChartOfAccountsScreen(
-    viewModel: ChartOfAccountsViewModel = produce(CharOfAccounts),
-    navigateAddAccount: () -> Unit
-) {
 
-    val accounts by viewModel.accounts.collectAsState(initial = emptyList())
-    val selectedAccount by viewModel.selectedAccount.collectAsState()
+class ChartOfAccountsScreen(appComponent: AppComponent) {
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = navigateAddAccount) {
-                AppIcon(imageVector = Icons.Default.Add)
+    init {
+        appComponent.inject(this)
+    }
+
+    @Inject lateinit var viewModel: ChartOfAccountsViewModel
+
+    @Composable
+    fun ChartOfAccountsScreen(navigateAddAccount: () -> Unit) {
+
+        val accounts by viewModel.accounts.collectAsState(initial = emptyList())
+        val selectedAccount by viewModel.selectedAccount.collectAsState()
+
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(onClick = navigateAddAccount) {
+                    AppIcon(imageVector = Icons.Default.Add)
+                }
             }
-        }
-    ) {
-        LazyColumn {
-            itemsIndexed(accounts) { index, item ->
+        ) {
+            LazyColumn {
+                itemsIndexed(accounts) { index, item ->
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(smallPadding),
-                    modifier = Modifier
-                        .clickable { viewModel.selectAccount(item) }
-                        .fillMaxWidth()
-                        .height(rowHeight)
-                        .background(
-                            MaterialTheme.colors.surface.copy(
-                                if (selectedAccount?.id == item.id) 0.1f
-                                else if (index % 2 == 0) 0.8f
-                                else 0.5f
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(smallPadding),
+                        modifier = Modifier
+                            .clickable { viewModel.selectAccount(item) }
+                            .fillMaxWidth()
+                            .height(rowHeight)
+                            .background(
+                                MaterialTheme.colors.surface.copy(
+                                    if (selectedAccount?.id == item.id) 0.1f
+                                    else if (index % 2 == 0) 0.8f
+                                    else 0.5f
+                                )
+
                             )
-
+                    ) {
+                        Text(text = item.number, modifier = Modifier.padding(start = smallPadding))
+                        Text(text = item.partner?.name ?: item.description)
+                        Spacer(modifier = Modifier.weight(1f))
+                        AppRowActions(
+                            selected = selectedAccount?.id == item.id,
+                            onDelete = { viewModel.deleteAccount(item.id) }
                         )
-                ) {
-                    Text(text = item.number, modifier = Modifier.padding(start = smallPadding))
-                    Text(text = item.partner?.name ?: item.description)
-                    Spacer(modifier = Modifier.weight(1f))
-                    AppRowActions(
-                        selected = selectedAccount?.id == item.id,
-                        onDelete = { viewModel.deleteAccount(item.id) }
-                    )
+                    }
                 }
             }
         }

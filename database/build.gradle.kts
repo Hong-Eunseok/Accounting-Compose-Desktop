@@ -1,4 +1,10 @@
+plugins {
+    kotlin("jvm")
+    kotlin("kapt")
+}
+
 dependencies {
-    implementation(libs.koin)
+    api(libs.dagger)
+    kapt(libs.daggerCompiler)
     implementation(libs.sqlite)
 }

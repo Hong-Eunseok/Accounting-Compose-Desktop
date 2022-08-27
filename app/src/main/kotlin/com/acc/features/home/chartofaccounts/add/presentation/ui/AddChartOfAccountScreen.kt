@@ -16,99 +16,106 @@ import com.acc.common.ui.error
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.mediumPadding
 import com.acc.common.ui.smallPadding
+import com.acc.di.AppComponent
+import com.acc.features.di.ViewModel
 import com.acc.features.home.chartofaccounts.add.presentation.result.AddChartAccountResult
 import com.acc.features.home.chartofaccounts.add.presentation.viewmodel.AddChartOfAccountsViewModel
-import com.acc.navigation.AddChartOfAccountRoute
-import com.navigation.produce
+import javax.inject.Inject
 
-@Composable
-fun AddChartOfAccountScreen(
-    viewModel: AddChartOfAccountsViewModel = produce(AddChartOfAccountRoute),
-    navigateBack: () -> Unit
-) {
+class AddChartOfAccountScreen(appComponent: AppComponent) {
 
-    val locale = LocaleComposition.current
+    @Inject lateinit var viewModel: AddChartOfAccountsViewModel
 
-    val accountNumber by viewModel.accountNumber.collectAsState()
-    val accountDescription by viewModel.accountDescription.collectAsState()
+    init {
+        appComponent.inject(this)
+    }
 
-    val connectedPartnerName by viewModel.partnerName.collectAsState(initial = locale.notSelectedLabel)
-    val partners by viewModel.partners.collectAsState(initial = emptyList())
-    var expandedPartners by remember { mutableStateOf(false) }
+    @Composable
+    fun AddChartOfAccountScreen(navigateBack: () -> Unit) {
 
-    val accountValid by viewModel.accountValid.collectAsState(initial = false)
+        val locale = LocaleComposition.current
 
-    val addChartAccountResult by viewModel.addChartResult.collectAsState()
+        val accountNumber by viewModel.accountNumber.collectAsState()
+        val accountDescription by viewModel.accountDescription.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = locale.addAccountToolbarTitle, style = MaterialTheme.typography.h3) },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
-                }
-            )
-        }
-    ) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            Card(modifier = Modifier.width(300.dp)) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(smallPadding),
-                    modifier = Modifier.padding(largePadding)
-                ) {
-                    AppTextField(
-                        value = accountNumber,
-                        setValue = viewModel::setAccountNumber,
-                        label = locale.addAccountNumberLabel
-                    )
-                    if (addChartAccountResult == AddChartAccountResult.ERROR_ACCOUNT_NUMBER_EXISTS) {
-                        Text(text = locale.addChartAccountNumberError, color = error)
+        val connectedPartnerName by viewModel.partnerName.collectAsState(initial = locale.notSelectedLabel)
+        val partners by viewModel.partners.collectAsState(initial = emptyList())
+        var expandedPartners by remember { mutableStateOf(false) }
+
+        val accountValid by viewModel.accountValid.collectAsState(initial = false)
+
+        val addChartAccountResult by viewModel.addChartResult.collectAsState()
+
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = locale.addAccountToolbarTitle, style = MaterialTheme.typography.h3) },
+                    navigationIcon = {
+                        IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
                     }
-                    AppTextField(
-                        value = accountDescription,
-                        setValue = viewModel::setAccountDescription,
-                        label = locale.addAccountDescriptionLabel
-                    )
-                    Box {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(mediumPadding),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            AppTextField(
-                                value = connectedPartnerName ?: locale.notSelectedLabel,
-                                enabled = false,
-                                label = locale.connectPartnerLabel,
-                                modifier = Modifier.weight(1f)
-                            )
-                            IconButton(onClick = { expandedPartners = true }) {
-                                AppIcon(imageVector = Icons.Default.Add)
-                            }
+                )
+            }
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Card(modifier = Modifier.width(300.dp)) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(smallPadding),
+                        modifier = Modifier.padding(largePadding)
+                    ) {
+                        AppTextField(
+                            value = accountNumber,
+                            setValue = viewModel::setAccountNumber,
+                            label = locale.addAccountNumberLabel
+                        )
+                        if (addChartAccountResult == AddChartAccountResult.ERROR_ACCOUNT_NUMBER_EXISTS) {
+                            Text(text = locale.addChartAccountNumberError, color = error)
                         }
-                        DropdownMenu(
-                            expanded = expandedPartners,
-                            onDismissRequest = { expandedPartners = false }
-                        ) {
-                            partners.forEach {
-                                DropdownMenuItem(
-                                    onClick = {
-                                        expandedPartners = false
-                                        viewModel.setPartner(it.id)
+                        AppTextField(
+                            value = accountDescription,
+                            setValue = viewModel::setAccountDescription,
+                            label = locale.addAccountDescriptionLabel
+                        )
+                        Box {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(mediumPadding),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                AppTextField(
+                                    value = connectedPartnerName ?: locale.notSelectedLabel,
+                                    enabled = false,
+                                    label = locale.connectPartnerLabel,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                IconButton(onClick = { expandedPartners = true }) {
+                                    AppIcon(imageVector = Icons.Default.Add)
+                                }
+                            }
+                            DropdownMenu(
+                                expanded = expandedPartners,
+                                onDismissRequest = { expandedPartners = false }
+                            ) {
+                                partners.forEach {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            expandedPartners = false
+                                            viewModel.setPartner(it.id)
+                                        }
+                                    ) {
+                                        Text(text = it.name)
                                     }
-                                ) {
-                                    Text(text = it.name)
                                 }
                             }
                         }
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Button(
-                            enabled = accountValid,
-                            onClick = viewModel::addChartAccount
+                        Row(
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = locale.addAccount)
+                            Button(
+                                enabled = accountValid,
+                                onClick = viewModel::addChartAccount
+                            ) {
+                                Text(text = locale.addAccount)
+                            }
                         }
                     }
                 }

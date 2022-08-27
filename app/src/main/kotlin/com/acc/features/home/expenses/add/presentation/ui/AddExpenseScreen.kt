@@ -15,91 +15,99 @@ import com.acc.common.locale.presentation.model.LocaleComposition
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.mediumPadding
 import com.acc.common.ui.smallPadding
+import com.acc.di.AppComponent
+import com.acc.features.di.ViewModel
 import com.acc.features.home.expenses.add.presentation.viewmodel.AddExpenseViewModel
-import com.acc.navigation.AddExpenseRoute
-import com.navigation.produce
+import javax.inject.Inject
 
-@Composable
-fun AddExpenseScreen(
-    viewModel: AddExpenseViewModel = produce(AddExpenseRoute),
-    navigateBack: () -> Unit
-) {
-    val locale = LocaleComposition.current
+class AddExpenseScreen(appComponent: AppComponent) {
 
-    val accountNumber by viewModel.accountNumber.collectAsState()
-    val expenseDescription by viewModel.expenseDescription.collectAsState()
-    val connectedPartnerName by viewModel.partnerName.collectAsState(initial = locale.notSelectedLabel)
-    var expandedPartners by remember { mutableStateOf(false) }
-    val partners by viewModel.partners.collectAsState(initial = emptyList())
+    @Inject
+    lateinit var viewModel: AddExpenseViewModel
 
-    val expenseValid by viewModel.expenseValid.collectAsState(initial = false)
+    init {
+        appComponent.inject(this)
+    }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = locale.addExpenseToolbarTitle, style = MaterialTheme.typography.h3) },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
-                }
-            )
-        }
-    ) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            Card(modifier = Modifier.width(300.dp)) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(smallPadding),
-                    modifier = Modifier.padding(largePadding)
-                ) {
-                    AppTextField(
-                        value = accountNumber,
-                        setValue = viewModel::setAccountNumber,
-                        label = locale.addExpenseAccount
-                    )
-                    AppTextField(
-                        value = expenseDescription,
-                        setValue = viewModel::setExpenseDescription,
-                        label = locale.addExpenseAccount
-                    )
-                    Box {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(mediumPadding),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            AppTextField(
-                                value = connectedPartnerName ?: locale.notSelectedLabel,
-                                enabled = false,
-                                label = locale.connectPartnerLabel,
-                                modifier = Modifier.weight(1f)
-                            )
-                            IconButton(onClick = { expandedPartners = true }) {
-                                AppIcon(imageVector = Icons.Default.Add)
+    @Composable
+    fun AddExpenseScreen(navigateBack: () -> Unit) {
+        val locale = LocaleComposition.current
+
+        val accountNumber by viewModel.accountNumber.collectAsState()
+        val expenseDescription by viewModel.expenseDescription.collectAsState()
+        val connectedPartnerName by viewModel.partnerName.collectAsState(initial = locale.notSelectedLabel)
+        var expandedPartners by remember { mutableStateOf(false) }
+        val partners by viewModel.partners.collectAsState(initial = emptyList())
+
+        val expenseValid by viewModel.expenseValid.collectAsState(initial = false)
+
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = locale.addExpenseToolbarTitle, style = MaterialTheme.typography.h3) },
+                    navigationIcon = {
+                        IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
+                    }
+                )
+            }
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Card(modifier = Modifier.width(300.dp)) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(smallPadding),
+                        modifier = Modifier.padding(largePadding)
+                    ) {
+                        AppTextField(
+                            value = accountNumber,
+                            setValue = viewModel::setAccountNumber,
+                            label = locale.addExpenseAccount
+                        )
+                        AppTextField(
+                            value = expenseDescription,
+                            setValue = viewModel::setExpenseDescription,
+                            label = locale.addExpenseAccount
+                        )
+                        Box {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(mediumPadding),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                AppTextField(
+                                    value = connectedPartnerName ?: locale.notSelectedLabel,
+                                    enabled = false,
+                                    label = locale.connectPartnerLabel,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                IconButton(onClick = { expandedPartners = true }) {
+                                    AppIcon(imageVector = Icons.Default.Add)
+                                }
                             }
-                        }
-                        DropdownMenu(
-                            expanded = expandedPartners,
-                            onDismissRequest = { expandedPartners = false }
-                        ) {
-                            partners.forEach {
-                                DropdownMenuItem(
-                                    onClick = {
-                                        expandedPartners = false
-                                        viewModel.setPartner(it.id)
+                            DropdownMenu(
+                                expanded = expandedPartners,
+                                onDismissRequest = { expandedPartners = false }
+                            ) {
+                                partners.forEach {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            expandedPartners = false
+                                            viewModel.setPartner(it.id)
+                                        }
+                                    ) {
+                                        Text(text = it.name)
                                     }
-                                ) {
-                                    Text(text = it.name)
                                 }
                             }
                         }
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Button(
-                            enabled = expenseValid,
-                            onClick = viewModel::addExpense
+                        Row(
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = locale.addExpense)
+                            Button(
+                                enabled = expenseValid,
+                                onClick = viewModel::addExpense
+                            ) {
+                                Text(text = locale.addExpense)
+                            }
                         }
                     }
                 }

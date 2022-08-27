@@ -9,18 +9,21 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.compose)
+    kotlin("jvm")
+    kotlin("kapt")
 }
 
 group = "me.zero"
 version = "1.0"
 
 dependencies {
+    api(libs.dagger)
+    kapt(libs.daggerCompiler)
     implementation(project(":navigation"))
     implementation(project(":database"))
     implementation(project(":utils"))
     implementation(project(":preferences"))
     implementation(compose.desktop.currentOs)
-    implementation(libs.koin)
     implementation(libs.junit)
     implementation(libs.testCoroutines)
 }

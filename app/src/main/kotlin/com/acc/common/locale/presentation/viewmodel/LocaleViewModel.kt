@@ -7,8 +7,11 @@ import com.navigation.Entry
 import com.preferences.Preferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class LocaleViewModel(
+@Singleton
+class LocaleViewModel @Inject constructor(
     private val preferences: Preferences
 ) : Entry {
 

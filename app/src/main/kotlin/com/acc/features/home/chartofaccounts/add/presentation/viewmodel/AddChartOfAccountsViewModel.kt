@@ -8,8 +8,10 @@ import com.navigation.Entry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AddChartOfAccountsViewModel(
+@Singleton class AddChartOfAccountsViewModel @Inject constructor(
     private val accountsRepository: ChartOfAccountsRepository,
     private val partnersRepository: PartnersRepository,
     private val organizationRepository: OrganizationRepository,

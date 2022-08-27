@@ -3,8 +3,9 @@ package com.acc.features.home.chartofaccounts.data.repository
 import com.acc.features.home.chartofaccounts.data.local.dao.ChartOfAccountsDao
 import com.acc.features.home.chartofaccounts.model.ChartAccount
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class ChartOfAccountsRepository(private val dao: ChartOfAccountsDao) {
+class ChartOfAccountsRepository @Inject constructor(private val dao: ChartOfAccountsDao) {
 
     suspend fun insertAccount(number: String, description: String, partnerId: String, organizationId: String) {
         dao.insertAccount(number, description, partnerId, organizationId)

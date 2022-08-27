@@ -19,92 +19,100 @@ import com.acc.common.locale.presentation.viewmodel.LocaleViewModel
 import com.acc.common.theme.viewmodel.ThemeViewModel
 import com.acc.common.ui.mediumPadding
 import com.acc.common.ui.smallPadding
+import com.acc.di.AppComponent
+import com.acc.features.di.ViewModel
 import com.acc.features.settings.presentation.viewmodel.SettingsViewModel
-import com.acc.navigation.RootRoute
-import com.acc.navigation.SettingsRoute
-import com.navigation.produce
+import javax.inject.Inject
 
-@Composable
-fun SettingsScreen(
-    navigateOrganizationSelection: () -> Unit,
-    navigateBack: () -> Unit
-) {
+class SettingsScreen(appComponent: AppComponent) {
+    init {
+        appComponent.inject(this)
+    }
 
-    val locale = LocaleComposition.current
+    @Inject lateinit var settingsViewModel: SettingsViewModel
+    @Inject lateinit var themeViewModel: ThemeViewModel
+    @Inject lateinit var localeViewModel: LocaleViewModel
 
-    val settingsViewModel: SettingsViewModel = produce(SettingsRoute)
-    var vatRate by remember { mutableStateOf<String?>(null) }
-    val vatError by settingsViewModel.vatUpdateError.collectAsState()
 
-    val themeViewModel: ThemeViewModel = produce(RootRoute)
-    val darkTheme by themeViewModel.darkTheme.collectAsState()
-
-    val localeViewModel: LocaleViewModel = produce(RootRoute)
-    var showLocales by remember { mutableStateOf(false) }
-    val availableLocale by remember { mutableStateOf(listOf(English, Croatian)) }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = locale.settingsToolbarTitle, style = MaterialTheme.typography.h3) },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
-                }
-            )
-        }
+    @Composable
+    fun SettingsScreen(
+        navigateOrganizationSelection: () -> Unit,
+        navigateBack: () -> Unit
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
+
+        val locale = LocaleComposition.current
+
+        var vatRate by remember { mutableStateOf<String?>(null) }
+        val vatError by settingsViewModel.vatUpdateError.collectAsState()
+
+        val darkTheme by themeViewModel.darkTheme.collectAsState()
+
+        var showLocales by remember { mutableStateOf(false) }
+        val availableLocale by remember { mutableStateOf(listOf(English, Croatian)) }
+
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = locale.settingsToolbarTitle, style = MaterialTheme.typography.h3) },
+                    navigationIcon = {
+                        IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
+                    }
+                )
+            }
         ) {
-            Card(modifier = Modifier.width(220.dp)) {
-                Column(modifier = Modifier.padding(horizontal = mediumPadding, vertical = smallPadding)) {
-                    Button(onClick = {
-                        navigateOrganizationSelection()
-                        settingsViewModel.unselectOrganizations()
-                    }) {
-                        Text(text = locale.reselectOrganizationButton)
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = locale.settingsDarkThemeButton)
-                        Checkbox(
-                            checked = darkTheme,
-                            onCheckedChange = { themeViewModel.toggleTheme() }
-                        )
-                    }
-                    AppTextField(
-                        value = vatRate ?: settingsViewModel.vatRate.toString(),
-                        setValue = {
-                            vatRate = it
-                            settingsViewModel.storeVatRate(it)
-                        },
-                        label = locale.settingsVatRate,
-                        errorMessage = if (vatError) locale.settingsVatRateError else null
-                    )
-                    Box {
-                        OutlinedButton(
-                            onClick = { showLocales = true },
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Card(modifier = Modifier.width(220.dp)) {
+                    Column(modifier = Modifier.padding(horizontal = mediumPadding, vertical = smallPadding)) {
+                        Button(onClick = {
+                            navigateOrganizationSelection()
+                            settingsViewModel.unselectOrganizations()
+                        }) {
+                            Text(text = locale.reselectOrganizationButton)
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                                Text(text = locale.language)
-                                AppIcon(imageVector = if (showLocales) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown)
-                            }
+                            Text(text = locale.settingsDarkThemeButton)
+                            Checkbox(
+                                checked = darkTheme,
+                                onCheckedChange = { themeViewModel.toggleTheme() }
+                            )
                         }
-                        DropdownMenu(
-                            expanded = showLocales,
-                            onDismissRequest = { showLocales = false }
-                        ) {
-                            availableLocale.forEach {
-                                DropdownMenuItem(onClick = {
-                                    showLocales = false
-                                    localeViewModel.updateSelectedLocale(it)
-                                }) {
-                                    Text(text = it.language)
+                        AppTextField(
+                            value = vatRate ?: settingsViewModel.vatRate.toString(),
+                            setValue = {
+                                vatRate = it
+                                settingsViewModel.storeVatRate(it)
+                            },
+                            label = locale.settingsVatRate,
+                            errorMessage = if (vatError) locale.settingsVatRateError else null
+                        )
+                        Box {
+                            OutlinedButton(
+                                onClick = { showLocales = true },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                                    Text(text = locale.language)
+                                    AppIcon(imageVector = if (showLocales) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown)
+                                }
+                            }
+                            DropdownMenu(
+                                expanded = showLocales,
+                                onDismissRequest = { showLocales = false }
+                            ) {
+                                availableLocale.forEach {
+                                    DropdownMenuItem(onClick = {
+                                        showLocales = false
+                                        localeViewModel.updateSelectedLocale(it)
+                                    }) {
+                                        Text(text = it.language)
+                                    }
                                 }
                             }
                         }
@@ -113,4 +121,5 @@ fun SettingsScreen(
             }
         }
     }
+
 }

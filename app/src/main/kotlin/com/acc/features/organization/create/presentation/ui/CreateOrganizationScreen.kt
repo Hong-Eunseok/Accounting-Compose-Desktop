@@ -16,88 +16,97 @@ import com.acc.common.locale.presentation.model.LocaleComposition
 import com.acc.common.ui.error
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.smallPadding
+import com.acc.di.AppComponent
+import com.acc.features.di.ViewModel
 import com.acc.features.organization.create.presentation.result.CreateOrganizationResult
 import com.acc.features.organization.create.presentation.state.rememberOrganizationState
 import com.acc.features.organization.create.presentation.viewmodel.CreateOrganizationViewModel
-import com.acc.navigation.CreateOrganizationRoute
-import com.navigation.produce
+import javax.inject.Inject
 
-@Composable
-fun CreateOrganizationScreen(
-    viewModel: CreateOrganizationViewModel = produce(CreateOrganizationRoute),
-    navigateBack: () -> Unit
-) {
+class CreateOrganizationScreen(appComponent: AppComponent) {
 
-    val locale = LocaleComposition.current
-
-    val organization = rememberOrganizationState()
-    val result by viewModel.result.collectAsState()
-    if (result == CreateOrganizationResult.SUCCESS) {
-        navigateBack()
+    init {
+        appComponent.inject(this)
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = locale.createOrganizationToolbarTitle, style = MaterialTheme.typography.h4) },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
-                }
-            )
+    @Inject
+    lateinit var viewModel: CreateOrganizationViewModel
+
+    @Composable
+    fun CreateOrganizationScreen(navigateBack: () -> Unit) {
+
+        val locale = LocaleComposition.current
+
+        val organization = rememberOrganizationState()
+        val result by viewModel.result.collectAsState()
+        if (result == CreateOrganizationResult.SUCCESS) {
+            navigateBack()
         }
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Card(modifier = Modifier.width(300.dp)) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(smallPadding),
-                    modifier = Modifier.padding(horizontal = largePadding, vertical = smallPadding)
-                ) {
-                    AppTextField(
-                        value = organization.organizationId,
-                        setValue = { organization.organizationId = it },
-                        label = locale.organizationIdLabel
-                    )
-                    if (result == CreateOrganizationResult.ERROR) {
-                        Text(text = locale.createOrganizationIdError, color = error)
+
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = locale.createOrganizationToolbarTitle, style = MaterialTheme.typography.h4) },
+                    navigationIcon = {
+                        IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
                     }
-                    AppTextField(
-                        value = organization.name,
-                        setValue = { organization.name = it },
-                        label = locale.organizationNameLabel
-                    )
-                    AppTextField(
-                        value = organization.postCode,
-                        setValue = { organization.postCode = it },
-                        label = locale.organizationPostCodeLabel
-                    )
-                    AppTextField(
-                        value = organization.address,
-                        setValue = { organization.address = it },
-                        label = locale.organizationAddressLabel
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier.fillMaxWidth()
+                )
+            }
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Card(modifier = Modifier.width(300.dp)) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(smallPadding),
+                        modifier = Modifier.padding(horizontal = largePadding, vertical = smallPadding)
                     ) {
-                        Button(
-                            enabled = organization.valid,
-                            onClick = {
-                                viewModel.createOrganization(
-                                    organizationId = organization.organizationId,
-                                    name = organization.name,
-                                    postCode = organization.postCode,
-                                    address = organization.address
-                                )
-                            }
+                        AppTextField(
+                            value = organization.organizationId,
+                            setValue = { organization.organizationId = it },
+                            label = locale.organizationIdLabel
+                        )
+                        if (result == CreateOrganizationResult.ERROR) {
+                            Text(text = locale.createOrganizationIdError, color = error)
+                        }
+                        AppTextField(
+                            value = organization.name,
+                            setValue = { organization.name = it },
+                            label = locale.organizationNameLabel
+                        )
+                        AppTextField(
+                            value = organization.postCode,
+                            setValue = { organization.postCode = it },
+                            label = locale.organizationPostCodeLabel
+                        )
+                        AppTextField(
+                            value = organization.address,
+                            setValue = { organization.address = it },
+                            label = locale.organizationAddressLabel
+                        )
+                        Row(
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(text = locale.createOrganizationButton)
+                            Button(
+                                enabled = organization.valid,
+                                onClick = {
+                                    viewModel.createOrganization(
+                                        organizationId = organization.organizationId,
+                                        name = organization.name,
+                                        postCode = organization.postCode,
+                                        address = organization.address
+                                    )
+                                }
+                            ) {
+                                Text(text = locale.createOrganizationButton)
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 }

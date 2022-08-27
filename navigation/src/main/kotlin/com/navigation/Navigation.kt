@@ -22,16 +22,12 @@ internal class AppNavigation(defaultRoute: Route) : Navigation {
     }
 
     override fun navigateAsRoot(route: Route) {
-        routes.forEach {
-            popEntry(it)
-        }
         routes.clear()
         routes.add(route)
         _routeStack.tryEmit(route)
     }
 
     override fun popLast() {
-        popEntry(routes.last())
         routes.removeLast()
         if (routes.isNotEmpty()) _routeStack.tryEmit(routes.last())
     }
@@ -39,7 +35,6 @@ internal class AppNavigation(defaultRoute: Route) : Navigation {
     override fun popTo(route: Route) {
         if (!routes.contains(route)) throw IllegalStateException("$route route missing.")
         while (routes.last() != route) {
-            popEntry(routes.last())
             routes.removeLast()
             _routeStack.tryEmit(routes.last())
         }

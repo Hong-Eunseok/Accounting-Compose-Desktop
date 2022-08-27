@@ -7,8 +7,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SettingsViewModel(
+@Singleton
+class SettingsViewModel @Inject constructor(
     private val repository: OrganizationRepository,
     private val preferences: Preferences,
     private val ioCoroutineScope: CoroutineScope
