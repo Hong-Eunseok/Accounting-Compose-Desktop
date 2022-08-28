@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test
 class CreateOrganizationViewModelTest {
 
     private val repository = OrganizationRepositoryFake()
-    private val dateUtils = DateUtilsFake()
     private val testDispatcher = UnconfinedTestDispatcher()
     private val testScope = TestScope(testDispatcher)
     private lateinit var sut: CreateOrganizationViewModel
@@ -27,7 +26,6 @@ class CreateOrganizationViewModelTest {
     fun setUp() {
         sut = CreateOrganizationViewModel(
             repository = repository,
-            dateUtils = dateUtils,
             ioCoroutineScope = testScope
         )
     }

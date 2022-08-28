@@ -26,6 +26,7 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(libs.junit)
     implementation(libs.testCoroutines)
+    testImplementation(libs.truth)
 }
 
 compose.desktop {
