@@ -2,15 +2,22 @@
 kotlin = "1.7.10"
 coroutines = "1.6.4"
 dagger = "2.43.2"
+exposed = "0.39.1"
 
 [libraries]
-sqlite = { module = "org.xerial:sqlite-jdbc", version = "3.36.0.3" }
+sqlite = { module = "org.xerial:sqlite-jdbc", version = "3.39.2.1" }
 junit = { module = "org.junit.jupiter:junit-jupiter-engine", version = "5.8.1" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 testCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 truth = { module = "com.google.truth:truth", version = "1.1.3" }
 daggerCompiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+
+[bundles]
+exposed = ["exposed-core", "exposed-dao", "exposed-jdbc"]
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version = "1.2.0-alpha01-dev741" }
