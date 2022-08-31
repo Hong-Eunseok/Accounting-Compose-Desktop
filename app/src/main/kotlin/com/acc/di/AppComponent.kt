@@ -12,7 +12,8 @@ import com.acc.features.main.ui.Main
 import com.acc.features.organization.create.presentation.ui.CreateOrganizationScreen
 import com.acc.features.organization.selection.ui.OrganizationSelectionScreen
 import com.acc.features.settings.presentation.ui.SettingsScreen
-import com.acc.goodwill.data.source.SourceModule
+import com.acc.goodwill.di.GoodwillModule
+import com.acc.goodwill.presentation.donation.AddDonationContent
 import com.database.DatabaseModule
 import com.preferences.PreferencesModule
 import dagger.Component
@@ -21,11 +22,8 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-       DatabaseModule::class, PreferencesModule::class, CommonModule::class, FeaturesModule::class,
-        /**
-         * Goodwill store
-         */
-        SourceModule::class
+        DatabaseModule::class, PreferencesModule::class, CommonModule::class, FeaturesModule::class,
+        GoodwillModule::class
     ]
 )
 interface AppComponent {
@@ -39,6 +37,6 @@ interface AppComponent {
     fun inject(addPartnerScreen: AddPartnerScreen)
     fun inject(chartOfAccountsScreen: ChartOfAccountsScreen)
     fun inject(partnersScreen: PartnersScreen)
-
     fun inject(main: com.acc.goodwill.presentation.main.Main)
+    fun inject(main: AddDonationContent)
 }

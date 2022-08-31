@@ -4,9 +4,13 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.acc.di.AppComponent
 import com.acc.di.DaggerAppComponent
+import com.acc.goodwill.data.source.table.User
 import com.acc.goodwill.presentation.main.Main
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.File
 import java.sql.Connection
 
 fun main() {
@@ -19,11 +23,13 @@ fun main() {
     }
 }
 
-
 private fun initializeConnection() {
-    val path = "./app/src/main/resource/goodwillstore.db"
-    val url = "jdbc:sqlite:$path"
-    println(url)
-    Database.connect(url = url, driver = "org.sqlite.JDBC")
+    val db = "goodwillstore.db"
+    val folder = "./app/src/main/resource/"
+    File(folder).mkdirs()
+    val connect = Database.connect(url = "jdbc:sqlite:$folder$db", driver = "org.sqlite.JDBC")
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+    transaction(connect) {
+        SchemaUtils.createMissingTablesAndColumns(User)
+    }
 }

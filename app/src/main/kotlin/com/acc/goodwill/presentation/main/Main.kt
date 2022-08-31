@@ -9,6 +9,7 @@ import com.acc.common.ui.AppTheme
 import com.acc.di.AppComponent
 import com.acc.goodwill.presentation.common.LocaleComposition
 import com.acc.goodwill.presentation.common.SettingViewModel
+import com.acc.goodwill.presentation.donation.AddDonationContent
 import com.acc.goodwill.presentation.home.HomeScreen
 import com.acc.goodwill.presentation.navigation.AddDonationScreen
 import com.acc.goodwill.presentation.navigation.MainScreen
@@ -18,6 +19,8 @@ import javax.inject.Inject
 class Main(appComponent: AppComponent) {
 
     @Inject lateinit var settingViewModel: SettingViewModel
+
+    private val addDonationContent by lazy { AddDonationContent(appComponent) }
 
     init {
         appComponent.inject(this)
