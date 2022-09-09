@@ -63,6 +63,9 @@ compose.desktop {
         mainClass = "com.acc.ApplicationKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+
+            modules("java.sql")
+
             packageName = "acc"
             packageVersion = "1.0.0"
         }

@@ -36,9 +36,13 @@ fun main() {
 
 private fun initializeConnection() {
     val db = "goodwillstore.db"
-    val folder = "./app/src/main/resource/"
-    File(folder).mkdirs()
-    val connect = Database.connect(url = "jdbc:sqlite:$folder$db", driver = "org.sqlite.JDBC")
+//    val folder = "./app/src/main/resource/"
+//    File(folder).mkdirs()
+//    val connect = Database.connect(url = "jdbc:sqlite:$folder$db", driver = "org.sqlite.JDBC")
+
+    val databasePath = File(System.getProperty("java.io.tmpdir"), db)
+    val connect = Database.connect(url = "jdbc:sqlite:${databasePath.absolutePath}", driver = "org.sqlite.JDBC")
+
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     transaction(connect) {
         SchemaUtils.createMissingTablesAndColumns(ContributorTable)
