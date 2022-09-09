@@ -13,7 +13,7 @@ import com.acc.goodwill.data.source.presentation.navigation.Report
 import com.acc.goodwill.data.source.presentation.navigation.Search
 import com.acc.goodwill.data.source.presentation.common.LocaleComposition
 import com.acc.goodwill.data.source.presentation.common.homeMenuPadding
-import com.acc.goodwill.data.source.presentation.navigation.Dashboard
+import com.acc.goodwill.data.source.presentation.navigation.Statistics
 import com.navigation.Route
 
 
@@ -21,7 +21,7 @@ import com.navigation.Route
 fun HomeMenu(
     currentRoute: Route,
     screenWidth: Dp,
-    navigateDashboard: () -> Unit,
+    navigateStatistics: () -> Unit,
     navigateDonation: () -> Unit,
     navigateSearch: () -> Unit,
     navigateReport: () -> Unit
@@ -36,11 +36,6 @@ fun HomeMenu(
     ) {
         Column(modifier = Modifier.padding(homeMenuPadding)) {
             HomeMenuButton(
-                text = locale.dashboard,
-                selected = currentRoute is Dashboard,
-                onClick = navigateDashboard
-            )
-            HomeMenuButton(
                 text = locale.donation,
                 selected = currentRoute is Donation,
                 onClick = navigateDonation
@@ -49,6 +44,11 @@ fun HomeMenu(
                 text = locale.search,
                 selected = currentRoute is Search,
                 onClick = navigateSearch
+            )
+            HomeMenuButton(
+                text = locale.statistics,
+                selected = currentRoute is Statistics,
+                onClick = navigateStatistics
             )
             HomeMenuButton(
                 text = locale.report,

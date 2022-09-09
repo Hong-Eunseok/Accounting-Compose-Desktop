@@ -1,5 +1,6 @@
 package com.acc.goodwill.data.source.presentation.home
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.goodwill.data.source.presentation.donation.DonationContent
-import com.acc.goodwill.data.source.presentation.navigation.Dashboard
+import com.acc.goodwill.data.source.presentation.navigation.Statistics
 import com.acc.goodwill.data.source.presentation.navigation.Donation
 import com.acc.goodwill.data.source.presentation.navigation.Report
 import com.acc.goodwill.data.source.presentation.navigation.Search
@@ -22,15 +23,15 @@ import com.navigation.rememberNavigation
 @Composable
 fun HomeScreen(navigateAddDonation: () -> Unit) {
 
-    val navigation = rememberNavigation(defaultRoute = Dashboard)
+    val navigation = rememberNavigation(defaultRoute = Donation)
     val route by navigation.routeStack.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Goodwill Store Suwon", style = MaterialTheme.typography.h3) },
+                title = { Text(text = "수원굿윌스토어", style = MaterialTheme.typography.h3) },
                 actions = {
-                    IconButton(onClick = { println("click Icon!!!") }) { AppIcon(imageVector = Icons.Default.Settings) }
+                    IconButton(onClick = { println("setting click Icon!!!") }) { AppIcon(imageVector = Icons.Default.Settings) }
                 }
             )
         }
@@ -42,7 +43,7 @@ fun HomeScreen(navigateAddDonation: () -> Unit) {
                 HomeMenu(
                     route,
                     screenWidth.dp,
-                    navigateDashboard = { navigation.navigate(Dashboard) },
+                    navigateStatistics = { navigation.navigate(Statistics) },
                     navigateDonation = { navigation.navigate(Donation) },
                     navigateSearch = { navigation.navigate(Search) },
                     navigateReport = { navigation.navigate(Report) }
@@ -50,9 +51,9 @@ fun HomeScreen(navigateAddDonation: () -> Unit) {
                 // content side
                 HomeContent(modifier = Modifier.weight(3f)) {
                     when (route) {
-                        Dashboard -> EmptyScreen()
                         Donation -> DonationContent(navigateAddDonation = navigateAddDonation)
                         Search -> EmptyScreen()
+                        Statistics -> EmptyScreen()
                         Report -> EmptyScreen()
                     }
                 }

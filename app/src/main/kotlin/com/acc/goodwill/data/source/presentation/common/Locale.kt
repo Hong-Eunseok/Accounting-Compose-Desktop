@@ -2,7 +2,7 @@ package com.acc.goodwill.data.source.presentation.common
 
 interface Locale {
     /** Home Menu **/
-    val dashboard: String
+    val statistics: String
     val donation: String
     val search: String
     val report: String
@@ -23,7 +23,7 @@ interface Locale {
 
 object Korean : Locale {
     /** Home Menu **/
-    override val dashboard: String = "상황판"
+    override val statistics: String = "통계"
     override val donation: String = "기부"
     override val search: String = "검색"
     override val report: String = "보고서"
@@ -45,7 +45,7 @@ object Korean : Locale {
 
 object English : Locale {
     /** Home Menu **/
-    override val dashboard: String = "Dashboard"
+    override val statistics: String = "Statistics"
     override val donation: String = "Donation"
     override val search: String = "Search"
     override val report: String = "Report"
