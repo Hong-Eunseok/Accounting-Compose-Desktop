@@ -13,7 +13,7 @@ import com.acc.features.organization.create.presentation.ui.CreateOrganizationSc
 import com.acc.features.organization.selection.ui.OrganizationSelectionScreen
 import com.acc.features.settings.presentation.ui.SettingsScreen
 import com.acc.goodwill.di.GoodwillModule
-import com.acc.goodwill.data.source.presentation.donation.AddDonationContent
+import com.acc.goodwill.data.source.presentation.donation.SearchContributorContent
 import com.database.DatabaseModule
 import com.preferences.PreferencesModule
 import dagger.Component
@@ -38,5 +38,5 @@ interface AppComponent {
     fun inject(chartOfAccountsScreen: ChartOfAccountsScreen)
     fun inject(partnersScreen: PartnersScreen)
     fun inject(main: com.acc.goodwill.data.source.presentation.main.Main)
-    fun inject(main: AddDonationContent)
+//    fun inject(main: SearchContributorContent)
 }

@@ -17,7 +17,6 @@ import com.acc.common.components.AppIcon
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DonationContent(navigateAddDonation: () -> Unit) {
-    var text by remember { mutableStateOf("") }
     Scaffold(
         modifier = Modifier
             .fillMaxSize()

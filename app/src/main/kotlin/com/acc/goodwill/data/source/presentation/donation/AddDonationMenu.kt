@@ -1,69 +1,66 @@
 package com.acc.goodwill.data.source.presentation.donation
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.acc.goodwill.data.source.presentation.common.LocaleComposition
-import com.acc.goodwill.data.source.presentation.navigation.Confirm
-import com.acc.goodwill.data.source.presentation.navigation.DonationRoute
-import com.acc.goodwill.data.source.presentation.navigation.SearchContribute
+import com.acc.goodwill.data.source.presentation.common.homeMenuPadding
+import com.acc.goodwill.data.source.presentation.home.HomeMenuButton
+import com.acc.goodwill.data.source.presentation.navigation.*
 
 @Composable
 fun AddDonationMenu(
     currentRoute: DonationRoute,
+    screenWidth: Dp,
     navigateSearchContributor: () -> Unit,
     navigateAddProduct: () -> Unit,
     navigateAddConfirm: () -> Unit
 ) {
     val locale = LocaleComposition.current
 
-    Row {
-        Button(
-            onClick = navigateSearchContributor,
-            modifier = Modifier.padding(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (currentRoute is SearchContribute) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
+    Surface(
+        color = Color.LightGray,
+        elevation = 3.dp,
+        modifier = Modifier.width(minOf((screenWidth / 3), 220.dp)).fillMaxSize().zIndex(5f)
+    ) {
+        Column(modifier = Modifier.padding(homeMenuPadding)) {
+            AddDonationButton(
+                text = locale.search,
+                selected = currentRoute is SearchContribute,
+                onClick = navigateSearchContributor
             )
-        ) {
-            Text(text = locale.stepSearchContributor)
-        }
-        Button(
-            onClick = navigateAddProduct,
-            modifier = Modifier.padding(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (currentRoute is SearchContribute) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
-            ),
-            //enabled = currentRoute.value >= AddProduct.value
-        ) {
-            Text(text = locale.stepAddProduct)
-        }
-        Button(
-            onClick = navigateAddConfirm,
-            modifier = Modifier.padding(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = if (currentRoute is SearchContribute) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
-            ),
-            enabled = currentRoute.value >= Confirm.value
-        ) {
-            Text(text = locale.stepConfirm)
+            AddDonationButton(
+                text = "기부물품등록",
+                selected = currentRoute is AddProduct,
+                onClick = navigateAddProduct
+            )
+            AddDonationButton(
+                text = "최종확인",
+                selected = currentRoute is Confirm,
+                onClick = navigateAddConfirm
+            )
         }
     }
 }
 
-//카테고리 : 의류/도서/잡화생활/잡화유아/문구,완구/가구/가전/주방/기타
-//기증품목 : XXXXXX
-//수량 : XXXXXX
-//불량 : XXXX
-//금액 : XXXX
-//추가
-//
-//다음
-//
-//추가된 리스트 보이고
-//뭔가 이쁘게
+@Composable
+fun AddDonationButton(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Button(
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = if (selected) MaterialTheme.colors.primary else MaterialTheme.colors.secondary
+        ),
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(text = text)
+    }
+}
