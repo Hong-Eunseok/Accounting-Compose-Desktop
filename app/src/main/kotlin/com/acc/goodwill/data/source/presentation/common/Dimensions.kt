@@ -1,4 +1,4 @@
-package com.acc.goodwill.presentation.common
+package com.acc.goodwill.data.source.presentation.common
 
 import androidx.compose.ui.unit.dp
 

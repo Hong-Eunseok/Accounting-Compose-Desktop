@@ -1,4 +1,4 @@
-package com.acc.goodwill.presentation.home
+package com.acc.goodwill.data.source.presentation.home
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -12,11 +12,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
-import com.acc.goodwill.presentation.donation.DonationContent
-import com.acc.goodwill.presentation.navigation.Dashboard
-import com.acc.goodwill.presentation.navigation.Donation
-import com.acc.goodwill.presentation.navigation.Report
-import com.acc.goodwill.presentation.navigation.Search
+import com.acc.goodwill.data.source.presentation.donation.DonationContent
+import com.acc.goodwill.data.source.presentation.navigation.Dashboard
+import com.acc.goodwill.data.source.presentation.navigation.Donation
+import com.acc.goodwill.data.source.presentation.navigation.Report
+import com.acc.goodwill.data.source.presentation.navigation.Search
 import com.navigation.rememberNavigation
 
 @Composable

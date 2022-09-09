@@ -1,18 +1,30 @@
-package com.acc.goodwill.presentation.main
+package com.acc.goodwill.data.source.presentation.main
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import com.acc.common.ui.AppTheme
 import com.acc.di.AppComponent
-import com.acc.goodwill.presentation.common.LocaleComposition
-import com.acc.goodwill.presentation.common.SettingViewModel
-import com.acc.goodwill.presentation.donation.AddDonationContent
-import com.acc.goodwill.presentation.home.HomeScreen
-import com.acc.goodwill.presentation.navigation.AddDonationScreen
-import com.acc.goodwill.presentation.navigation.MainScreen
+import com.acc.goodwill.data.source.presentation.common.LocaleComposition
+import com.acc.goodwill.data.source.presentation.common.SettingViewModel
+import com.acc.goodwill.data.source.presentation.donation.AddDonationContent
+import com.acc.goodwill.data.source.presentation.home.HomeScreen
+import com.acc.goodwill.data.source.presentation.navigation.AddDonationScreen
+import com.acc.goodwill.data.source.presentation.navigation.MainScreen
 import com.navigation.rememberNavigation
 import javax.inject.Inject
 
@@ -42,7 +54,7 @@ class Main(appComponent: AppComponent) {
                         HomeScreen(navigateAddDonation = { navigation.navigate(AddDonationScreen) })
                     }
                     AddDonationScreen -> {
-
+                        addDonationContent.addDonationContent { navigation.popLast() }
                     }
                 }
 
@@ -50,4 +62,9 @@ class Main(appComponent: AppComponent) {
         }
     }
 }
+
+
+
+
+
 

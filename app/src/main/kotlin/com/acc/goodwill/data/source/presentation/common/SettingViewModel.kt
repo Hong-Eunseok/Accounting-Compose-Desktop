@@ -1,4 +1,4 @@
-package com.acc.goodwill.presentation.common
+package com.acc.goodwill.data.source.presentation.common
 
 import com.acc.goodwill.data.source.Preferences
 import kotlinx.coroutines.CoroutineScope

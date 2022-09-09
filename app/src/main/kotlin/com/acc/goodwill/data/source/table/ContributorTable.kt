@@ -3,9 +3,10 @@ package com.acc.goodwill.data.source.table
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
 
-object User : IntIdTable() {
+object ContributorTable : IntIdTable() {
     val name: Column<String> = text("name").index()
-    val phoneNumber: Column<String> = text("phone_number").index()
+    val phoneNumber: Column<String?> = text("phone_number").nullable().index()
     val address: Column<String?> = text("address").nullable()
     val registrationNumber: Column<String?> = text("registration_number").nullable()
+    val recommend: Column<Int> = integer("recommend").default(0)
 }

@@ -1,4 +1,4 @@
-package com.acc.goodwill.presentation.home
+package com.acc.goodwill.data.source.presentation.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -8,12 +8,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.acc.goodwill.presentation.navigation.Donation
-import com.acc.goodwill.presentation.navigation.Report
-import com.acc.goodwill.presentation.navigation.Search
-import com.acc.goodwill.presentation.common.LocaleComposition
-import com.acc.goodwill.presentation.common.homeMenuPadding
-import com.acc.goodwill.presentation.navigation.Dashboard
+import com.acc.goodwill.data.source.presentation.navigation.Donation
+import com.acc.goodwill.data.source.presentation.navigation.Report
+import com.acc.goodwill.data.source.presentation.navigation.Search
+import com.acc.goodwill.data.source.presentation.common.LocaleComposition
+import com.acc.goodwill.data.source.presentation.common.homeMenuPadding
+import com.acc.goodwill.data.source.presentation.navigation.Dashboard
 import com.navigation.Route
 
 
