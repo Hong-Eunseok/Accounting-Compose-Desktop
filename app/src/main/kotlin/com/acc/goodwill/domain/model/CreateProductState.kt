@@ -28,6 +28,16 @@ class CreateProductState {
         }
     }
 
+    fun toProduct(): Product {
+        return Product(
+            category = category,
+            label = label,
+            total = total.toInt(),
+            error = error.toInt(),
+            price = price.toLong(),
+        )
+    }
+
     fun init() {
         category = "선택하세요"
         label = ""
@@ -37,7 +47,16 @@ class CreateProductState {
         selectedIndex = -1
     }
 
+    fun setCategoryWithIndex(category: String, index: Int) {
+        this.category = category
+        selectedIndex = index
+        if (category == "도서") {
+            label = "도서"
+        }
+    }
+
     enum class Validate {
         VALID, LABEL, TOTAL, ERROR, PRICE, WRONG_TOTAL, CATEGORY
     }
+
 }

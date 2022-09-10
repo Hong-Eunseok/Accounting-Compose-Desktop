@@ -29,7 +29,8 @@ fun RowTextField(
     label: String,
     errorMessage: String? = null,
     modifier: Modifier = Modifier,
-    deleteLastChar: () -> Unit = {}
+    deleteLastChar: () -> Unit = {},
+    enterAction: () -> Unit = {}
 ) {
     var beforeText by remember { mutableStateOf("") }
 
@@ -62,6 +63,8 @@ fun RowTextField(
                                 if (beforeText != value) {
                                     deleteLastChar()
                                     return@onKeyEvent true
+                                } else {
+                                    enterAction()
                                 }
                             }
                         }

@@ -43,7 +43,7 @@ fun ConfirmDonationContent(navigateBack: () -> Unit) {
             Text("기부 환산금액")
 
             Text("기부 물품 내역")
-            ProductResult()
+            ProductResult(1, {}, listOf())
             
             Row {
                 Button(onClick = {}) {

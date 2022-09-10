@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
+import com.acc.common.ui.smallPadding
 import com.acc.di.AppComponent
 import com.acc.goodwill.data.source.presentation.navigation.*
 import com.acc.goodwill.domain.model.Contributor
+import com.acc.goodwill.domain.model.Product
 import com.navigation.rememberNavigation
 import javax.inject.Inject
 
@@ -37,6 +39,7 @@ class AddDonationScreen(appComponent: AppComponent) {
 
         val searchResult by viewModel.searchResult.collectAsState()
         var contributor by remember { mutableStateOf(Contributor.INIT) }
+        var products by remember { mutableStateOf(listOf<Product>()) }
 
 
         var screenTitle by remember { mutableStateOf("기부자 찾기") }
@@ -54,7 +57,7 @@ class AddDonationScreen(appComponent: AppComponent) {
                                 style = MaterialTheme.typography.h3
                             )
                             if (price.isNotEmpty()) {
-                                Spacer(modifier = Modifier.width(20.dp))
+                                Spacer(modifier = Modifier.width(smallPadding))
                                 Text(text = price, style = MaterialTheme.typography.h3)
                             }
                         }
@@ -100,7 +103,23 @@ class AddDonationScreen(appComponent: AppComponent) {
                                 searchResult = searchResult,
                                 searchKeyword = viewModel::searchContributor
                             )
-                            AddProduct -> AddProductContent { navigation.navigate(Confirm) }
+                            AddProduct -> AddProductContent(
+                                navigateNext = {
+                                    screenTitle = "최종확인"
+                                    price = "${products.sumOf { it.transferPrice }}원"
+                                    navigation.navigate(Confirm)
+                                },
+                                deleteProduct = {
+                                    val newValue = products.toMutableList()
+                                    newValue.remove(it)
+                                    products = newValue
+                                },
+                                addProduct = { product ->
+                                    val newValue = products.toMutableList().apply { add(product) }
+                                    products = newValue
+                                },
+                                products = products
+                            )
                             Confirm -> ConfirmDonationContent { navigateBack() }
                         }
                     }
@@ -112,7 +131,7 @@ class AddDonationScreen(appComponent: AppComponent) {
 
     @Composable
     private fun AddDonationContent(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-        Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxHeight().background(Color.White)) {
+        Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxHeight().background(Color.Gray)) {
             content()
         }
     }
