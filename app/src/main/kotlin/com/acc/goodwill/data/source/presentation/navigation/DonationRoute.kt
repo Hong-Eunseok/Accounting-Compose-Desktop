@@ -9,8 +9,6 @@ interface DonationRoute : Route {
 object SearchContribute : DonationRoute {
     override val value: Int = 1
 }
-
-object AddContributor : DonationRoute
 object AddProduct : DonationRoute {
     override val value: Int = 2
 }

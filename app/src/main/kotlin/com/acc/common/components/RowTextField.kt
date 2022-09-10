@@ -40,7 +40,8 @@ fun RowTextField(
                     shape = RoundedCornerShape(4.dp)
                 )
                 .padding(smallPadding)
-                .weight(.5f)
+                .fillMaxWidth(0.3f)
+//                .width(100.dp)
         )
 
         if (errorMessage != null) {

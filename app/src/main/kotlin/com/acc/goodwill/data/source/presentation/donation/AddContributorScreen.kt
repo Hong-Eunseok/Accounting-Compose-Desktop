@@ -78,10 +78,10 @@ fun AddContributorScreen(navigateBack: () -> Unit) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(text = "가입경로", modifier = Modifier.padding(end = largePadding))
 
-                        OptionButton("교인", modifier = Modifier.padding(bottom = smallPadding))
-                        OptionButton("인터넷", modifier = Modifier.padding(bottom = smallPadding))
-                        OptionButton("지인소개", modifier = Modifier.padding(bottom = smallPadding))
-                        OptionButton("기타", modifier = Modifier.padding(bottom = smallPadding))
+                        OptionButton("교인")
+                        OptionButton("인터넷")
+                        OptionButton("지인소개")
+                        OptionButton("기타")
                     }
 
                     Row {
