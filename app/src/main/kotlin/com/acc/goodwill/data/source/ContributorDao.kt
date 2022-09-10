@@ -23,10 +23,11 @@ import javax.inject.Singleton
             }.map {
                 Contributor(
                     it[name],
+                    it[ContributorTable.id],
                     it[phoneNumber],
                     it[address],
                     it[registrationNumber],
-                    it[recommend]
+                    it[recommend],
                 )
             }
         }

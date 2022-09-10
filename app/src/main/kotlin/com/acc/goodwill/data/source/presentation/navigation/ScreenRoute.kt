@@ -5,4 +5,4 @@ import com.navigation.Route
 interface ScreenRoute : Route
 
 object MainScreen : ScreenRoute
-object AddDonationScreen : ScreenRoute
+object AddDonationRoute : ScreenRoute

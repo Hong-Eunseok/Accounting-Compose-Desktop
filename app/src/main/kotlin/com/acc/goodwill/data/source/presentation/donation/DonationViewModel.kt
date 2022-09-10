@@ -42,12 +42,13 @@ class DonationViewModel @Inject constructor(
         ioCoroutineScope.launch {
             _searchResult.emit(userDao.searchUser(keyword))
         }
+    }
 
-//        return flow {
-//            val data = userDao.searchUser(keyword)
-//            emit(data)
-//            _searchResult.emit(data)
-//        }
+    fun clearSearchContributor() {
+        println("clearSearchContributor")
+        ioCoroutineScope.launch {
+            _searchResult.emit(listOf())
+        }
     }
 
 }

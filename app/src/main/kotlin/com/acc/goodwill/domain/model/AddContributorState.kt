@@ -1,7 +1,6 @@
 package com.acc.goodwill.domain.model
 
 import androidx.compose.runtime.*
-import java.util.regex.Pattern
 import kotlin.math.floor
 
 @Composable

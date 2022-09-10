@@ -10,7 +10,7 @@ import com.acc.goodwill.data.source.presentation.donation.AddContributorScreen
 import com.acc.goodwill.data.source.presentation.donation.AddDonationScreen
 import com.acc.goodwill.data.source.presentation.home.HomeScreen
 import com.acc.goodwill.data.source.presentation.navigation.AddContributor
-import com.acc.goodwill.data.source.presentation.navigation.AddDonationScreen
+import com.acc.goodwill.data.source.presentation.navigation.AddDonationRoute
 import com.acc.goodwill.data.source.presentation.navigation.MainScreen
 import com.navigation.rememberNavigation
 import javax.inject.Inject
@@ -20,6 +20,7 @@ class Main(private val appComponent: AppComponent) {
     @Inject lateinit var settingViewModel: SettingViewModel
 
     private val addContributorScreen by lazy { AddContributorScreen(appComponent) }
+    private val addDonationScreen by lazy { AddDonationScreen(appComponent) }
 
     init {
         appComponent.inject(this)
@@ -38,10 +39,10 @@ class Main(private val appComponent: AppComponent) {
             CompositionLocalProvider(LocaleComposition provides selectedLocal) {
                 when (route) {
                     MainScreen -> stateHolder.SaveableStateProvider(Unit) {
-                        HomeScreen(navigateAddDonation = { navigation.navigate(AddDonationScreen) })
+                        HomeScreen(navigateAddDonation = { navigation.navigate(AddDonationRoute) })
                     }
-                    AddDonationScreen -> {
-                        AddDonationScreen(
+                    AddDonationRoute -> {
+                        addDonationScreen.AddDonationScreen(
                             navigateBack = { navigation.popLast() },
                             navigateAddContributor = { navigation.navigate(AddContributor) }
                         )
