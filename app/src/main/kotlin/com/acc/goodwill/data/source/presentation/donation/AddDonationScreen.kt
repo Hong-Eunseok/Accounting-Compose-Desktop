@@ -21,6 +21,7 @@ fun AddDonationScreen(
     val route by navigation.routeStack.collectAsState()
     var screenTitle by remember { mutableStateOf("기부 추가하기") }
     var contributor by remember { mutableStateOf("") }
+    var price by remember { mutableStateOf("") }
 
     var phoneNumber by mutableStateOf("")
 
@@ -32,6 +33,10 @@ fun AddDonationScreen(
                     if (contributor.isNotEmpty()) {
                         Spacer(modifier = Modifier.width(200.dp))
                         Text(text = contributor, style = MaterialTheme.typography.h3)
+                    }
+                    if (price.isNotEmpty()) {
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Text(text = price, style = MaterialTheme.typography.h3)
                     }
                 },
                 navigationIcon = {
@@ -53,14 +58,17 @@ fun AddDonationScreen(
                         contributor = "홍은석 | 010-3020-6909"
                         navigation.navigate(AddProduct)
                     },
-                    navigateAddConfirm = { navigation.navigate(Confirm) },
+                    navigateAddConfirm = {
+                        price = "5000원"
+                        navigation.navigate(Confirm)
+                    },
                 )
                 // content side
                 AddDonationContent(modifier = Modifier.weight(3f)) {
                     when (route) {
                         SearchContribute -> SearchContributorContent(navigateAddContributor)
                         AddProduct -> AddProductContent { navigation.navigate(Confirm) }
-                        Confirm -> EmptyScreen()
+                        Confirm -> ConfirmDonationContent { navigateBack() }
                     }
                 }
             }

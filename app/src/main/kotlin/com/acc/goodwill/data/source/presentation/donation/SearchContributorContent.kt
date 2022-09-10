@@ -49,9 +49,6 @@ import javax.inject.Inject
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SearchContributorContent(navigateAddContributor: () -> Unit) {
-
-    val text by remember { mutableStateOf("") }
-
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
