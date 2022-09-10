@@ -1,9 +1,9 @@
 package com.acc.goodwill.data.source.table
 
-import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.Column
 
-object ContributorTable : IntIdTable() {
+object ContributorTable : LongIdTable() {
     val name: Column<String> = text("name").index()
     val phoneNumber: Column<String?> = text("phone_number").nullable().index()
     val address: Column<String?> = text("address").nullable()

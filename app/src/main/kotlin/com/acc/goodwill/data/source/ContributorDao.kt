@@ -42,7 +42,7 @@ import javax.inject.Singleton
         registrationNumber: String?,
         join: Int
     ) {
-        var id: EntityID<Int>? = null
+        var id: EntityID<Long>? = null
         val launchResult = suspendedTransactionAsync(Dispatchers.IO) {
             id = ContributorTable.insertAndGetId {
                 it[this.name] = name

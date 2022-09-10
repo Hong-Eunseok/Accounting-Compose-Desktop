@@ -1,124 +1,115 @@
 package com.acc.goodwill.data.source.presentation.donation
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.common.components.OptionButton
 import com.acc.common.components.RowTextField
 import com.acc.common.ui.largePadding
-import com.acc.common.ui.smallPadding
-import com.acc.common.ui.smallerPadding
-import com.acc.goodwill.data.source.presentation.navigation.Confirm
-import com.acc.goodwill.data.source.presentation.navigation.DonationRoute
-import com.acc.goodwill.data.source.presentation.navigation.SearchContribute
-import com.navigation.rememberNavigation
+import com.acc.di.AppComponent
+import com.acc.goodwill.domain.model.CreateContributorState
+import com.acc.goodwill.domain.model.rememberContributor
+import javax.inject.Inject
 
-@Composable
-fun AddContributorScreen(navigateBack: () -> Unit) {
 
-    var name by mutableStateOf("")
-    var phoneNumber by mutableStateOf("")
-    var registerNumber by mutableStateOf("")
-    var address by mutableStateOf("")
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "기부자 정보 입력", style = MaterialTheme.typography.h4) },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
-                }
-            )
-        }
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Card(modifier = Modifier) {
-                Column {
-                    RowTextField(
-                        value = name,
-                        setValue = { name = it },
-                        label = "이름",
-                        modifier = Modifier.padding(bottom = largePadding)
-                    )
+class AddContributorScreen(appComponent: AppComponent) {
 
-                    RowTextField(
-                        value = phoneNumber,
-                        setValue = { phoneNumber = it },
-                        label = "연락처",
-                        modifier = Modifier.padding(bottom = largePadding)
-                    )
+    @Inject lateinit var viewModel: DonationViewModel
+    init {
+        appComponent.inject(this)
+    }
 
-                    RowTextField(
-                        value = registerNumber,
-                        setValue = { registerNumber = it },
-                        label = "주민/사업자 번호",
-                        modifier = Modifier.padding(bottom = largePadding)
-                    )
+    @Composable
+    fun AddContributorScreen(navigateBack: () -> Unit) {
 
-                    RowTextField(
-                        value = address,
-                        setValue = { address = it },
-                        label = "주소",
-                        modifier = Modifier.padding(bottom = largePadding)
-                    )
+        val contributor = rememberContributor()
+        val radioOptions = listOf("교인", "인터넷", "지인소개", "기타")
+        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0] ) }
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = "가입경로", modifier = Modifier.padding(end = largePadding))
-
-                        OptionButton("교인")
-                        OptionButton("인터넷")
-                        OptionButton("지인소개")
-                        OptionButton("기타")
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = "기부자 정보 입력", style = MaterialTheme.typography.h4) },
+                    navigationIcon = {
+                        IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
                     }
+                )
+            }
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Card(modifier = Modifier) {
+                    Column {
+                        RowTextField(
+                            value = contributor.name,
+                            setValue = {
+                                contributor.name = it
+                            },
+                            label = "이름",
+                            modifier = Modifier.padding(bottom = largePadding),
+                            deleteLastChar = { contributor.name = contributor.name.substring(0 until contributor.name.length - 1) },
+                            errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.NAME_ERROR }?.run { "이름을 입력하세요 (필수 입력)" }
+                        )
 
-                    Row {
-                        Spacer(modifier = Modifier.weight(1f))
-                        Button(onClick = {}) {
-                            Text("추가")
+                        RowTextField(
+                            value = contributor.phoneNumber,
+                            setValue = { value ->
+                                contributor.phoneNumber = value.filter { it.isDigit() || it == '-' }
+                            },
+                            label = "연락처",
+                            modifier = Modifier.padding(bottom = largePadding),
+                            errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.PHONE_NUMBER_ERROR }?.run { "전화번호가 잘못 입력되었습니다." }
+                        )
+
+                        RowTextField(
+                            value = contributor.registrationNumber,
+                            setValue = { value ->
+                                contributor.registrationNumber = value.filter { it.isDigit() || it == '-' }
+                            },
+                            label = "주민/사업자 번호",
+                            modifier = Modifier.padding(bottom = largePadding),
+                            errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.REGISTRATION_NUMBER_ERROR }?.run { "주민/사업자 번호가 잘못입력하였습니다." }
+                        )
+
+                        RowTextField(
+                            value = contributor.address,
+                            setValue = { contributor.address = it },
+                            label = "주소",
+                            modifier = Modifier.padding(bottom = largePadding),
+                            deleteLastChar = { contributor.address = contributor.address.substring(0 until contributor.address.length - 1) }
+                        )
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = "가입경로", modifier = Modifier.padding(end = largePadding))
+                            radioOptions.forEach { text ->
+                                OptionButton(
+                                    text = text,
+                                    selectedOption = selectedOption,
+                                    onClick = { onOptionSelected(text) }
+                                )
+                            }
+                        }
+
+                        Row {
+                            Spacer(modifier = Modifier.weight(1f))
+                            Button(
+                                onClick = {},
+                                enabled = contributor.valid == CreateContributorState.Validator.VALID
+                            ) {
+                                Text("추가")
+                            }
                         }
                     }
                 }
             }
         }
-
     }
 }
 
-
-@Composable
-fun TextViewFiledRow() {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(text = "주민/사업자 번호1",)
-
-        Spacer(modifier = Modifier.width(largePadding))
-
-        BasicTextField(
-            value = "주민/사업자 번호",
-            onValueChange = { },
-            enabled = true,
-            singleLine = true,
-            textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colors.onBackground),
-            modifier = Modifier
-                .border(
-                    width = 1.25.dp,
-                    color = MaterialTheme.colors.primary.copy(alpha = 0.7f),
-                    shape = RoundedCornerShape(4.dp)
-                )
-                .padding(smallPadding)
-                .weight(.5f)
-        )
-    }
-}

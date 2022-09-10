@@ -8,7 +8,6 @@ import com.acc.goodwill.data.source.presentation.common.LocaleComposition
 import com.acc.goodwill.data.source.presentation.common.SettingViewModel
 import com.acc.goodwill.data.source.presentation.donation.AddContributorScreen
 import com.acc.goodwill.data.source.presentation.donation.AddDonationScreen
-import com.acc.goodwill.data.source.presentation.donation.SearchContributorContent
 import com.acc.goodwill.data.source.presentation.home.HomeScreen
 import com.acc.goodwill.data.source.presentation.navigation.AddContributor
 import com.acc.goodwill.data.source.presentation.navigation.AddDonationScreen
@@ -16,11 +15,11 @@ import com.acc.goodwill.data.source.presentation.navigation.MainScreen
 import com.navigation.rememberNavigation
 import javax.inject.Inject
 
-class Main(appComponent: AppComponent) {
+class Main(private val appComponent: AppComponent) {
 
     @Inject lateinit var settingViewModel: SettingViewModel
 
-//    private val addDonationContent by lazy { SearchContributorContent(appComponent) }
+    private val addContributorScreen by lazy { AddContributorScreen(appComponent) }
 
     init {
         appComponent.inject(this)
@@ -46,13 +45,8 @@ class Main(appComponent: AppComponent) {
                             navigateBack = { navigation.popLast() },
                             navigateAddContributor = { navigation.navigate(AddContributor) }
                         )
-//                        addDonationContent.addDonationContent { navigation.popLast() }
                     }
-                    AddContributor -> {
-                        AddContributorScreen(
-                            navigateBack = { navigation.popLast() },
-                        )
-                    }
+                    AddContributor -> addContributorScreen.AddContributorScreen { navigation.popLast() }
                 }
 
             }

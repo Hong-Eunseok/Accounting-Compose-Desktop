@@ -7,21 +7,31 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.awtEventOrNull
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.smallPadding
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RowTextField(
     value: String,
     setValue: (String) -> Unit = {},
     label: String,
     errorMessage: String? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    deleteLastChar: () -> Unit = {}
 ) {
+    var beforeText by remember { mutableStateOf("") }
+
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         Text(text = label, modifier = Modifier.widthIn(min = 120.dp))
 
@@ -40,8 +50,21 @@ fun RowTextField(
                     shape = RoundedCornerShape(4.dp)
                 )
                 .padding(smallPadding)
-                .fillMaxWidth(0.3f)
-//                .width(100.dp)
+                .fillMaxWidth(0.5f)
+                .onKeyEvent { keyEvent ->
+                    if (keyEvent.key == Key.Enter) {
+                        if (keyEvent.type == KeyEventType.KeyDown) {
+                            beforeText = value
+                            return@onKeyEvent true
+                        } else {
+                            if (beforeText != value) {
+                                deleteLastChar()
+                                return@onKeyEvent true
+                            }
+                        }
+                    }
+                    false
+                }
         )
 
         if (errorMessage != null) {
