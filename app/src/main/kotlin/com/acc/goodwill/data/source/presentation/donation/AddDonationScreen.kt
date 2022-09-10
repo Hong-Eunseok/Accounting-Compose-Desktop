@@ -1,11 +1,14 @@
 package com.acc.goodwill.data.source.presentation.donation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.di.AppComponent
@@ -107,7 +110,14 @@ class AddDonationScreen(appComponent: AppComponent) {
 
     }
 
+    @Composable
+    private fun AddDonationContent(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+        Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxHeight().background(Color.White)) {
+            content()
+        }
+    }
 }
+
 
 
 

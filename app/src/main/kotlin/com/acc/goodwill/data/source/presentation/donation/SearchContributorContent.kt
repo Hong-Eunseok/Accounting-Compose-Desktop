@@ -21,6 +21,7 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.common.ui.largePadding
+import com.acc.common.ui.mediumPadding
 import com.acc.common.ui.smallPadding
 import com.acc.common.ui.smallerPadding
 import com.acc.di.AppComponent
@@ -56,77 +57,75 @@ class SearchContributorContent(appComponent: AppComponent) {
                 }
             }
         ) {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(start = largePadding, end = largePadding)) {
-                    Box(
-                        Modifier
-                            .requiredHeight(80.dp)
-                            .align(Alignment.Start)
-                            .padding(top = largePadding)
-                    ) {
-                        Button(onClick = { selectedContributor(Contributor.UNKNOWN) }) {
-                            Text("무명으로 등록하기")
-                        }
+            Column(modifier = Modifier.padding(start = largePadding, end = largePadding)) {
+                Box(
+                    Modifier
+                        .requiredHeight(80.dp)
+                        .align(Alignment.Start)
+                        .padding(top = largePadding)
+                ) {
+                    Button(onClick = { selectedContributor(Contributor.UNKNOWN) }) {
+                        Text("무명으로 등록하기")
                     }
+                }
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        BasicTextField(
-                            value = keyword,
-                            onValueChange = { keyword = it },
-                            enabled = true,
-                            singleLine = true,
-                            textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colors.onBackground),
-                            modifier = Modifier
-                                .border(
-                                    width = 1.25.dp,
-                                    color = MaterialTheme.colors.primary.copy(alpha = 0.7f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(smallPadding)
-                                .weight(0.3f)
-                                .onKeyEvent { keyEvent ->
-                                    if (keyEvent.key != Key.Enter) return@onKeyEvent false
-                                    if (keyEvent.type == KeyEventType.KeyUp && keyword.isNotEmpty()) {
-                                        searchKeyword(keyword)
-                                        true
-                                    } else {
-                                        false
-                                    }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    BasicTextField(
+                        value = keyword,
+                        onValueChange = { keyword = it },
+                        enabled = true,
+                        singleLine = true,
+                        textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colors.onBackground),
+                        modifier = Modifier
+                            .border(
+                                width = 1.25.dp,
+                                color = MaterialTheme.colors.primary.copy(alpha = 0.7f),
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                            .padding(smallPadding)
+                            .weight(0.3f)
+                            .onKeyEvent { keyEvent ->
+                                if (keyEvent.key != Key.Enter) return@onKeyEvent false
+                                if (keyEvent.type == KeyEventType.KeyUp && keyword.isNotEmpty()) {
+                                    searchKeyword(keyword)
+                                    true
+                                } else {
+                                    false
                                 }
-                        )
-                        Spacer(modifier = Modifier.width(smallerPadding))
-                        Button(
-                            onClick = { searchKeyword(keyword) },
-                            enabled = keyword.isNotEmpty()
-                        ) {
-                            Text("검색")
-                        }
+                            }
+                    )
+                    Spacer(modifier = Modifier.width(smallerPadding))
+                    Button(
+                        onClick = { searchKeyword(keyword) },
+                        enabled = keyword.isNotEmpty()
+                    ) {
+                        Text("검색")
                     }
-                    Text(
-                        text = "이름 또는 번호로 검색하기",
-                        style = MaterialTheme.typography.caption,
-                    )
+                }
+                Text(
+                    text = "이름 또는 번호로 검색하기",
+                    style = MaterialTheme.typography.caption,
+                )
 
-                    Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
-                    Text("검색 결과")
-                    Spacer(modifier = Modifier.height(smallerPadding))
+                Text("검색 결과")
+                Spacer(modifier = Modifier.height(smallerPadding))
 
-                    LazyScrollable(
-                        searchResult = searchResult,
-                        selectedIndex = selectedIndex,
-                        setValue = { selectedIndex = if (selectedIndex != it) it else -1 }
-                    )
+                LazyScrollable(
+                    searchResult = searchResult,
+                    selectedIndex = selectedIndex,
+                    setValue = { selectedIndex = if (selectedIndex != it) it else -1 }
+                )
 
-                    Row(Modifier.weight(0.1f)) {
-                        if (selectedIndex != -1) {
-                            Button(onClick = {}) {
-                                Text("수정하기")
-                            }
-                            Spacer(modifier = Modifier.weight(1f))
-                            Button(onClick = { selectedContributor(searchResult[selectedIndex]) }) {
-                                Text("선택하기")
-                            }
+                Row(Modifier.weight(0.1f)) {
+                    if (selectedIndex != -1) {
+                        Button(onClick = {}) {
+                            Text("수정하기")
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Button(onClick = { selectedContributor(searchResult[selectedIndex]) }) {
+                            Text("선택하기")
                         }
                     }
                 }
@@ -159,13 +158,13 @@ class SearchContributorContent(appComponent: AppComponent) {
                     val contributor = searchResult[index]
                     Box(
                         modifier = Modifier
-                            .background(color = Color(0, 0, 0, 20))
                             .fillMaxSize()
-                            .background(if (selectedIndex == index) MaterialTheme.colors.primary else MaterialTheme.colors.background)
+                            .background(if (selectedIndex == index) MaterialTheme.colors.primary else Color.White)
                             .selectable(
                                 selected = index == selectedIndex,
                                 onClick = { setValue(index) }
                             )
+                            .padding(mediumPadding)
                     ) {
                         Column {
                             Text("이름 : ${contributor.name}")

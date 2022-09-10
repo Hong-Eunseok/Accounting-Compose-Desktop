@@ -30,17 +30,17 @@ fun AddDonationMenu(
     ) {
         Column(modifier = Modifier.padding(homeMenuPadding)) {
             AddDonationButton(
-                text = locale.search,
+                text = "1. 검색",
                 selected = currentRoute is SearchContribute,
                 onClick = navigateSearchContributor
             )
             AddDonationButton(
-                text = "기부물품등록",
+                text = "2. 기부물품등록",
                 selected = currentRoute is AddProduct,
                 onClick = navigateAddProduct
             )
             AddDonationButton(
-                text = "최종확인",
+                text = "3. 최종확인",
                 selected = currentRoute is Confirm,
                 onClick = navigateAddConfirm
             )

@@ -35,7 +35,7 @@ class AddContributorScreen(appComponent: AppComponent) {
         val result by viewModel.result.collectAsState()
         val contributor = rememberContributor()
         val radioOptions = listOf("교인", "인터넷", "지인소개", "기타")
-        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0] ) }
+        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
 
         when (result) {
             CreateContributorResult.SUCCESS -> "등록에 성공하였습니다."

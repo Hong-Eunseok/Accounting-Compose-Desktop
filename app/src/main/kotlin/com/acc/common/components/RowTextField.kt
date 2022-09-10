@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import com.acc.common.ui.largePadding
+import com.acc.common.ui.mediumPadding
 import com.acc.common.ui.smallPadding
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -32,43 +33,50 @@ fun RowTextField(
 ) {
     var beforeText by remember { mutableStateOf("") }
 
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-        Text(text = label, modifier = Modifier.widthIn(min = 120.dp))
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+            Text(text = label, modifier = Modifier.widthIn(min = 120.dp))
 
-        Spacer(modifier = Modifier.width(largePadding))
+            Spacer(modifier = Modifier.width(largePadding))
 
-        BasicTextField(
-            value = value,
-            onValueChange = setValue,
-            enabled = true,
-            singleLine = true,
-            textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colors.onBackground),
-            modifier = Modifier
-                .border(
-                    width = 1.25.dp,
-                    color = MaterialTheme.colors.primary.copy(alpha = 0.7f),
-                    shape = RoundedCornerShape(4.dp)
-                )
-                .padding(smallPadding)
-                .fillMaxWidth(0.5f)
-                .onKeyEvent { keyEvent ->
-                    if (keyEvent.key == Key.Enter) {
-                        if (keyEvent.type == KeyEventType.KeyDown) {
-                            beforeText = value
-                            return@onKeyEvent true
-                        } else {
-                            if (beforeText != value) {
-                                deleteLastChar()
+            BasicTextField(
+                value = value,
+                onValueChange = setValue,
+                enabled = true,
+                singleLine = true,
+                textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colors.onBackground),
+                modifier = Modifier
+                    .border(
+                        width = 1.25.dp,
+                        color = MaterialTheme.colors.primary.copy(alpha = 0.7f),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .padding(smallPadding)
+                    .fillMaxWidth(0.5f)
+                    .onKeyEvent { keyEvent ->
+                        if (keyEvent.key == Key.Enter) {
+                            if (keyEvent.type == KeyEventType.KeyDown) {
+                                beforeText = value
                                 return@onKeyEvent true
+                            } else {
+                                if (beforeText != value) {
+                                    deleteLastChar()
+                                    return@onKeyEvent true
+                                }
                             }
                         }
+                        false
                     }
-                    false
-                }
-        )
-
+            )
+        }
         if (errorMessage != null) {
-            Text(text = errorMessage, color = com.acc.common.ui.error)
+            Text(
+                text = errorMessage,
+                color = com.acc.common.ui.error,
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(start = 140.dp, bottom = mediumPadding)
+            )
         }
     }
+
 }
