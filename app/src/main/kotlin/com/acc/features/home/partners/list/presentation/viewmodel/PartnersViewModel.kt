@@ -10,13 +10,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class PartnersViewModel @Inject constructor(
     private val partnersRepository: PartnersRepository,
     private val organizationRepository: OrganizationRepository,
-    private val ioCoroutineScope: CoroutineScope
+    @Named("io") private val ioCoroutineScope: CoroutineScope
 ) : Entry {
 
     val partners = partnersRepository.getPartners().map {

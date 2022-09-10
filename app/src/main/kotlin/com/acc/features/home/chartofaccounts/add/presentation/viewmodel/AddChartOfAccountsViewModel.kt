@@ -9,13 +9,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton class AddChartOfAccountsViewModel @Inject constructor(
     private val accountsRepository: ChartOfAccountsRepository,
     private val partnersRepository: PartnersRepository,
     private val organizationRepository: OrganizationRepository,
-    private val ioCoroutineScope: CoroutineScope
+    @Named("io") private val ioCoroutineScope: CoroutineScope
 ) : Entry {
 
     private val _accountNumber = MutableStateFlow("")

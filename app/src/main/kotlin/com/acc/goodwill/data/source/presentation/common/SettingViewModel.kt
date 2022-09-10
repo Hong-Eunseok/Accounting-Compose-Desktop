@@ -5,11 +5,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton class SettingViewModel @Inject constructor(
     private val preferences: Preferences,
-    private val ioCoroutineScope: CoroutineScope
+    @Named("io") private val ioCoroutineScope: CoroutineScope
 ) {
 
     val darkTheme = preferences.getFlow(DARK_THEME_KEY, false)

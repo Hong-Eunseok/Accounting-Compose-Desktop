@@ -8,13 +8,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class SettingsViewModel @Inject constructor(
     private val repository: OrganizationRepository,
     private val preferences: Preferences,
-    private val ioCoroutineScope: CoroutineScope
+    @Named("io") private val ioCoroutineScope: CoroutineScope
 ) : Entry {
 
     fun unselectOrganizations() {

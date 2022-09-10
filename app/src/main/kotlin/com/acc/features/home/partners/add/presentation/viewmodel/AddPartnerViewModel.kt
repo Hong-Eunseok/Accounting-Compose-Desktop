@@ -9,13 +9,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class AddPartnerViewModel @Inject constructor(
     private val repository: PartnersRepository,
     private val organizationRepository: OrganizationRepository,
-    private val ioCoroutineScope: CoroutineScope
+    @Named("io") private val ioCoroutineScope: CoroutineScope
 ) : Entry {
 
     private val _partnerName = MutableStateFlow("")

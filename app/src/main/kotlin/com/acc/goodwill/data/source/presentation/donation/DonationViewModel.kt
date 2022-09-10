@@ -3,16 +3,18 @@ package com.acc.goodwill.data.source.presentation.donation
 import com.acc.goodwill.data.source.ContributorDao
 import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.CreateContributorResult
+import com.acc.goodwill.domain.model.CreateContributorState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 class DonationViewModel @Inject constructor(
     private val userDao: ContributorDao,
-    private val ioCoroutineScope: CoroutineScope
+    @Named("io") private val ioCoroutineScope: CoroutineScope
 ) {
 
     private val _result: MutableStateFlow<CreateContributorResult> = MutableStateFlow(CreateContributorResult.IDLE)
@@ -21,15 +23,15 @@ class DonationViewModel @Inject constructor(
     private val _searchResult: MutableStateFlow<List<Contributor>> = MutableStateFlow(listOf())
     val searchResult: StateFlow<List<Contributor>> = _searchResult
 
-    fun addContributor(
-        name: String,
-        phoneNumber: String?,
-        address: String?,
-        registrationNumber: String?,
-        join: Int
-    ) {
+    fun addContributor(contributor: CreateContributorState, join: Int) {
         ioCoroutineScope.launch {
-            userDao.addContributor(name, phoneNumber, address, registrationNumber, join)
+            userDao.addContributor(
+                contributor.name,
+                contributor.phoneNumber,
+                contributor.address,
+                contributor.registrationNumber,
+                join
+            )
             _result.emit(CreateContributorResult.SUCCESS)
             println("addContributor success")
         }

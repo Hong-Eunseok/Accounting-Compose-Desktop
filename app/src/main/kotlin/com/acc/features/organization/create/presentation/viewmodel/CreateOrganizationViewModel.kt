@@ -12,12 +12,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class CreateOrganizationViewModel @Inject constructor(
     private val repository: OrganizationRepository,
-    private val ioCoroutineScope: CoroutineScope
+    @Named("io") private val ioCoroutineScope: CoroutineScope
 ) : Entry {
 
     private val dateUtils: DateUtils = DateUtilsImpl()

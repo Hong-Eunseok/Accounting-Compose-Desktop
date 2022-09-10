@@ -12,13 +12,18 @@ import com.acc.common.components.OptionButton
 import com.acc.common.components.RowTextField
 import com.acc.common.ui.largePadding
 import com.acc.di.AppComponent
+import com.acc.goodwill.domain.model.CreateContributorResult
 import com.acc.goodwill.domain.model.CreateContributorState
 import com.acc.goodwill.domain.model.rememberContributor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 
 class AddContributorScreen(appComponent: AppComponent) {
 
+    @Named("main") @Inject lateinit var mainScope: CoroutineScope
     @Inject lateinit var viewModel: DonationViewModel
     init {
         appComponent.inject(this)
@@ -26,10 +31,22 @@ class AddContributorScreen(appComponent: AppComponent) {
 
     @Composable
     fun AddContributorScreen(navigateBack: () -> Unit) {
-
+        val scaffoldState = rememberScaffoldState()
+        val result by viewModel.result.collectAsState()
         val contributor = rememberContributor()
         val radioOptions = listOf("교인", "인터넷", "지인소개", "기타")
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0] ) }
+
+        when (result) {
+            CreateContributorResult.SUCCESS -> "등록에 성공하였습니다."
+            CreateContributorResult.ERROR -> "등록에 실패하였습니다."
+            else -> null
+        }?.let { message ->
+            mainScope.launch {
+                scaffoldState.snackbarHostState.showSnackbar(message)
+                navigateBack()
+            }
+        }
 
         Scaffold(
             topBar = {
@@ -39,7 +56,8 @@ class AddContributorScreen(appComponent: AppComponent) {
                         IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
                     }
                 )
-            }
+            },
+            scaffoldState = scaffoldState
         ) {
             Box(
                 contentAlignment = Alignment.Center,
@@ -100,7 +118,9 @@ class AddContributorScreen(appComponent: AppComponent) {
                         Row {
                             Spacer(modifier = Modifier.weight(1f))
                             Button(
-                                onClick = {},
+                                onClick = {
+                                    viewModel.addContributor(contributor, radioOptions.indexOf(selectedOption))
+                                },
                                 enabled = contributor.valid == CreateContributorState.Validator.VALID
                             ) {
                                 Text("추가")

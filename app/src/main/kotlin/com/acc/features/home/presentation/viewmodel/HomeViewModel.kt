@@ -7,12 +7,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class HomeViewModel @Inject constructor(
     organizationRepository: OrganizationRepository,
-    ioCoroutineScope: CoroutineScope
+    @Named("io") ioCoroutineScope: CoroutineScope
 ) : Entry {
 
     val selectedOrganizationName = organizationRepository.getSelectedOrganization().map {
