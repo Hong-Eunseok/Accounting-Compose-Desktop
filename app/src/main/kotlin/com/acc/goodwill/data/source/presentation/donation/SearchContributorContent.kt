@@ -1,54 +1,36 @@
 package com.acc.goodwill.data.source.presentation.donation
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.awtEventOrNull
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.*
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
-import com.acc.common.components.AppTextField
 import com.acc.common.ui.largePadding
-import com.acc.common.ui.mediumPadding
 import com.acc.common.ui.smallPadding
 import com.acc.common.ui.smallerPadding
-import com.acc.di.AppComponent
-import com.acc.di.DaggerAppComponent
-import com.acc.goodwill.domain.model.Contributor
-import com.acc.goodwill.domain.model.CreateContributorResult
-import com.acc.goodwill.domain.model.rememberContributor
-import com.acc.goodwill.data.source.presentation.common.LocaleComposition
-import com.acc.goodwill.data.source.presentation.navigation.AddProduct
-import com.acc.goodwill.data.source.presentation.navigation.Confirm
-import com.acc.goodwill.data.source.presentation.navigation.SearchContribute
-import com.navigation.rememberNavigation
-import javax.inject.Inject
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SearchContributorContent(navigateAddContributor: () -> Unit) {
+    var state2 =  TextFieldValue("")
+
+    var selectedIndex by remember { mutableStateOf(-1) }
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -60,18 +42,22 @@ fun SearchContributorContent(navigateAddContributor: () -> Unit) {
         }
     ) {
         Card(modifier = Modifier.fillMaxWidth()) {
-            Column {
-                Box(Modifier.requiredHeight(80.dp).align(Alignment.Start)) {
+            Column(modifier = Modifier.padding(start = largePadding, end = largePadding)) {
+                Box(
+                    Modifier
+                        .requiredHeight(80.dp)
+                        .align(Alignment.Start)
+                        .padding(top = largePadding)
+                ) {
                     Button(onClick = {}) {
                         Text("무명으로 등록하기")
                     }
                 }
 
-                Text("이름 또는 번호로 검색하기")
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     BasicTextField(
-                        value = "value",
-                        onValueChange = { },
+                        value = state2,
+                        onValueChange = { state2 = it },
                         enabled = true,
                         singleLine = true,
                         textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colors.onBackground),
@@ -82,54 +68,86 @@ fun SearchContributorContent(navigateAddContributor: () -> Unit) {
                                 shape = RoundedCornerShape(4.dp)
                             )
                             .padding(smallPadding)
+                            .weight(0.3f)
                     )
                     Spacer(modifier = Modifier.width(smallerPadding))
                     Button(onClick = {}) {
                         Text("검색")
                     }
                 }
+                Text(
+                    text = "이름 또는 번호로 검색하기",
+                    style = MaterialTheme.typography.caption,
+                )
 
-                Spacer(modifier = Modifier.height(mediumPadding))
+                Spacer(modifier = Modifier.height(30.dp))
+
                 Text("검색 결과")
                 Spacer(modifier = Modifier.height(smallerPadding))
-                Column {
-                    ListItem(trailing = { RadioButton(false, onClick = { }) }) {
-                        Column {
-                            Text("이름 : 홍길동")
-                            Text("번호 : 010-3020-6909")
-                            Text("주민/사업자 번호 : 880712-1212121")
+
+                LazyScrollable(
+                    selectedIndex = selectedIndex,
+                    setValue = { selectedIndex = if (selectedIndex != it) it else -1 }
+                )
+
+                Row(Modifier.weight(0.1f)) {
+                    if (selectedIndex != -1) {
+                        Button(onClick = {}) {
+                            Text("수정하기")
                         }
                     }
-                    Divider()
-                    ListItem(
-                        overlineText = { Text(text = "총수량/불량/양품 : 10 / 3 / 7")  },
-                        secondaryText = { Text(text = "기부환산금액 : 10000원") }
-                    ) {
-                        Text("이름 : 홍길동 / 번호 : 010-3020-6909")
-                    }
-                    Divider()
-                    ListItem(
-                        overlineText = { Text(text = "총수량/불량/양품 : 10 / 3 / 7")  },
-                        secondaryText = { Text(text = "기부환산금액 : 10000원") }
-                    ) {
-                        Text("이름 : 홍길동 / 번호 : 010-3020-6909")
-                    }
-                }
-
-                Row {
+                    Spacer(modifier = Modifier.weight(1f))
                     Button(onClick = {}) {
                         Text("선택하기")
                     }
-                    Button(onClick = {}) {
-                        Text("수정하기")
-                    }
-                }
 
+                }
             }
         }
 
     }
 }
+
+@Composable
+fun LazyScrollable(
+    selectedIndex: Int,
+    setValue: (Int) -> Unit,
+    state: LazyListState = rememberLazyListState()
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(fraction = 0.8f).padding(10.dp)
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(end = 12.dp),
+            state = state,
+        ) {
+            items(1000) { x ->
+                Box(
+                    modifier = Modifier
+                        .background(color = Color(0, 0, 0, 20))
+                        .fillMaxSize()
+                        .background(if (selectedIndex == x) MaterialTheme.colors.primary else MaterialTheme.colors.background)
+                        .selectable(
+                            selected = x == selectedIndex,
+                            onClick = { setValue(x) }
+                        )
+                ) {
+                    Column {
+                        Text("이름 : 홍길동 Item #$x")
+                        Text("번호 : 010-3020-6909")
+                        Text("주민/사업자 번호 : 880712-1212121")
+                    }
+                }
+                Spacer(modifier = Modifier.height(largePadding))
+            }
+        }
+        VerticalScrollbar(
+            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+            adapter = rememberScrollbarAdapter(scrollState = state)
+        )
+    }
+}
+
 
 //class SearchContributorContent(appComponent: AppComponent) {
 //
@@ -235,108 +253,6 @@ fun SearchContributorContent(navigateAddContributor: () -> Unit) {
 //        }
 //    }
 //
-//    @Composable
-//    fun AddContribute() {
-//        val locale = LocaleComposition.current
-//        val result by viewModel.result.collectAsState()
-//        val contributor = rememberContributor()
-//
-//        if (result == CreateContributorResult.SUCCESS) contributor.init()
-//
-//        Card(modifier = Modifier.width(500.dp)) {
-//            Column(
-//                verticalArrangement = Arrangement.spacedBy(smallPadding),
-//                modifier = Modifier.padding(horizontal = largePadding, vertical = smallPadding)
-//            ) {
-//                AppTextField(
-//                    value = contributor.name,
-//                    setValue = { contributor.name = it },
-//                    label = locale.name,
-//                    singleLine = true
-//                )
-//                AppTextField(
-//                    value = contributor.phoneNumber,
-//                    setValue = { contributor.phoneNumber = it },
-//                    label = locale.phoneNumber,
-//                    singleLine = true
-//                )
-//                AppTextField(
-//                    value = contributor.registrationNumber,
-//                    setValue = { contributor.registrationNumber = it },
-//                    label = locale.registrationNumber,
-//                    singleLine = true
-//                )
-//                AppTextField(
-//                    value = contributor.address,
-//                    setValue = { contributor.address = it },
-//                    label = locale.address,
-//                    singleLine = true
-//                )
-//                Row {
-//                    Row {
-//                        RadioButton(
-//                            selected = contributor.join == 0,
-//                            onClick = { contributor.join = 0 }
-//                        )
-//                        Text(text = "교인")
-//                    }
-//                    Row {
-//                        RadioButton(
-//                            selected = contributor.join == 1,
-//                            onClick = { contributor.join = 1 }
-//                        )
-//                        Text(text = "친구추천")
-//                    }
-//                    Row {
-//                        RadioButton(
-//                            selected = contributor.join == 2,
-//                            onClick = { contributor.join = 2 }
-//                        )
-//                        Text(text = "인터넷")
-//                    }
-//                    Row {
-//                        RadioButton(
-//                            selected = contributor.join == 3,
-//                            onClick = { contributor.join = 3 }
-//                        )
-//                        Text(text = "기타")
-//                    }
-//                }
-//                Row(
-//                    horizontalArrangement = Arrangement.End,
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Button(
-//                        modifier = Modifier.padding(end = 10.dp),
-//                        enabled = !contributor.valid,
-//                        onClick = {  }
-//                    ) {
-//                        Text(text = locale.unknown)
-//                    }
-//
-//                    Button(
-//                        enabled = contributor.valid,
-//                        onClick = {
-//                            viewModel.addContributor(
-//                                contributor.name,
-//                                contributor.phoneNumber,
-//                                contributor.address,
-//                                contributor.registrationNumber,
-//                                contributor.join
-//                            )
-//                        }
-//                    ) {
-//                        Text(text = locale.add)
-//                    }
-//                }
-//
-//                if (result == CreateContributorResult.ERROR) {
-//                    Text(text = "error", color = com.acc.common.ui.error)
-//                }
-//            }
-//        }
-//    }
-//}
 //
 //@Preview
 //@Composable
