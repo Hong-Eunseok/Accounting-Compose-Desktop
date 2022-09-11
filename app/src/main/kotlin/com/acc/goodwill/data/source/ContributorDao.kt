@@ -9,7 +9,7 @@ import com.acc.goodwill.data.source.table.ContributorTable.registrationNumber
 import com.acc.goodwill.data.source.table.ContributorTable.registrationType
 import com.acc.goodwill.domain.model.Contributor
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.dao.id.EntityID
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import java.time.LocalDateTime
@@ -47,10 +47,25 @@ import javax.inject.Singleton
         registrationType: Int,
         join: Int
     ) {
-        val createTime = LocalDateTime.now()
-        var id: EntityID<Long>? = null
-        val launchResult = suspendedTransactionAsync(Dispatchers.IO) {
-            id = ContributorTable.insertAndGetId {
+        val id = internalAddContributorAsync(
+            name, phoneNumber, address, registrationNumber, registrationType, join
+        )
+
+        println("addContributor success $id")
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    suspend fun internalAddContributorAsync(
+        name: String,
+        phoneNumber: String?,
+        address: String?,
+        registrationNumber: String?,
+        registrationType: Int,
+        join: Int,
+        createTime: LocalDateTime = LocalDateTime.now()
+    ): Long {
+        val launch = suspendedTransactionAsync(Dispatchers.IO) {
+            ContributorTable.insertAndGetId {
                 it[this.name] = name
                 it[this.phoneNumber] = phoneNumber.orEmpty()
                 it[this.address] = address.orEmpty()
@@ -62,8 +77,8 @@ import javax.inject.Singleton
                 it[this.recentAt] = createTime
             }
         }
-        println("Result : ${launchResult.await()}")
-        println("addUser id : ${id?.value ?: -1}")
+        launch.await()
+        return launch.getCompleted().value
     }
 
     suspend fun modifyContributor(

@@ -51,6 +51,7 @@ class Main(private val appComponent: AppComponent) {
                 when (route) {
                     MainScreen -> stateHolder.SaveableStateProvider(Unit) {
                         HomeScreen(
+                            appComponent,
                             navigateAddDonation = { navigation.navigate(AddDonationRoute) },
                             navigateDetailDonation = {
                                 mainDonate = it

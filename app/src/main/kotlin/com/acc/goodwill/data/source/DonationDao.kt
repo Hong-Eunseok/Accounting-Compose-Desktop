@@ -60,6 +60,24 @@ import javax.inject.Singleton
         return launchResult.getCompletionExceptionOrNull()
     }
 
+    suspend fun addDonationOnlyAsync(
+        donation: Donate.Donation, createTime: LocalDateTime, contributorId: Long, fromType: Int
+    ) {
+        suspendedTransactionAsync(Dispatchers.IO) {
+            DonationTable.insert { table ->
+                table[this.contributorId] = contributorId
+                table[this.total] = donation.total
+                table[this.total_error] = donation.error
+                table[this.total_correct] = donation.correct
+                table[this.price] = donation.price
+                table[this.fromType] = fromType
+                table[this.organization] = 0
+                table[this.member] = true
+                table[this.createdAt] = createTime
+            }
+        }.await()
+    }
+
     suspend fun queryTodayDonation(): List<Donate> {
         val now = LocalDateTime.now()
         val before = now.withHour(0).withMinute(0).withSecond(0).withNano(0)

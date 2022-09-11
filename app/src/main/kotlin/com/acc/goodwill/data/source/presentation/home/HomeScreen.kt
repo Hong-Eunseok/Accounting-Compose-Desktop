@@ -7,21 +7,19 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.AwtWindow
 import com.acc.common.components.AppIcon
+import com.acc.di.AppComponent
 import com.acc.goodwill.data.source.presentation.donation.DonationContent
 import com.acc.goodwill.data.source.presentation.navigation.*
-import com.acc.goodwill.data.source.presentation.setting.SettingsScreen
+import com.acc.goodwill.data.source.presentation.setting.SettingScreen
 import com.acc.goodwill.domain.model.Donate
 import com.navigation.rememberNavigation
-import java.awt.FileDialog
-import java.awt.Frame
 
 @Composable
 fun HomeScreen(
+    appComponent: AppComponent,
     navigateAddDonation: () -> Unit,
     navigateDetailDonation: (Donate) -> Unit,
     todayDonations: List<Donate>
@@ -65,7 +63,7 @@ fun HomeScreen(
                         HomeSearch -> EmptyScreen()
                         HomeStatistics -> EmptyScreen()
                         HomeReport -> EmptyScreen()
-                        HomeSetting -> SettingsScreen { navigation.popLast() }
+                        HomeSetting -> SettingScreen(appComponent).SettingsScreen { navigation.popLast() }
                     }
                 }
             }
