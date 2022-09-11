@@ -8,10 +8,12 @@ import com.acc.goodwill.data.source.presentation.common.LocaleComposition
 import com.acc.goodwill.data.source.presentation.common.SettingViewModel
 import com.acc.goodwill.data.source.presentation.contributor.ContributorScreen
 import com.acc.goodwill.data.source.presentation.donation.AddDonationScreen
+import com.acc.goodwill.data.source.presentation.donation.DetailDonationScreen
 import com.acc.goodwill.data.source.presentation.donation.DonationViewModel
 import com.acc.goodwill.data.source.presentation.home.HomeScreen
 import com.acc.goodwill.data.source.presentation.navigation.AddContributor
 import com.acc.goodwill.data.source.presentation.navigation.AddDonationRoute
+import com.acc.goodwill.data.source.presentation.navigation.DetailDonationRoute
 import com.acc.goodwill.data.source.presentation.navigation.MainScreen
 import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.Donate
@@ -52,6 +54,7 @@ class Main(private val appComponent: AppComponent) {
                             navigateAddDonation = { navigation.navigate(AddDonationRoute) },
                             navigateDetailDonation = {
                                 mainDonate = it
+                                navigation.navigate(DetailDonationRoute)
                             },
                             todayDonations
                         )
@@ -77,6 +80,13 @@ class Main(private val appComponent: AppComponent) {
                         navigateBack = { navigation.popLast() },
                         contributor = contributor,
                         modifyContributor = if (mainContributor == Contributor.INIT) null else mainContributor,
+                    )
+                    DetailDonationRoute -> DetailDonationScreen(appComponent).DetailDonationScreen(
+                        navigateBack = {
+                            mainDonate = Donate.INIT
+                            navigation.popLast()
+                        },
+                        mainDonate
                     )
                 }
 

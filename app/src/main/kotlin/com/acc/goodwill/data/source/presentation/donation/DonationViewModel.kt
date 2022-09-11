@@ -29,6 +29,9 @@ class DonationViewModel @Inject constructor(
     private val _todayDonation: MutableStateFlow<List<Donate>> = MutableStateFlow(listOf())
     val todayDonation = _todayDonation.asStateFlow()
 
+    private val _productResult: MutableStateFlow<List<Product>> = MutableStateFlow(listOf())
+    val productResult = _productResult.asStateFlow()
+
     fun addContributor(contributor: CreateContributorState) {
         ioCoroutineScope.launch {
             contributorDao.addContributor(
@@ -95,6 +98,12 @@ class DonationViewModel @Inject constructor(
     fun queryTodayDonation() {
         ioCoroutineScope.launch {
             _todayDonation.emit(donationDao.queryTodayDonation())
+        }
+    }
+
+    fun queryProduct(donationId: Long) {
+        ioCoroutineScope.launch {
+            _productResult.emit(donationDao.queryProducts(donationId))
         }
     }
 

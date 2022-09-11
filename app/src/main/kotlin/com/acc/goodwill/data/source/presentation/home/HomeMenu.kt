@@ -8,12 +8,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.acc.goodwill.data.source.presentation.navigation.Donation
-import com.acc.goodwill.data.source.presentation.navigation.Report
-import com.acc.goodwill.data.source.presentation.navigation.Search
+import com.acc.goodwill.data.source.presentation.navigation.HomeDonation
+import com.acc.goodwill.data.source.presentation.navigation.HomeReport
+import com.acc.goodwill.data.source.presentation.navigation.HomeSearch
 import com.acc.goodwill.data.source.presentation.common.LocaleComposition
 import com.acc.goodwill.data.source.presentation.common.homeMenuPadding
-import com.acc.goodwill.data.source.presentation.navigation.Statistics
+import com.acc.goodwill.data.source.presentation.navigation.HomeStatistics
 import com.navigation.Route
 
 
@@ -37,22 +37,22 @@ fun HomeMenu(
         Column(modifier = Modifier.padding(homeMenuPadding)) {
             HomeMenuButton(
                 text = locale.donation,
-                selected = currentRoute is Donation,
+                selected = currentRoute is HomeDonation,
                 onClick = navigateDonation
             )
             HomeMenuButton(
                 text = locale.search,
-                selected = currentRoute is Search,
+                selected = currentRoute is HomeSearch,
                 onClick = navigateSearch
             )
             HomeMenuButton(
                 text = locale.statistics,
-                selected = currentRoute is Statistics,
+                selected = currentRoute is HomeStatistics,
                 onClick = navigateStatistics
             )
             HomeMenuButton(
                 text = locale.report,
-                selected = currentRoute is Report,
+                selected = currentRoute is HomeReport,
                 onClick = navigateReport
             )
         }

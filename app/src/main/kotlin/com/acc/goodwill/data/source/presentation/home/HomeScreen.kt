@@ -13,10 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.goodwill.data.source.presentation.donation.DonationContent
-import com.acc.goodwill.data.source.presentation.navigation.Statistics
-import com.acc.goodwill.data.source.presentation.navigation.Donation
-import com.acc.goodwill.data.source.presentation.navigation.Report
-import com.acc.goodwill.data.source.presentation.navigation.Search
+import com.acc.goodwill.data.source.presentation.navigation.HomeStatistics
+import com.acc.goodwill.data.source.presentation.navigation.HomeDonation
+import com.acc.goodwill.data.source.presentation.navigation.HomeReport
+import com.acc.goodwill.data.source.presentation.navigation.HomeSearch
 import com.acc.goodwill.domain.model.Donate
 import com.navigation.rememberNavigation
 
@@ -27,7 +27,7 @@ fun HomeScreen(
     todayDonations: List<Donate>
 ) {
 
-    val navigation = rememberNavigation(defaultRoute = Donation)
+    val navigation = rememberNavigation(defaultRoute = HomeDonation)
     val route by navigation.routeStack.collectAsState()
 
     println("HomeScreen size : ${todayDonations.size}")
@@ -49,22 +49,22 @@ fun HomeScreen(
                 HomeMenu(
                     route,
                     screenWidth.dp,
-                    navigateStatistics = { navigation.navigate(Statistics) },
-                    navigateDonation = { navigation.navigate(Donation) },
-                    navigateSearch = { navigation.navigate(Search) },
-                    navigateReport = { navigation.navigate(Report) }
+                    navigateStatistics = { navigation.navigate(HomeStatistics) },
+                    navigateDonation = { navigation.navigate(HomeDonation) },
+                    navigateSearch = { navigation.navigate(HomeSearch) },
+                    navigateReport = { navigation.navigate(HomeReport) }
                 )
                 // content side
                 HomeContent(modifier = Modifier.weight(3f)) {
                     when (route) {
-                        Donation -> DonationContent(
+                        HomeDonation -> DonationContent(
                             navigateDetailDonation = navigateDetailDonation,
                             navigateAddDonation = navigateAddDonation,
                             todayDonations = todayDonations
                         )
-                        Search -> EmptyScreen()
-                        Statistics -> EmptyScreen()
-                        Report -> EmptyScreen()
+                        HomeSearch -> EmptyScreen()
+                        HomeStatistics -> EmptyScreen()
+                        HomeReport -> EmptyScreen()
                     }
                 }
             }

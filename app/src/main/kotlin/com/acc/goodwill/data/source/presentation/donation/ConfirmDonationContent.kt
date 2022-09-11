@@ -16,8 +16,6 @@ import com.acc.common.components.CheckButton
 import com.acc.common.components.OptionButton
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.mediumPadding
-import com.acc.common.ui.smallPadding
-import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.Product
 
 @Composable

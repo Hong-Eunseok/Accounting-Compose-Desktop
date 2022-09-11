@@ -14,6 +14,7 @@ import com.acc.features.organization.selection.ui.OrganizationSelectionScreen
 import com.acc.features.settings.presentation.ui.SettingsScreen
 import com.acc.goodwill.data.source.presentation.contributor.ContributorScreen
 import com.acc.goodwill.data.source.presentation.donation.AddDonationScreen
+import com.acc.goodwill.data.source.presentation.donation.DetailDonationScreen
 import com.acc.goodwill.di.GoodwillModule
 import com.acc.goodwill.data.source.presentation.donation.SearchContributorContent
 import com.database.DatabaseModule
@@ -43,5 +44,7 @@ interface AppComponent {
     fun inject(main: SearchContributorContent)
     fun inject(main: AddDonationScreen)
     fun inject(main: HomeScreen)
+    fun inject(main: DetailDonationScreen)
+
 
 }

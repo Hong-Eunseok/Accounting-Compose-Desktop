@@ -103,4 +103,25 @@ import javax.inject.Singleton
         return result
     }
 
+    suspend fun queryProducts(donationId: Long): List<Product> {
+        val data = suspendedTransactionAsync(Dispatchers.IO) {
+            ProductTable.select {
+                ProductTable.donationId eq donationId
+            }.map {
+                Product(
+                    category = it[ProductTable.category],
+                    label = it[ProductTable.label],
+                    total = it[ProductTable.total].toUInt(),
+                    error = it[ProductTable.error].toUInt(),
+                    price = it[ProductTable.price],
+                    correct = it[ProductTable.correct].toUInt(),
+                    transferPrice = it[ProductTable.transferPrice]
+                )
+            }
+        }
+        val result = data.await()
+        println("queryTodayDonation result count ${result.size}")
+        return result
+    }
+
 }

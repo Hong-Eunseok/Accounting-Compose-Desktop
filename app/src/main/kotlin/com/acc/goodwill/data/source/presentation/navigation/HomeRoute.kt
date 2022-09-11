@@ -4,9 +4,9 @@ import com.navigation.Route
 
 interface HomeRoute : Route
 
-object Statistics : HomeRoute
-object Donation : HomeRoute
-object Search : HomeRoute
-object Report : HomeRoute
+object HomeStatistics : HomeRoute
+object HomeDonation : HomeRoute
+object HomeSearch : HomeRoute
+object HomeReport : HomeRoute
 
 object AddContributor : HomeRoute
