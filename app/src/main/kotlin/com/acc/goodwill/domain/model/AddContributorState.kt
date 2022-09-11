@@ -24,6 +24,14 @@ class CreateContributorState {
         }
     }
 
+    fun init() {
+        name = ""
+        phoneNumber = ""
+        address = ""
+        registrationNumber = ""
+        registrationType = -1
+    }
+
     private fun phoneNumberValidator(): Boolean {
         return when {
             phoneNumber.isEmpty() -> false

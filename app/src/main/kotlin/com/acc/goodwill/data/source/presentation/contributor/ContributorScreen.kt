@@ -34,11 +34,11 @@ class ContributorScreen(appComponent: AppComponent) {
     @Composable
     fun ContributorScreen(
         navigateBack: () -> Unit,
-        modifyContributor: Contributor? = null
+        contributor: CreateContributorState,
+        modifyContributor: Contributor? = null,
     ) {
         val scaffoldState = rememberScaffoldState()
         val result by viewModel.result.collectAsState()
-        val contributor = rememberContributor()
         val radioOptions = listOf("교인", "인터넷", "지인소개", "기타")
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
 
@@ -53,14 +53,6 @@ class ContributorScreen(appComponent: AppComponent) {
                 scaffoldState.snackbarHostState.showSnackbar(message)
                 navigateBack()
             }
-        }
-
-        modifyContributor?.let {
-            contributor.name = it.name
-            contributor.phoneNumber = it.phoneNumber.orEmpty()
-            contributor.address = it.address.orEmpty()
-            contributor.registrationNumber = it.registrationNumber.orEmpty()
-            contributor.registrationType = it.registrationType
         }
 
         Scaffold(
