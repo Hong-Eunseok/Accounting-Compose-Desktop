@@ -32,6 +32,14 @@ class CreateContributorState {
         registrationType = -1
     }
 
+    fun copyContributor(contributor: Contributor) {
+        name = contributor.name
+        phoneNumber = contributor.phoneNumber.orEmpty()
+        address = contributor.address.orEmpty()
+        registrationNumber = contributor.registrationNumber.orEmpty()
+        registrationType = contributor.registrationType
+    }
+
     private fun phoneNumberValidator(): Boolean {
         return when {
             phoneNumber.isEmpty() -> false

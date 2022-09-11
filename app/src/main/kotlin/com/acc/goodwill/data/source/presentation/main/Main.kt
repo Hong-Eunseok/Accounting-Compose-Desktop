@@ -42,7 +42,6 @@ class Main(private val appComponent: AppComponent) {
         val contributor = rememberContributor()
         var modifyContributor by remember { mutableStateOf(Contributor.INIT) }
 
-
         AppTheme(useDarkTheme = darkTheme) {
             CompositionLocalProvider(LocaleComposition provides selectedLocal) {
                 when (route) {
@@ -63,11 +62,7 @@ class Main(private val appComponent: AppComponent) {
                                 navigation.navigate(AddContributor)
                             },
                             navigateModifyContributor = {
-                                contributor.name = it.name
-                                contributor.phoneNumber = it.phoneNumber.orEmpty()
-                                contributor.address = it.address.orEmpty()
-                                contributor.registrationNumber = it.registrationNumber.orEmpty()
-                                contributor.registrationType = it.registrationType
+                                contributor.copyContributor(it)
                                 modifyContributor = it
                                 navigation.navigate(AddContributor)
                             }

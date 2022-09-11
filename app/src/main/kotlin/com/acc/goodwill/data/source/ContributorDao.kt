@@ -89,4 +89,14 @@ import javax.inject.Singleton
         println("Result : ${launchResult.await()}")
     }
 
+    suspend fun updatedRecentTime(contributorId: Long) {
+        if (contributorId < 0) return
+        val launchResult = suspendedTransactionAsync(Dispatchers.IO) {
+            ContributorTable.update({ ContributorTable.id eq contributorId}) {
+                it[this.recentAt] = LocalDateTime.now()
+            }
+        }
+        launchResult.await()
+    }
+
 }

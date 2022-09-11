@@ -84,6 +84,7 @@ class DonationViewModel @Inject constructor(
         ioCoroutineScope.launch {
             val throwable = donationDao.addDonation(contributor.primaryKey.value, products, confirmInfo)
             if (throwable == null) {
+                contributorDao.updatedRecentTime(contributor.primaryKey.value)
                 _addDonationResult.emit(DatabaseResult.SUCCESS)
             } else {
                 throwable.printStackTrace()
