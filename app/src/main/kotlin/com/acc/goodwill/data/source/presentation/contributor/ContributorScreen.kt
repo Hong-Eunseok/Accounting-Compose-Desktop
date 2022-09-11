@@ -39,9 +39,6 @@ class ContributorScreen(appComponent: AppComponent) {
     ) {
         val scaffoldState = rememberScaffoldState()
         val result by viewModel.result.collectAsState()
-        val radioOptions = listOf("교인", "인터넷", "지인소개", "기타")
-        val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-
         val registerString = if (modifyContributor == null) "등록" else "수정"
 
         when (result) {
@@ -113,11 +110,11 @@ class ContributorScreen(appComponent: AppComponent) {
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(text = "가입경로", modifier = Modifier.padding(end = largePadding))
-                        radioOptions.forEach { text ->
+                        CreateContributorState.RECOMMAND.forEach { text ->
                             OptionButton(
                                 text = text,
-                                selectedOption = selectedOption,
-                                onClick = { onOptionSelected(text) }
+                                selectedOption = contributor.recommand,
+                                onClick = { contributor.recommand = text }
                             )
                         }
                     }
@@ -127,11 +124,10 @@ class ContributorScreen(appComponent: AppComponent) {
                         Button(
                             onClick = {
                                 if (modifyContributor == null) {
-                                    viewModel.addContributor(contributor, radioOptions.indexOf(selectedOption))
+                                    viewModel.addContributor(contributor)
                                 } else {
                                     viewModel.modifyContributor(
                                         contributor,
-                                        radioOptions.indexOf(selectedOption),
                                         modifyContributor.primaryKey.value
                                     )
                                 }

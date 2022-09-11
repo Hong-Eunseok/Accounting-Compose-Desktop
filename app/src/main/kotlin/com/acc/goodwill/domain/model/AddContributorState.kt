@@ -14,6 +14,7 @@ class CreateContributorState {
     var address by mutableStateOf("")
     var registrationNumber by mutableStateOf("")
     var registrationType by mutableStateOf(-1)
+    var recommand by mutableStateOf("")
 
     val valid by derivedStateOf {
         when {
@@ -30,6 +31,7 @@ class CreateContributorState {
         address = ""
         registrationNumber = ""
         registrationType = -1
+        recommand = ""
     }
 
     fun copyContributor(contributor: Contributor) {
@@ -38,6 +40,7 @@ class CreateContributorState {
         address = contributor.address.orEmpty()
         registrationNumber = contributor.registrationNumber.orEmpty()
         registrationType = contributor.registrationType
+        recommand = RECOMMAND[contributor.recommend]
     }
 
     private fun phoneNumberValidator(): Boolean {
@@ -119,5 +122,8 @@ class CreateContributorState {
         }
     }
 
+    companion object {
+        val RECOMMAND = listOf("교인", "인터넷", "지인소개", "기타")
+    }
 }
 

@@ -127,7 +127,6 @@ fun TodayDonation(
                         contentAlignment = Alignment.CenterEnd,
                         modifier = Modifier
                             .fillMaxHeight()
-                            .clickable {  }
                             .width(40.dp)
                     ) {
                         AppIcon(imageVector = Icons.Default.KeyboardArrowRight, tint = seed)

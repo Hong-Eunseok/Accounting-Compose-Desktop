@@ -30,7 +30,7 @@ class DonationViewModel @Inject constructor(
     private val _todayDonation: MutableStateFlow<List<TodayDonate>> = MutableStateFlow(listOf())
     val todayDonation = _todayDonation.asStateFlow()
 
-    fun addContributor(contributor: CreateContributorState, join: Int) {
+    fun addContributor(contributor: CreateContributorState) {
         ioCoroutineScope.launch {
             contributorDao.addContributor(
                 contributor.name,
@@ -38,14 +38,14 @@ class DonationViewModel @Inject constructor(
                 contributor.address,
                 contributor.registrationNumber,
                 contributor.registrationType,
-                join
+                CreateContributorState.RECOMMAND.indexOf(contributor.recommand)
             )
             _result.emit(CreateContributorResult.SUCCESS)
             println("addContributor success")
         }
     }
 
-    fun modifyContributor(contributor: CreateContributorState, join: Int, id: Long) {
+    fun modifyContributor(contributor: CreateContributorState, id: Long) {
         println("modifyContributor $id")
         ioCoroutineScope.launch {
             contributorDao.modifyContributor(
@@ -54,7 +54,7 @@ class DonationViewModel @Inject constructor(
                 contributor.address,
                 contributor.registrationNumber,
                 contributor.registrationType,
-                join,
+                CreateContributorState.RECOMMAND.indexOf(contributor.recommand),
                 id
             )
             _result.emit(CreateContributorResult.SUCCESS)
