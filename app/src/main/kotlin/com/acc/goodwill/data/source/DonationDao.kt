@@ -1,12 +1,17 @@
 package com.acc.goodwill.data.source
 
+import com.acc.goodwill.data.source.table.ContributorTable
 import com.acc.goodwill.data.source.table.DonationTable
 import com.acc.goodwill.data.source.table.ProductTable
+import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.Product
+import com.acc.goodwill.domain.model.TodayDonate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -53,6 +58,49 @@ import javax.inject.Singleton
         }
         println("addDonation await : ${launchResult.await()}")
         return launchResult.getCompletionExceptionOrNull()
+    }
+
+    suspend fun queryTodayDonation(): List<TodayDonate> {
+        val now = LocalDateTime.now()
+        val before = now.minusHours(now.hour.toLong())
+        val after = now.plusDays(1L)
+
+        println("queryTodayDonation before $before")
+        println("queryTodayDonation after $after")
+
+        val data = suspendedTransactionAsync(Dispatchers.IO) {
+            DonationTable.join(ContributorTable, JoinType.LEFT, DonationTable.contributorId, ContributorTable.id)
+                .select {
+                    DonationTable.createdAt.between(before, after)
+                }
+                .map {
+                    TodayDonate(
+                        contributor = if (it[DonationTable.contributorId] == -1L) {
+                            null
+                        } else {
+                            Contributor(
+                                name = it[ContributorTable.name],
+                                primaryKey = it[ContributorTable.id],
+                                phoneNumber = it[ContributorTable.phoneNumber],
+                                address = it[ContributorTable.address],
+                                registrationNumber = it[ContributorTable.registrationNumber],
+                                recommend = it[ContributorTable.recommend]
+                            )
+                        },
+                        donate = TodayDonate.Donation(
+                            total = it[DonationTable.total],
+                            error = it[DonationTable.total_error],
+                            correct = it[DonationTable.total_correct],
+                            price = it[DonationTable.price],
+                        ),
+                        primaryKey = it[DonationTable.id]
+                    )
+                }
+        }
+
+        val result = data.await()
+        println("queryTodayDonation result count ${result.size}")
+        return result
     }
 
 }

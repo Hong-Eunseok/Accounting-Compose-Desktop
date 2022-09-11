@@ -2,18 +2,24 @@ package com.acc.goodwill.data.source.presentation.donation
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.mediumPadding
+import com.acc.common.ui.seed
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DonationContent(navigateAddDonation: () -> Unit) {
     Scaffold(
@@ -55,33 +61,77 @@ fun DonationContent(navigateAddDonation: () -> Unit) {
 
             Spacer(modifier = Modifier.height(mediumPadding))
 
-            Card {
-                Column {
-                    ListItem(
-                        overlineText = { Text(text = "총수량/불량/양품 : 10 / 3 / 7")  },
-                        secondaryText = { Text(text = "기부환산금액 : 10000원") }
-                    ) {
-                        Text("이름 : 홍길동 | 번호 : 010-3020-6909")
-                    }
-                    Divider()
-                    ListItem(
-                        overlineText = { Text(text = "총수량/불량/양품 : 10 / 3 / 7")  },
-                        secondaryText = { Text(text = "기부환산금액 : 10000원") }
-                    ) {
-                        Text("이름 : 홍길동 / 번호 : 010-3020-6909")
-                    }
-                    Divider()
-                    ListItem(
-                        overlineText = { Text(text = "총수량/불량/양품 : 10 / 3 / 7")  },
-                        secondaryText = { Text(text = "기부환산금액 : 10000원") }
-                    ) {
-                        Text("이름 : 홍길동 / 번호 : 010-3020-6909")
-                    }
-                }
-            }
+            TodayDonation()
         }
     }
 }
+
+@Composable
+fun TodayDonation(
+    state: LazyListState = rememberLazyListState()
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.8f)
+            .padding(end = 12.dp),
+        state = state
+    ) {
+        items(300) { index ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+//                    .background(if (selectedIndex == index) MaterialTheme.colors.primary else Color.White)
+//                    .selectable(
+//                        selected = index == selectedIndex,
+//                        onClick = { setValue(index) }
+//                    )
+                    .padding(mediumPadding)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            "총수량 / 불량 / 양품 : 10 / 3 / 7",
+                            style = MaterialTheme.typography.body2,
+                            color = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
+                            modifier = Modifier
+                        )
+                        Text(
+                            "이름 : 홍은석 | 번호 : 010-3020-6909",
+                            style = MaterialTheme.typography.h3,
+                            color = LocalContentColor.current.copy(alpha = ContentAlpha.high),
+                            modifier = Modifier
+                        )
+                        Text(
+                            "기부환산금액 : 10000원",
+                            style = MaterialTheme.typography.body1,
+                            color = LocalContentColor.current.copy(alpha = ContentAlpha.high),
+                            modifier = Modifier
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box(
+                        contentAlignment = Alignment.CenterEnd,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .clickable {  }
+                            .width(40.dp)
+                    ) {
+                        AppIcon(imageVector = Icons.Default.Person, tint = seed)
+                    }
+                }
+
+            }
+            Spacer(modifier = Modifier.height(largePadding))
+        }
+    }
+}
+
+//@Composable
+//fun d
 
 @Preview
 @Composable

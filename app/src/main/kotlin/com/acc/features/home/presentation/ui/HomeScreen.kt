@@ -41,7 +41,7 @@ class HomeScreen(appComponent: AppComponent) {
     }
 
     init {
-        appComponent.inject(this)
+//        appComponent.inject(this)
     }
 
     @Composable

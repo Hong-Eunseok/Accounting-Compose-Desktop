@@ -10,8 +10,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
+import javax.inject.Singleton
 
-class DonationViewModel @Inject constructor(
+@Singleton class DonationViewModel @Inject constructor(
     private val contributor: ContributorDao,
     private val donationDao: DonationDao,
     @Named("io") private val ioCoroutineScope: CoroutineScope
@@ -25,6 +26,9 @@ class DonationViewModel @Inject constructor(
 
     private val _addDonationResult: MutableStateFlow<DatabaseResult> = MutableStateFlow(DatabaseResult.IDLE)
     val addDonationResult = _addDonationResult.asStateFlow()
+
+    private val _todayDonation: MutableStateFlow<List<TodayDonate>> = MutableStateFlow(listOf())
+    val todayDonation = _todayDonation.asStateFlow()
 
     fun addContributor(contributor: CreateContributorState, join: Int) {
         ioCoroutineScope.launch {
@@ -68,6 +72,12 @@ class DonationViewModel @Inject constructor(
                 throwable.printStackTrace()
                 _addDonationResult.emit(DatabaseResult.ERROR)
             }
+        }
+    }
+
+    fun queryTodayDonation() {
+        ioCoroutineScope.launch {
+            _todayDonation.emit(donationDao.queryTodayDonation())
         }
     }
 

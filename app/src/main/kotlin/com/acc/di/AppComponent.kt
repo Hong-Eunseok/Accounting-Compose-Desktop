@@ -31,7 +31,6 @@ import javax.inject.Singleton
 interface AppComponent {
     fun inject(main: Main)
     fun inject(organizationSelectionScreen: OrganizationSelectionScreen)
-    fun inject(homeScreen: HomeScreen)
     fun inject(homeScreen: AddExpenseScreen)
     fun inject(addChartOfAccountScreen: AddChartOfAccountScreen)
     fun inject(settingsScreen: SettingsScreen)
@@ -43,4 +42,7 @@ interface AppComponent {
     fun inject(main: AddContributorScreen)
     fun inject(main: SearchContributorContent)
     fun inject(main: AddDonationScreen)
+    fun inject(main: HomeScreen)
+    fun inject(homeScreen: com.acc.goodwill.data.source.presentation.home.HomeScreen)
+
 }
