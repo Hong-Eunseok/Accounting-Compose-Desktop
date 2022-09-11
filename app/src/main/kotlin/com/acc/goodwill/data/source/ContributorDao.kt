@@ -66,4 +66,27 @@ import javax.inject.Singleton
         println("addUser id : ${id?.value ?: -1}")
     }
 
+    suspend fun modifyContributor(
+        name: String,
+        phoneNumber: String?,
+        address: String?,
+        registrationNumber: String?,
+        registrationType: Int,
+        join: Int,
+        modifyId: Long,
+    ) {
+        val launchResult = suspendedTransactionAsync(Dispatchers.IO) {
+            ContributorTable.update({ ContributorTable.id eq modifyId}) {
+                it[this.name] = name
+                it[this.phoneNumber] = phoneNumber.orEmpty()
+                it[this.address] = address.orEmpty()
+                it[this.registrationNumber] = registrationNumber.orEmpty()
+                it[this.registrationType] = registrationType
+                it[this.recommend] = join
+                it[this.updatedAt] = LocalDateTime.now()
+            }
+        }
+        println("Result : ${launchResult.await()}")
+    }
+
 }

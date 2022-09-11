@@ -13,7 +13,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 class DonationViewModel @Inject constructor(
-    private val contributor: ContributorDao,
+    private val contributorDao: ContributorDao,
     private val donationDao: DonationDao,
     @Named("io") private val ioCoroutineScope: CoroutineScope
 ) {
@@ -32,7 +32,7 @@ class DonationViewModel @Inject constructor(
 
     fun addContributor(contributor: CreateContributorState, join: Int) {
         ioCoroutineScope.launch {
-            this@DonationViewModel.contributor.addContributor(
+            contributorDao.addContributor(
                 contributor.name,
                 contributor.phoneNumber,
                 contributor.address,
@@ -45,10 +45,27 @@ class DonationViewModel @Inject constructor(
         }
     }
 
+    fun modifyContributor(contributor: CreateContributorState, join: Int, id: Long) {
+        println("modifyContributor $id")
+        ioCoroutineScope.launch {
+            contributorDao.modifyContributor(
+                contributor.name,
+                contributor.phoneNumber,
+                contributor.address,
+                contributor.registrationNumber,
+                contributor.registrationType,
+                join,
+                id
+            )
+            _result.emit(CreateContributorResult.SUCCESS)
+            println("addContributor success")
+        }
+    }
+
     fun searchContributor(keyword: String) {
         println("searchContributor $keyword")
         ioCoroutineScope.launch {
-            _searchResult.emit(contributor.searchContributor(keyword))
+            _searchResult.emit(contributorDao.searchContributor(keyword))
         }
     }
 

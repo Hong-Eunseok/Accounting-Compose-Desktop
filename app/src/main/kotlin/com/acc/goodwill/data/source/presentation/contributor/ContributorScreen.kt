@@ -42,9 +42,11 @@ class ContributorScreen(appComponent: AppComponent) {
         val radioOptions = listOf("교인", "인터넷", "지인소개", "기타")
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
 
+        val registerString = if (modifyContributor == null) "등록" else "수정"
+
         when (result) {
-            CreateContributorResult.SUCCESS -> "등록에 성공하였습니다."
-            CreateContributorResult.ERROR -> "등록에 실패하였습니다."
+            CreateContributorResult.SUCCESS -> "${registerString}에 성공하였습니다."
+            CreateContributorResult.ERROR -> "${registerString}에 실패하였습니다."
             else -> null
         }?.let { message ->
             mainScope.launch {
@@ -132,11 +134,21 @@ class ContributorScreen(appComponent: AppComponent) {
                         Spacer(modifier = Modifier.weight(1f))
                         Button(
                             onClick = {
-                                viewModel.addContributor(contributor, radioOptions.indexOf(selectedOption))
+                                if (modifyContributor == null) {
+                                    viewModel.addContributor(contributor, radioOptions.indexOf(selectedOption))
+                                } else {
+                                    viewModel.modifyContributor(
+                                        contributor,
+                                        radioOptions.indexOf(selectedOption),
+                                        modifyContributor.primaryKey.value
+                                    )
+                                }
+
                             },
-                            enabled = contributor.valid == CreateContributorState.Validator.VALID
+                            enabled = contributor.valid == CreateContributorState.Validator.VALID,
+                            modifier = Modifier.padding(horizontal = largePadding)
                         ) {
-                            Text("추가")
+                            Text(registerString)
                         }
                     }
                 }
