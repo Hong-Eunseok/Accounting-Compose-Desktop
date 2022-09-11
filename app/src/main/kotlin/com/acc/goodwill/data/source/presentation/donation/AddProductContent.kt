@@ -37,12 +37,11 @@ fun AddProductContent(
             .fillMaxSize()
             .background(MaterialTheme.colors.background),
     ) {
-        Column(
-            modifier = Modifier.padding(start = largePadding, end = largePadding, top = largePadding),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(modifier = Modifier.padding(largePadding),) {
 
             ProductForm(addProduct)
+
+            Spacer(modifier = Modifier.height(largePadding))
 
             Box(
                 contentAlignment = Alignment.CenterStart,
@@ -69,7 +68,7 @@ fun AddProductContent(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Row(modifier = Modifier.padding(bottom = largePadding)) {
+            Row {
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
                     onClick = { navigateNext() },
@@ -87,7 +86,7 @@ fun ProductForm(addProduct: (Product) -> Unit) {
     var showCompanies by remember { mutableStateOf(false) }
     val product = rememberProduct()
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = "카테고리", modifier = Modifier.widthIn(min = 120.dp))
 

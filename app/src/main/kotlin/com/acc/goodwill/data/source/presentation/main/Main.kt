@@ -14,6 +14,7 @@ import com.acc.goodwill.data.source.presentation.navigation.AddContributor
 import com.acc.goodwill.data.source.presentation.navigation.AddDonationRoute
 import com.acc.goodwill.data.source.presentation.navigation.MainScreen
 import com.acc.goodwill.domain.model.Contributor
+import com.acc.goodwill.domain.model.Donate
 import com.acc.goodwill.domain.model.rememberContributor
 import com.navigation.rememberNavigation
 import javax.inject.Inject
@@ -40,7 +41,8 @@ class Main(private val appComponent: AppComponent) {
         val todayDonations by donationViewModel.todayDonation.collectAsState()
 
         val contributor = rememberContributor()
-        var modifyContributor by remember { mutableStateOf(Contributor.INIT) }
+        var mainContributor by remember { mutableStateOf(Contributor.INIT) }
+        var mainDonate by remember { mutableStateOf(Donate.INIT) }
 
         AppTheme(useDarkTheme = darkTheme) {
             CompositionLocalProvider(LocaleComposition provides selectedLocal) {
@@ -48,6 +50,9 @@ class Main(private val appComponent: AppComponent) {
                     MainScreen -> stateHolder.SaveableStateProvider(Unit) {
                         HomeScreen(
                             navigateAddDonation = { navigation.navigate(AddDonationRoute) },
+                            navigateDetailDonation = {
+                                mainDonate = it
+                            },
                             todayDonations
                         )
                     }
@@ -63,7 +68,7 @@ class Main(private val appComponent: AppComponent) {
                             },
                             navigateModifyContributor = {
                                 contributor.copyContributor(it)
-                                modifyContributor = it
+                                mainContributor = it
                                 navigation.navigate(AddContributor)
                             }
                         )
@@ -71,7 +76,7 @@ class Main(private val appComponent: AppComponent) {
                     AddContributor -> ContributorScreen(appComponent).ContributorScreen(
                         navigateBack = { navigation.popLast() },
                         contributor = contributor,
-                        modifyContributor = if (modifyContributor == Contributor.INIT) null else modifyContributor,
+                        modifyContributor = if (mainContributor == Contributor.INIT) null else mainContributor,
                     )
                 }
 

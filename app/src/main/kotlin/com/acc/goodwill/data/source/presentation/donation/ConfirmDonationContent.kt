@@ -38,13 +38,11 @@ fun ConfirmDonationContent(
             .background(MaterialTheme.colors.background),
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(top = largePadding, start = largePadding, end = smallPadding),
+            modifier = Modifier.fillMaxSize().padding(largePadding),
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Column {
+                Text("기증통로", modifier = Modifier.padding(end = largePadding))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("기증통로", modifier = Modifier.padding(end = largePadding))
                     from.forEach { text ->
                         OptionButton(
                             text = text,
@@ -54,8 +52,8 @@ fun ConfirmDonationContent(
                     }
                 }
 
+                Text("개인/단체", modifier = Modifier.padding(end = largePadding))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("개인/단체", modifier = Modifier.padding(end = largePadding))
                     organization.forEach { text ->
                         OptionButton(
                             text = text,
@@ -79,9 +77,12 @@ fun ConfirmDonationContent(
                         Spacer(modifier = Modifier.height(mediumPadding))
                         Text("기부 물품 내역")
                         Spacer(modifier = Modifier.height(largePadding))
+
                         ProductResult(-1, {}, products)
                     }
                 }
+
+                Spacer(modifier = Modifier.weight(1f))
 
                 Row {
                     Button(onClick = navigateBack) {

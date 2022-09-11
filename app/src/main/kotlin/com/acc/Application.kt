@@ -44,7 +44,7 @@ private fun initializeConnection() {
 //    val connect = Database.connect(url = "jdbc:sqlite:$folder$db", driver = "org.sqlite.JDBC")
 
     val databasePath = File(System.getProperty("java.io.tmpdir"), db)
-    if (databasePath.isFile) databasePath.delete()
+//    if (databasePath.isFile) databasePath.delete()
     val connect = Database.connect(url = "jdbc:sqlite:${databasePath.absolutePath}", driver = "org.sqlite.JDBC")
     println("path ${databasePath.absolutePath}")
 

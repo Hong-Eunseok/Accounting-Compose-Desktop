@@ -1,7 +1,6 @@
 package com.acc.goodwill.data.source.presentation.donation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -19,12 +18,13 @@ import com.acc.common.components.AppIcon
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.mediumPadding
 import com.acc.common.ui.seed
-import com.acc.goodwill.domain.model.TodayDonate
+import com.acc.goodwill.domain.model.Donate
 
 @Composable
 fun DonationContent(
+    navigateDetailDonation: (Donate) -> Unit,
     navigateAddDonation: () -> Unit,
-    todayDonations: List<TodayDonate>
+    todayDonations: List<Donate>
 ) {
     Scaffold(
         modifier = Modifier
@@ -65,14 +65,15 @@ fun DonationContent(
 
             Spacer(modifier = Modifier.height(mediumPadding))
 
-            TodayDonation(todayDonations)
+            TodayDonation(navigateDetailDonation, todayDonations)
         }
     }
 }
 
 @Composable
 fun TodayDonation(
-    todayDonations: List<TodayDonate>,
+    navigateDetailDonation: (Donate) -> Unit,
+    todayDonations: List<Donate>,
     state: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
@@ -88,10 +89,9 @@ fun TodayDonation(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.White)
-//                    .background(if (selectedIndex == index) MaterialTheme.colors.primary else Color.White)
                     .selectable(
                         selected = false,
-                        onClick = { /*setValue(index)*/ }
+                        onClick = { navigateDetailDonation(todayDonate) }
                     )
                     .padding(mediumPadding)
             ) {

@@ -5,7 +5,7 @@ import com.acc.goodwill.data.source.table.DonationTable
 import com.acc.goodwill.data.source.table.ProductTable
 import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.Product
-import com.acc.goodwill.domain.model.TodayDonate
+import com.acc.goodwill.domain.model.Donate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.jetbrains.exposed.sql.JoinType
@@ -60,7 +60,7 @@ import javax.inject.Singleton
         return launchResult.getCompletionExceptionOrNull()
     }
 
-    suspend fun queryTodayDonation(): List<TodayDonate> {
+    suspend fun queryTodayDonation(): List<Donate> {
         val now = LocalDateTime.now()
         val before = now.minusHours(now.hour.toLong())
         val after = now.plusDays(1L)
@@ -74,7 +74,7 @@ import javax.inject.Singleton
                     DonationTable.createdAt.between(before, after)
                 }
                 .map {
-                    TodayDonate(
+                    Donate(
                         contributor = if (it[DonationTable.contributorId] == -1L) {
                             null
                         } else {
@@ -87,7 +87,7 @@ import javax.inject.Singleton
                                 recommend = it[ContributorTable.recommend]
                             )
                         },
-                        donate = TodayDonate.Donation(
+                        donate = Donate.Donation(
                             total = it[DonationTable.total],
                             error = it[DonationTable.total_error],
                             correct = it[DonationTable.total_correct],

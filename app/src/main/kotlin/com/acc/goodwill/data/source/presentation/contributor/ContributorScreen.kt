@@ -63,12 +63,8 @@ class ContributorScreen(appComponent: AppComponent) {
             },
             scaffoldState = scaffoldState
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(top = largePadding),
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+            Box(modifier = Modifier.fillMaxSize().padding(largePadding)) {
+                Column {
                     RowTextField(
                         value = contributor.name,
                         setValue = {
@@ -108,8 +104,8 @@ class ContributorScreen(appComponent: AppComponent) {
                         deleteLastChar = { contributor.address = contributor.address.substring(0 until contributor.address.length - 1) }
                     )
 
+                    Text(text = "가입경로", modifier = Modifier.padding(end = largePadding))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = "가입경로", modifier = Modifier.padding(end = largePadding))
                         CreateContributorState.RECOMMAND.forEach { text ->
                             OptionButton(
                                 text = text,

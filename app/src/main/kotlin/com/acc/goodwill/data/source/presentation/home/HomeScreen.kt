@@ -17,13 +17,14 @@ import com.acc.goodwill.data.source.presentation.navigation.Statistics
 import com.acc.goodwill.data.source.presentation.navigation.Donation
 import com.acc.goodwill.data.source.presentation.navigation.Report
 import com.acc.goodwill.data.source.presentation.navigation.Search
-import com.acc.goodwill.domain.model.TodayDonate
+import com.acc.goodwill.domain.model.Donate
 import com.navigation.rememberNavigation
 
 @Composable
 fun HomeScreen(
     navigateAddDonation: () -> Unit,
-    todayDonations: List<TodayDonate>
+    navigateDetailDonation: (Donate) -> Unit,
+    todayDonations: List<Donate>
 ) {
 
     val navigation = rememberNavigation(defaultRoute = Donation)
@@ -57,6 +58,7 @@ fun HomeScreen(
                 HomeContent(modifier = Modifier.weight(3f)) {
                     when (route) {
                         Donation -> DonationContent(
+                            navigateDetailDonation = navigateDetailDonation,
                             navigateAddDonation = navigateAddDonation,
                             todayDonations = todayDonations
                         )

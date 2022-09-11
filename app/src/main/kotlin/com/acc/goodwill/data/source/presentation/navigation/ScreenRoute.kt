@@ -6,3 +6,5 @@ interface ScreenRoute : Route
 
 object MainScreen : ScreenRoute
 object AddDonationRoute : ScreenRoute
+
+object DetailDonationRoute : ScreenRoute
