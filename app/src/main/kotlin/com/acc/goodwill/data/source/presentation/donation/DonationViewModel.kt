@@ -30,6 +30,7 @@ class DonationViewModel @Inject constructor(
                 contributor.phoneNumber,
                 contributor.address,
                 contributor.registrationNumber,
+                contributor.registrationType,
                 join
             )
             _result.emit(CreateContributorResult.SUCCESS)

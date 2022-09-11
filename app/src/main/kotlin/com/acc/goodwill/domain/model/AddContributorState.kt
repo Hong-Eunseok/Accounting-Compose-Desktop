@@ -13,6 +13,7 @@ class CreateContributorState {
     var phoneNumber by mutableStateOf("")
     var address by mutableStateOf("")
     var registrationNumber by mutableStateOf("")
+    var registrationType by mutableStateOf(-1)
 
     val valid by derivedStateOf {
         when {
@@ -34,7 +35,7 @@ class CreateContributorState {
     private fun registrationNumberValidator(): Boolean {
         return when {
             registrationNumber.isEmpty() -> false
-            (isBisNum() || isCorporNum() || isRsdnNum()) -> false
+            (isRsdnNum() || isCorporNum() || isBisNum()) -> false
             else -> true
         }
     }
@@ -61,7 +62,9 @@ class CreateContributorState {
                 ((Integer.parseInt(strBisNum.substring(7, 8)) * 3) % 10) +
                 (Integer.parseInt(strBisNum.substring(9, 10))) + share + rest
 
-        return sum % 10 == 0
+        return (sum % 10 == 0).also {
+            if (it) registrationType = 2
+        }
     }
 
     private fun isCorporNum(): Boolean {
@@ -69,7 +72,9 @@ class CreateContributorState {
         if (strCorporNum.length != 13) return false
         var sum = 0f
         for (i in 0..11) sum += (i % 2 + 1) * strCorporNum[i].toString().toFloat()
-        return strCorporNum.substring(12, 13).toFloat() == 10 - sum % 10 % 10
+        return (strCorporNum.substring(12, 13).toFloat() == 10 - sum % 10 % 10).also {
+            if (it) registrationType = 1
+        }
     }
 
     private fun isRsdnNum(): Boolean {
@@ -93,7 +98,9 @@ class CreateContributorState {
                 (strRsdnNum.substring(10, 11).toFloat() * 4) +
                 (strRsdnNum.substring(11, 12).toFloat() * 5)
 
-        return strRsdnNum.substring(12, 13).toFloat() == (11 - (sum % 11)) % 10
+        return (strRsdnNum.substring(12, 13).toFloat() == (11 - (sum % 11)) % 10).also {
+            if (it) registrationType = 0
+        }
     }
 
 }

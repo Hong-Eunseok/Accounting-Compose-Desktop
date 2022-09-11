@@ -8,6 +8,8 @@ import com.acc.di.AppComponent
 import com.acc.di.DaggerAppComponent
 import com.acc.features.main.ui.Main
 import com.acc.goodwill.data.source.table.ContributorTable
+import com.acc.goodwill.data.source.table.DonationTable
+import com.acc.goodwill.data.source.table.ProductTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.TransactionManager
@@ -42,10 +44,14 @@ private fun initializeConnection() {
 //    val connect = Database.connect(url = "jdbc:sqlite:$folder$db", driver = "org.sqlite.JDBC")
 
     val databasePath = File(System.getProperty("java.io.tmpdir"), db)
+//    if (databasePath.isFile) databasePath.delete()
     val connect = Database.connect(url = "jdbc:sqlite:${databasePath.absolutePath}", driver = "org.sqlite.JDBC")
+    println("path ${databasePath.absolutePath}")
 
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     transaction(connect) {
         SchemaUtils.createMissingTablesAndColumns(ContributorTable)
+        SchemaUtils.createMissingTablesAndColumns(DonationTable)
+        SchemaUtils.createMissingTablesAndColumns(ProductTable)
     }
 }
