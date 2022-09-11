@@ -6,19 +6,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.AwtWindow
 import com.acc.common.components.AppIcon
 import com.acc.goodwill.data.source.presentation.donation.DonationContent
-import com.acc.goodwill.data.source.presentation.navigation.HomeStatistics
-import com.acc.goodwill.data.source.presentation.navigation.HomeDonation
-import com.acc.goodwill.data.source.presentation.navigation.HomeReport
-import com.acc.goodwill.data.source.presentation.navigation.HomeSearch
+import com.acc.goodwill.data.source.presentation.navigation.*
+import com.acc.goodwill.data.source.presentation.setting.SettingsScreen
 import com.acc.goodwill.domain.model.Donate
 import com.navigation.rememberNavigation
+import java.awt.FileDialog
+import java.awt.Frame
 
 @Composable
 fun HomeScreen(
@@ -37,7 +37,7 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text(text = "수원굿윌스토어", style = MaterialTheme.typography.h3) },
                 actions = {
-                    IconButton(onClick = { println("setting click Icon!!!") }) { AppIcon(imageVector = Icons.Default.Settings) }
+                    IconButton(onClick = { navigation.navigate(HomeSetting) }) { AppIcon(imageVector = Icons.Default.Settings) }
                 }
             )
         }
@@ -65,6 +65,7 @@ fun HomeScreen(
                         HomeSearch -> EmptyScreen()
                         HomeStatistics -> EmptyScreen()
                         HomeReport -> EmptyScreen()
+                        HomeSetting -> SettingsScreen { navigation.popLast() }
                     }
                 }
             }

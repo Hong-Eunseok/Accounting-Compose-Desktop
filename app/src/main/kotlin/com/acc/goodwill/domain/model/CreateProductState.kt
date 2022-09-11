@@ -52,6 +52,8 @@ class CreateProductState {
         selectedIndex = index
         if (category == "도서") {
             label = "도서"
+        } else if (category == "의류") {
+            label = "의류"
         }
     }
 

@@ -8,5 +8,5 @@ object HomeStatistics : HomeRoute
 object HomeDonation : HomeRoute
 object HomeSearch : HomeRoute
 object HomeReport : HomeRoute
-
+object HomeSetting : HomeRoute
 object AddContributor : HomeRoute

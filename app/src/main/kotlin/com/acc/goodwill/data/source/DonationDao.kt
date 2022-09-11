@@ -62,8 +62,8 @@ import javax.inject.Singleton
 
     suspend fun queryTodayDonation(): List<Donate> {
         val now = LocalDateTime.now()
-        val before = now.minusHours(now.hour.toLong())
-        val after = now.plusDays(1L)
+        val before = now.withHour(0).withMinute(0).withSecond(0).withNano(0)
+        val after = before.plusDays(1)
 
         println("queryTodayDonation before $before")
         println("queryTodayDonation after $after")
