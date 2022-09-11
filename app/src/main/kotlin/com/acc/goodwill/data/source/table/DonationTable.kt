@@ -3,7 +3,6 @@ package com.acc.goodwill.data.source.table
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.javatime.datetime
-import java.time.LocalDateTime
 
 object DonationTable : LongIdTable() {
     val contributorId: Column<Long> = long("contributor_id").index()
@@ -12,8 +11,8 @@ object DonationTable : LongIdTable() {
     val total_correct = integer("total_correct")
     @OptIn(ExperimentalUnsignedTypes::class)
     val price = ulong("price")
-    val fromType = integer("from_type")
-    val organization = integer("organization")
-    val member = bool("member")
-    val createdAt = datetime("created_at").index().default(LocalDateTime.now())
+    val fromType = integer("from_type").index()
+    val organization = integer("organization").index()
+    val member = bool("member").index()
+    val createdAt = datetime("created_at")
 }

@@ -1,19 +1,19 @@
 package com.acc.goodwill.data.source.presentation.donation
 
 import com.acc.goodwill.data.source.ContributorDao
-import com.acc.goodwill.domain.model.Contributor
-import com.acc.goodwill.domain.model.CreateContributorResult
-import com.acc.goodwill.domain.model.CreateContributorState
+import com.acc.goodwill.data.source.DonationDao
+import com.acc.goodwill.domain.model.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
 class DonationViewModel @Inject constructor(
-    private val userDao: ContributorDao,
+    private val contributor: ContributorDao,
+    private val donationDao: DonationDao,
     @Named("io") private val ioCoroutineScope: CoroutineScope
 ) {
 
@@ -23,9 +23,12 @@ class DonationViewModel @Inject constructor(
     private val _searchResult: MutableStateFlow<List<Contributor>> = MutableStateFlow(listOf())
     val searchResult: StateFlow<List<Contributor>> = _searchResult
 
+    private val _addDonationResult: MutableStateFlow<DatabaseResult> = MutableStateFlow(DatabaseResult.IDLE)
+    val addDonationResult = _addDonationResult.asStateFlow()
+
     fun addContributor(contributor: CreateContributorState, join: Int) {
         ioCoroutineScope.launch {
-            userDao.addContributor(
+            this@DonationViewModel.contributor.addContributor(
                 contributor.name,
                 contributor.phoneNumber,
                 contributor.address,
@@ -41,7 +44,7 @@ class DonationViewModel @Inject constructor(
     fun searchContributor(keyword: String) {
         println("searchContributor $keyword")
         ioCoroutineScope.launch {
-            _searchResult.emit(userDao.searchUser(keyword))
+            _searchResult.emit(contributor.searchContributor(keyword))
         }
     }
 
@@ -49,6 +52,22 @@ class DonationViewModel @Inject constructor(
         println("clearSearchContributor")
         ioCoroutineScope.launch {
             _searchResult.emit(listOf())
+        }
+    }
+
+    fun addDonation(
+        contributor: Contributor,
+        products: List<Product>,
+        confirmInfo: Triple<Int, Int, Boolean>
+    ) {
+        ioCoroutineScope.launch {
+            val throwable = donationDao.addDonation(contributor.primaryKey.value, products, confirmInfo)
+            if (throwable == null) {
+                _addDonationResult.emit(DatabaseResult.SUCCESS)
+            } else {
+                throwable.printStackTrace()
+                _addDonationResult.emit(DatabaseResult.ERROR)
+            }
         }
     }
 

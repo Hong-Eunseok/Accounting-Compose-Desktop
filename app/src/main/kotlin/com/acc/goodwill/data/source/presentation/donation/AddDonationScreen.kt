@@ -15,12 +15,18 @@ import com.acc.common.ui.smallPadding
 import com.acc.di.AppComponent
 import com.acc.goodwill.data.source.presentation.navigation.*
 import com.acc.goodwill.domain.model.Contributor
+import com.acc.goodwill.domain.model.CreateContributorResult
+import com.acc.goodwill.domain.model.DatabaseResult
 import com.acc.goodwill.domain.model.Product
 import com.navigation.rememberNavigation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 class AddDonationScreen(appComponent: AppComponent) {
 
+    @Named("main") @Inject lateinit var mainScope: CoroutineScope
     @Inject lateinit var viewModel: DonationViewModel
 
     private val searchContributorContent by lazy { SearchContributorContent(appComponent) }
@@ -33,17 +39,29 @@ class AddDonationScreen(appComponent: AppComponent) {
         navigateBack: () -> Unit,
         navigateAddContributor: () -> Unit,
     ) {
-
+        val coroutineScope = rememberCoroutineScope()
+        val scaffoldState = rememberScaffoldState()
         val navigation = rememberNavigation(defaultRoute = SearchContribute)
         val route by navigation.routeStack.collectAsState()
-
         val searchResult by viewModel.searchResult.collectAsState()
         var contributor by remember { mutableStateOf(Contributor.INIT) }
         var products by remember { mutableStateOf(listOf<Product>()) }
 
-
         var screenTitle by remember { mutableStateOf("1. 기부자 찾기") }
         var price by remember { mutableStateOf("") }
+
+        val addDonationResult by viewModel.addDonationResult.collectAsState()
+
+        when (addDonationResult) {
+            DatabaseResult.SUCCESS -> "등록에 성공하였습니다."
+            DatabaseResult.ERROR -> "등록에 실패하였습니다."
+            else -> null
+        }?.let { message ->
+            coroutineScope.launch {
+                scaffoldState.snackbarHostState.showSnackbar(message)
+                navigateBack()
+            }
+        }
 
         Scaffold(
             topBar = {
@@ -66,7 +84,8 @@ class AddDonationScreen(appComponent: AppComponent) {
                         IconButton(onClick = navigateBack) { AppIcon(imageVector = Icons.Default.ArrowBack) }
                     }
                 )
-            }
+            },
+            scaffoldState = scaffoldState
         ) {
             BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
                 val screenWidth = constraints.maxWidth
@@ -114,8 +133,8 @@ class AddDonationScreen(appComponent: AppComponent) {
                             Confirm -> ConfirmDonationContent(
                                 products = products,
                                 navigateBack = { navigation.popLast() },
-                                navigateConfirm = { (from, organization, church) ->
-
+                                navigateConfirm = {
+                                    viewModel.addDonation(contributor, products, it)
                                 }
                             )
                         }

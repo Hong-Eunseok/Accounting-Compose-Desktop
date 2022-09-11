@@ -17,7 +17,7 @@ import javax.inject.Singleton
 
 @Singleton class ContributorDao @Inject constructor() {
 
-    suspend fun searchUser(keyword: String): List<Contributor> {
+    suspend fun searchContributor(keyword: String): List<Contributor> {
         val data = suspendedTransactionAsync(Dispatchers.IO) {
             ContributorTable.select {
                 name like  "%$keyword%" or (phoneNumber like "%$keyword%")

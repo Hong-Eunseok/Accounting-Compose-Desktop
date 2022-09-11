@@ -19,9 +19,6 @@ class Main(private val appComponent: AppComponent) {
 
     @Inject lateinit var settingViewModel: SettingViewModel
 
-    private val addContributorScreen by lazy { AddContributorScreen(appComponent) }
-    private val addDonationScreen by lazy { AddDonationScreen(appComponent) }
-
     init {
         appComponent.inject(this)
     }
@@ -42,12 +39,12 @@ class Main(private val appComponent: AppComponent) {
                         HomeScreen(navigateAddDonation = { navigation.navigate(AddDonationRoute) })
                     }
                     AddDonationRoute -> {
-                        addDonationScreen.AddDonationScreen(
+                        AddDonationScreen(appComponent).AddDonationScreen(
                             navigateBack = { navigation.popLast() },
                             navigateAddContributor = { navigation.navigate(AddContributor) }
                         )
                     }
-                    AddContributor -> addContributorScreen.AddContributorScreen { navigation.popLast() }
+                    AddContributor -> AddContributorScreen(appComponent).AddContributorScreen { navigation.popLast() }
                 }
 
             }

@@ -23,18 +23,18 @@ class CreateProductState {
             total.isEmpty() -> Validate.TOTAL
             error.isEmpty() -> Validate.ERROR
             price.isEmpty() -> Validate.PRICE
-            total.toInt() < error.toInt() -> Validate.WRONG_TOTAL
+            total.toUInt() < error.toUInt() -> Validate.WRONG_TOTAL
             else -> Validate.VALID
         }
     }
 
     fun toProduct(): Product {
         return Product(
-            category = category,
+            category = Product.CATEGORIES.indexOf(category),
             label = label,
-            total = total.toInt(),
-            error = error.toInt(),
-            price = price.toLong(),
+            total = total.toUInt(),
+            error = error.toUInt(),
+            price = price.toULong(),
         )
     }
 

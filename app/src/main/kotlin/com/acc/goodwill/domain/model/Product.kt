@@ -1,13 +1,13 @@
 package com.acc.goodwill.domain.model
 
 data class Product(
-    val category: String,
+    val category: Int,
     val label: String,
-    val total: Int,
-    val error: Int,
-    val price: Long,
-    val correct: Int = total - error,
-    val transferPrice: Long = correct * price
+    val total: UInt,
+    val error: UInt,
+    val price: ULong,
+    val correct: UInt = total - error,
+    val transferPrice: ULong = correct * price
 ) {
     companion object {
         val CATEGORIES = listOf(

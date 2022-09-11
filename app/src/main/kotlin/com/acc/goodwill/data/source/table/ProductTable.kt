@@ -16,5 +16,5 @@ object ProductTable : LongIdTable() {
     val correct = integer("correct")
     val price = ulong("price")
     val transferPrice = ulong("transfer_price")
-    val createdAt: Column<LocalDateTime> = datetime("created_at").index().default(LocalDateTime.now())
+    val createdAt: Column<LocalDateTime> = datetime("created_at")
 }
