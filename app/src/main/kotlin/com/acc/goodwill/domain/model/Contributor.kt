@@ -10,6 +10,7 @@ data class Contributor(
     val address: String? = null,
     val registrationNumber: String? = null,
     val recommend: Int = 0,
+    val registrationType: Int = -1
 ) {
 
     fun validUser(): Boolean {

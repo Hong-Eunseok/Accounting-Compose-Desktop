@@ -6,6 +6,7 @@ import com.acc.goodwill.data.source.table.ContributorTable.name
 import com.acc.goodwill.data.source.table.ContributorTable.phoneNumber
 import com.acc.goodwill.data.source.table.ContributorTable.recommend
 import com.acc.goodwill.data.source.table.ContributorTable.registrationNumber
+import com.acc.goodwill.data.source.table.ContributorTable.registrationType
 import com.acc.goodwill.domain.model.Contributor
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.id.EntityID
@@ -29,6 +30,7 @@ import javax.inject.Singleton
                     it[address],
                     it[registrationNumber],
                     it[recommend],
+                    it[registrationType]
                 )
             }
         }

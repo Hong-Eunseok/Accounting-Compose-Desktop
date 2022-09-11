@@ -1,4 +1,4 @@
-package com.acc.goodwill.data.source.presentation.donation
+package com.acc.goodwill.data.source.presentation.contributor
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -12,6 +12,8 @@ import com.acc.common.components.OptionButton
 import com.acc.common.components.RowTextField
 import com.acc.common.ui.largePadding
 import com.acc.di.AppComponent
+import com.acc.goodwill.data.source.presentation.donation.DonationViewModel
+import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.CreateContributorResult
 import com.acc.goodwill.domain.model.CreateContributorState
 import com.acc.goodwill.domain.model.rememberContributor
@@ -21,7 +23,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 
-class AddContributorScreen(appComponent: AppComponent) {
+class ContributorScreen(appComponent: AppComponent) {
 
     @Named("main") @Inject lateinit var mainScope: CoroutineScope
     @Inject lateinit var viewModel: DonationViewModel
@@ -30,7 +32,10 @@ class AddContributorScreen(appComponent: AppComponent) {
     }
 
     @Composable
-    fun AddContributorScreen(navigateBack: () -> Unit) {
+    fun ContributorScreen(
+        navigateBack: () -> Unit,
+        modifyContributor: Contributor? = null
+    ) {
         val scaffoldState = rememberScaffoldState()
         val result by viewModel.result.collectAsState()
         val contributor = rememberContributor()
@@ -46,6 +51,14 @@ class AddContributorScreen(appComponent: AppComponent) {
                 scaffoldState.snackbarHostState.showSnackbar(message)
                 navigateBack()
             }
+        }
+
+        modifyContributor?.let {
+            contributor.name = it.name
+            contributor.phoneNumber = it.phoneNumber.orEmpty()
+            contributor.address = it.address.orEmpty()
+            contributor.registrationNumber = it.registrationNumber.orEmpty()
+            contributor.registrationType = it.registrationType
         }
 
         Scaffold(

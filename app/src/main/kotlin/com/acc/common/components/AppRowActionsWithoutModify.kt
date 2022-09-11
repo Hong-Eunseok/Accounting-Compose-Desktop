@@ -36,7 +36,6 @@ fun AppRowActionsWithoutModify(
                     .clickable { onDelete() }
                     .width(width)
             ) {
-                Icons.Default.Info
                 AppIcon(imageVector = Icons.Default.Check, tint = seed)
             }
             Box(

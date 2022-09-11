@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -88,10 +89,10 @@ fun TodayDonation(
                     .fillMaxSize()
                     .background(Color.White)
 //                    .background(if (selectedIndex == index) MaterialTheme.colors.primary else Color.White)
-//                    .selectable(
-//                        selected = index == selectedIndex,
-//                        onClick = { setValue(index) }
-//                    )
+                    .selectable(
+                        selected = false,
+                        onClick = { /*setValue(index)*/ }
+                    )
                     .padding(mediumPadding)
             ) {
                 Row(
@@ -129,7 +130,7 @@ fun TodayDonation(
                             .clickable {  }
                             .width(40.dp)
                     ) {
-                        AppIcon(imageVector = Icons.Default.Person, tint = seed)
+                        AppIcon(imageVector = Icons.Default.KeyboardArrowRight, tint = seed)
                     }
                 }
 

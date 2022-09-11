@@ -38,6 +38,7 @@ class AddDonationScreen(appComponent: AppComponent) {
     fun AddDonationScreen(
         navigateBack: () -> Unit,
         navigateAddContributor: () -> Unit,
+        navigateModifyContributor: (Contributor) -> Unit,
     ) {
         val coroutineScope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState()
@@ -108,6 +109,7 @@ class AddDonationScreen(appComponent: AppComponent) {
                         when (route) {
                             SearchContribute -> searchContributorContent.SearchContributorContent(
                                 navigateAddContributor = navigateAddContributor,
+                                navigateModifyContributor = navigateModifyContributor,
                                 selectedContributor = {
                                     contributor = it
                                     navigation.navigate(AddProduct)
