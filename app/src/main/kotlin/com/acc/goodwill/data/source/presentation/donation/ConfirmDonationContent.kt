@@ -24,7 +24,7 @@ import com.acc.goodwill.domain.model.Product
 fun ConfirmDonationContent(
     products: List<Product>,
     navigateBack: () -> Unit,
-    navigateConfirm: () -> Unit
+    navigateConfirm: (Triple<Int, Int, Boolean>) -> Unit
 ) {
 
     val from = listOf("기증", "수거", "기타")
@@ -88,7 +88,17 @@ fun ConfirmDonationContent(
                         Text("기부물품 수정")
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    Button(onClick = navigateConfirm) {
+                    Button(
+                        onClick = {
+                            navigateConfirm(
+                                Triple(
+                                    from.indexOf(selectedFrom),
+                                    organization.indexOf(selectedOrganization),
+                                    checked
+                                )
+                            )
+                        }
+                    ) {
                         Text("완료")
                     }
                 }

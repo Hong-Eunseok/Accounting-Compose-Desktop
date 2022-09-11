@@ -114,7 +114,9 @@ class AddDonationScreen(appComponent: AppComponent) {
                             Confirm -> ConfirmDonationContent(
                                 products = products,
                                 navigateBack = { navigation.popLast() },
-                                navigateConfirm = {}
+                                navigateConfirm = { (from, organization, church) ->
+
+                                }
                             )
                         }
                     }
