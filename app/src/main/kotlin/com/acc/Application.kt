@@ -23,7 +23,8 @@ fun main() {
     application {
         Window(
             onCloseRequest = ::exitApplication,
-            state = rememberWindowState(width = 1000.dp, height = 1000.dp)
+            state = rememberWindowState(width = 1000.dp, height = 1000.dp),
+            title = "Suwon Good Will Store made by eunseok"
         ) {
             if (test) {
                 com.acc.goodwill.data.source.presentation.main.Main(appComponent).Main()

@@ -1,57 +1,96 @@
 package com.acc.goodwill.data.source.presentation.donation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.acc.common.components.CheckButton
 import com.acc.common.components.OptionButton
+import com.acc.common.ui.largePadding
+import com.acc.common.ui.mediumPadding
+import com.acc.common.ui.smallPadding
+import com.acc.goodwill.domain.model.Contributor
+import com.acc.goodwill.domain.model.Product
 
 @Composable
-fun ConfirmDonationContent(navigateBack: () -> Unit) {
+fun ConfirmDonationContent(
+    products: List<Product>,
+    navigateBack: () -> Unit,
+    navigateConfirm: () -> Unit
+) {
+
+    val from = listOf("기증", "수거", "기타")
+    val organization = listOf("개인", "단체")
+    val (selectedFrom, onFromSelected) = remember { mutableStateOf(from[0]) }
+    val (selectedOrganization, onOrganizationSelected) = remember { mutableStateOf(organization[0]) }
+    val (checked, onChecked) = remember { mutableStateOf(true) }
+
     Scaffold(
         modifier = Modifier
             .background(MaterialTheme.colors.background),
     ) {
-        Column {
-            Text("기증통로")
-            Row {
-                OptionButton("기증")
-                OptionButton("수거")
-                OptionButton("기타")
-            }
-
-            Text("개인/단체")
-            Row {
-                OptionButton("개인")
-                OptionButton("단체")
-                CheckButton("교인")
-            }
-
-            Row {
-                Text("총수량 : 100")
-                Text("양품 : 50")
-                Text("불량 : 50")
-            }
-
-            Text("기부 환산금액")
-
-            Text("기부 물품 내역")
-            ProductResult(1, {}, listOf())
-            
-            Row {
-                Button(onClick = {}) {
-                    Text("기부물품 수정")
+        Box(
+            modifier = Modifier.fillMaxSize().padding(top = largePadding, start = largePadding, end = smallPadding),
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("기증통로", modifier = Modifier.padding(end = largePadding))
+                    from.forEach { text ->
+                        OptionButton(
+                            text = text,
+                            selectedOption = selectedFrom,
+                            onClick = { onFromSelected(text) }
+                        )
+                    }
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Button(onClick = navigateBack) {
-                    Text("완료")
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("개인/단체", modifier = Modifier.padding(end = largePadding))
+                    organization.forEach { text ->
+                        OptionButton(
+                            text = text,
+                            selectedOption = selectedOrganization,
+                            onClick = { onOrganizationSelected(text) }
+                        )
+                    }
+                    CheckButton("교인", onChecked, checked)
+                }
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Box(
+                    contentAlignment = Alignment.CenterStart,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column {
+                        Text("기부 환산금액 : ${products.sumOf { it.transferPrice }}원")
+                        Text("총 수량 : ${products.sumOf { it.total }}")
+                        Text("총 불량수 / 총 양품수 : ${products.sumOf { it.error }} / ${products.sumOf { it.correct }}")
+                        Spacer(modifier = Modifier.height(mediumPadding))
+                        Text("기부 물품 내역")
+                        Spacer(modifier = Modifier.height(largePadding))
+                        ProductResult(-1, {}, products)
+                    }
+                }
+
+                Row {
+                    Button(onClick = navigateBack) {
+                        Text("기부물품 수정")
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    Button(onClick = navigateConfirm) {
+                        Text("완료")
+                    }
                 }
             }
         }

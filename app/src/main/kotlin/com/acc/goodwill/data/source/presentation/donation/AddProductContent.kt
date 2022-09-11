@@ -47,21 +47,22 @@ fun AddProductContent(
                 contentAlignment = Alignment.CenterStart,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("물품 추가 목록")
-            }
+                Column {
+                    Text("물품 추가 목록")
+                    Spacer(modifier = Modifier.height(largePadding))
 
-            Spacer(modifier = Modifier.height(largePadding))
-
-            if (products.isEmpty()) {
-                Text("등록된 물품이 없습니다.")
-            } else {
-                ProductResult(
-                    selectedIndex = selectedIndex,
-                    setValue = {
-                        selectedIndex = if (selectedIndex == it) -1 else it
-                    },
-                    products = products
-                )
+                    if (products.isEmpty()) {
+                        Text("등록된 물품이 없습니다.")
+                    } else {
+                        ProductResult(
+                            selectedIndex = selectedIndex,
+                            setValue = {
+                                selectedIndex = if (selectedIndex == it) -1 else it
+                            },
+                            products = products
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.weight(1f))

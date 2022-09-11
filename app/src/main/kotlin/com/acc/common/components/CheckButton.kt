@@ -12,18 +12,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CheckButton(text: String) {
+fun CheckButton(
+    text: String,
+    onChecked: (Boolean) -> Unit,
+    selected: Boolean = false,
+) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .selectable(
-                selected = false,
-                onClick = {}
+                selected = selected,
+                onClick = { onChecked(!selected) }
             )
             .padding(horizontal = 16.dp),
     ) {
-        Checkbox(checked = true, onCheckedChange = null)
+        Checkbox(checked = selected, onCheckedChange = onChecked)
         Text(text)
     }
 }

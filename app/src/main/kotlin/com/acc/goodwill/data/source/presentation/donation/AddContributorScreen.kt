@@ -60,71 +60,70 @@ class AddContributorScreen(appComponent: AppComponent) {
             scaffoldState = scaffoldState
         ) {
             Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().padding(top = largePadding),
             ) {
-                Card(modifier = Modifier) {
-                    Column {
-                        RowTextField(
-                            value = contributor.name,
-                            setValue = {
-                                contributor.name = it
-                            },
-                            label = "이름",
-                            modifier = Modifier.padding(bottom = largePadding),
-                            deleteLastChar = { contributor.name = contributor.name.substring(0 until contributor.name.length - 1) },
-                            errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.NAME_ERROR }?.run { "이름을 입력하세요 (필수 입력)" }
-                        )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    RowTextField(
+                        value = contributor.name,
+                        setValue = {
+                            contributor.name = it
+                        },
+                        label = "이름",
+                        modifier = Modifier.padding(bottom = largePadding),
+                        deleteLastChar = { contributor.name = contributor.name.substring(0 until contributor.name.length - 1) },
+                        errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.NAME_ERROR }?.run { "이름을 입력하세요 (필수 입력)" }
+                    )
 
-                        RowTextField(
-                            value = contributor.phoneNumber,
-                            setValue = { value ->
-                                contributor.phoneNumber = value.filter { it.isDigit() || it == '-' }
-                            },
-                            label = "연락처",
-                            modifier = Modifier.padding(bottom = largePadding),
-                            errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.PHONE_NUMBER_ERROR }?.run { "전화번호가 잘못 입력되었습니다." }
-                        )
+                    RowTextField(
+                        value = contributor.phoneNumber,
+                        setValue = { value ->
+                            contributor.phoneNumber = value.filter { it.isDigit() || it == '-' }
+                        },
+                        label = "연락처",
+                        modifier = Modifier.padding(bottom = largePadding),
+                        errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.PHONE_NUMBER_ERROR }?.run { "전화번호가 잘못 입력되었습니다." }
+                    )
 
-                        RowTextField(
-                            value = contributor.registrationNumber,
-                            setValue = { value ->
-                                contributor.registrationNumber = value.filter { it.isDigit() || it == '-' }
-                            },
-                            label = "주민/사업자 번호",
-                            modifier = Modifier.padding(bottom = largePadding),
-                            errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.REGISTRATION_NUMBER_ERROR }?.run { "주민/사업자 번호가 잘못입력하였습니다." }
-                        )
+                    RowTextField(
+                        value = contributor.registrationNumber,
+                        setValue = { value ->
+                            contributor.registrationNumber = value.filter { it.isDigit() || it == '-' }
+                        },
+                        label = "주민/사업자 번호",
+                        modifier = Modifier.padding(bottom = largePadding),
+                        errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.REGISTRATION_NUMBER_ERROR }?.run { "주민/사업자 번호가 잘못입력하였습니다." }
+                    )
 
-                        RowTextField(
-                            value = contributor.address,
-                            setValue = { contributor.address = it },
-                            label = "주소",
-                            modifier = Modifier.padding(bottom = largePadding),
-                            deleteLastChar = { contributor.address = contributor.address.substring(0 until contributor.address.length - 1) }
-                        )
+                    RowTextField(
+                        value = contributor.address,
+                        setValue = { contributor.address = it },
+                        label = "주소",
+                        modifier = Modifier.padding(bottom = largePadding),
+                        deleteLastChar = { contributor.address = contributor.address.substring(0 until contributor.address.length - 1) }
+                    )
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "가입경로", modifier = Modifier.padding(end = largePadding))
-                            radioOptions.forEach { text ->
-                                OptionButton(
-                                    text = text,
-                                    selectedOption = selectedOption,
-                                    onClick = { onOptionSelected(text) }
-                                )
-                            }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "가입경로", modifier = Modifier.padding(end = largePadding))
+                        radioOptions.forEach { text ->
+                            OptionButton(
+                                text = text,
+                                selectedOption = selectedOption,
+                                onClick = { onOptionSelected(text) }
+                            )
                         }
+                    }
 
-                        Row {
-                            Spacer(modifier = Modifier.weight(1f))
-                            Button(
-                                onClick = {
-                                    viewModel.addContributor(contributor, radioOptions.indexOf(selectedOption))
-                                },
-                                enabled = contributor.valid == CreateContributorState.Validator.VALID
-                            ) {
-                                Text("추가")
-                            }
+                    Row {
+                        Spacer(modifier = Modifier.weight(1f))
+                        Button(
+                            onClick = {
+                                viewModel.addContributor(contributor, radioOptions.indexOf(selectedOption))
+                            },
+                            enabled = contributor.valid == CreateContributorState.Validator.VALID
+                        ) {
+                            Text("추가")
                         }
                     }
                 }

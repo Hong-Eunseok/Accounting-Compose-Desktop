@@ -42,7 +42,7 @@ class AddDonationScreen(appComponent: AppComponent) {
         var products by remember { mutableStateOf(listOf<Product>()) }
 
 
-        var screenTitle by remember { mutableStateOf("기부자 찾기") }
+        var screenTitle by remember { mutableStateOf("1. 기부자 찾기") }
         var price by remember { mutableStateOf("") }
 
         Scaffold(
@@ -77,18 +77,12 @@ class AddDonationScreen(appComponent: AppComponent) {
                         screenWidth.dp,
                         navigateSearchContributor = {
                             contributor = Contributor.INIT
-                            screenTitle = "기부자 찾기"
+                            products = listOf()
                             viewModel.clearSearchContributor()
                             navigation.navigate(SearchContribute)
                         },
-                        navigateAddProduct = {
-                            screenTitle = "물품 추가하기"
-                            navigation.navigate(AddProduct)
-                        },
-                        navigateAddConfirm = {
-                            price = "5000원"
-                            navigation.navigate(Confirm)
-                        },
+                        navigateAddProduct = {},
+                        navigateAddConfirm = {},
                     )
                     // content side
                     AddDonationContent(modifier = Modifier.weight(3f)) {
@@ -97,18 +91,14 @@ class AddDonationScreen(appComponent: AppComponent) {
                                 navigateAddContributor = navigateAddContributor,
                                 selectedContributor = {
                                     contributor = it
-                                    screenTitle = "물품 추가하기"
                                     navigation.navigate(AddProduct)
                                 },
                                 searchResult = searchResult,
                                 searchKeyword = viewModel::searchContributor
                             )
+
                             AddProduct -> AddProductContent(
-                                navigateNext = {
-                                    screenTitle = "최종확인"
-                                    price = "${products.sumOf { it.transferPrice }}원"
-                                    navigation.navigate(Confirm)
-                                },
+                                navigateNext = { navigation.navigate(Confirm) },
                                 deleteProduct = {
                                     val newValue = products.toMutableList()
                                     newValue.remove(it)
@@ -120,10 +110,28 @@ class AddDonationScreen(appComponent: AppComponent) {
                                 },
                                 products = products
                             )
-                            Confirm -> ConfirmDonationContent { navigateBack() }
+
+                            Confirm -> ConfirmDonationContent(
+                                products = products,
+                                navigateBack = { navigation.popLast() },
+                                navigateConfirm = {}
+                            )
                         }
                     }
                 }
+
+                when (route) {
+                    SearchContribute -> "1. 기부자 찾기"
+                    AddProduct -> {
+                        price = ""
+                        "2. 기부물품등록"
+                    }
+                    Confirm -> {
+                        price = "${products.sumOf { it.transferPrice }}원"
+                        "3. 최종확인"
+                    }
+                    else -> null
+                }?.run { screenTitle = this }
             }
         }
 
