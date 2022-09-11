@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
+import com.acc.common.components.AppRowActionsWithoutModify
 import com.acc.common.components.RowTextField
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.mediumPadding
@@ -59,7 +60,8 @@ fun AddProductContent(
                             setValue = {
                                 selectedIndex = if (selectedIndex == it) -1 else it
                             },
-                            products = products
+                            products = products,
+                            deleteProduct = deleteProduct
                         )
                     }
                 }
@@ -68,20 +70,7 @@ fun AddProductContent(
             Spacer(modifier = Modifier.weight(1f))
 
             Row(modifier = Modifier.padding(bottom = largePadding)) {
-                if (selectedIndex != -1) {
-                    Button(
-                        onClick = {
-                            deleteProduct(products[selectedIndex])
-                            selectedIndex = -1
-                        }
-                    ) {
-                        Text("삭제")
-                    }
-                }
-
-
                 Spacer(modifier = Modifier.weight(1f))
-
                 Button(
                     onClick = { navigateNext() },
                     enabled = products.isNotEmpty()
@@ -200,6 +189,7 @@ fun ProductResult(
     selectedIndex: Int,
     setValue: (Int) -> Unit,
     products: List<Product>,
+    deleteProduct: ((Product) -> Unit)? = null,
     state: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
@@ -221,12 +211,30 @@ fun ProductResult(
                     )
                     .padding(mediumPadding)
             ) {
-                Column {
-                    Text("품목 : ${product.label}(${product.category})")
-                    Text("수량 : ${product.total}")
-                    Text("불량/양품 : ${product.error} / ${product.correct}")
-                    Text("기부환산금액 : ${product.transferPrice}원 = ${product.correct} * ${product.price}")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text("품목 : ${product.label}(${Product.CATEGORIES[product.category]})")
+                        Text("수량 : ${product.total}")
+                        Text("불량/양품 : ${product.error} / ${product.correct}")
+                        Text("기부환산금액 : ${product.transferPrice}원 = ${product.correct} * ${product.price}")
+                    }
+                    Box(
+                        contentAlignment = Alignment.CenterEnd,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        AppRowActionsWithoutModify(
+                            selected = index == selectedIndex,
+                            onDelete = {
+                                if (deleteProduct != null) deleteProduct(products[selectedIndex])
+                                setValue(-1)
+                            }
+                        )
+                    }
+
                 }
+
             }
             Spacer(modifier = Modifier.height(largePadding))
         }
