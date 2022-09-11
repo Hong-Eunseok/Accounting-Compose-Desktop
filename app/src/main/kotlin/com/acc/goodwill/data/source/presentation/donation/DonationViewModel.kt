@@ -12,7 +12,7 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Singleton class DonationViewModel @Inject constructor(
+class DonationViewModel @Inject constructor(
     private val contributor: ContributorDao,
     private val donationDao: DonationDao,
     @Named("io") private val ioCoroutineScope: CoroutineScope

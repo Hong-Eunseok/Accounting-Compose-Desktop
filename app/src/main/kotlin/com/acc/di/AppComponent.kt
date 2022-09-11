@@ -43,6 +43,5 @@ interface AppComponent {
     fun inject(main: SearchContributorContent)
     fun inject(main: AddDonationScreen)
     fun inject(main: HomeScreen)
-    fun inject(homeScreen: com.acc.goodwill.data.source.presentation.home.HomeScreen)
 
 }

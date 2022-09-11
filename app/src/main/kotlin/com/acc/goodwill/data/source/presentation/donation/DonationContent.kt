@@ -1,6 +1,5 @@
 package com.acc.goodwill.data.source.presentation.donation
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,9 +18,13 @@ import com.acc.common.components.AppIcon
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.mediumPadding
 import com.acc.common.ui.seed
+import com.acc.goodwill.domain.model.TodayDonate
 
 @Composable
-fun DonationContent(navigateAddDonation: () -> Unit) {
+fun DonationContent(
+    navigateAddDonation: () -> Unit,
+    todayDonations: List<TodayDonate>
+) {
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -37,14 +40,14 @@ fun DonationContent(navigateAddDonation: () -> Unit) {
         ) {
 
             Text(
-                "금일 기부수 3건",
+                "금일 기부수 ${todayDonations.size}건",
                 style = MaterialTheme.typography.h1,
                 color = LocalContentColor.current.copy(alpha = ContentAlpha.high),
                 modifier = Modifier.padding(top = 16.dp)
             )
 
             Text(
-                "총 기부금액 5000원",
+                "총 기부금액 ${todayDonations.sumOf { it.donate.price }}원",
                 style = MaterialTheme.typography.h1,
                 color = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
                 modifier = Modifier
@@ -61,13 +64,14 @@ fun DonationContent(navigateAddDonation: () -> Unit) {
 
             Spacer(modifier = Modifier.height(mediumPadding))
 
-            TodayDonation()
+            TodayDonation(todayDonations)
         }
     }
 }
 
 @Composable
 fun TodayDonation(
+    todayDonations: List<TodayDonate>,
     state: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
@@ -77,7 +81,8 @@ fun TodayDonation(
             .padding(end = 12.dp),
         state = state
     ) {
-        items(300) { index ->
+        items(todayDonations.size) { index ->
+            val todayDonate = todayDonations[index]
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -94,19 +99,23 @@ fun TodayDonation(
                 ) {
                     Column {
                         Text(
-                            "총수량 / 불량 / 양품 : 10 / 3 / 7",
+                            "총수량 / 불량 / 양품 : ${todayDonate.donate.total} / ${todayDonate.donate.error} / ${todayDonate.donate.correct}",
                             style = MaterialTheme.typography.body2,
                             color = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
                             modifier = Modifier
                         )
                         Text(
-                            "이름 : 홍은석 | 번호 : 010-3020-6909",
+                            text = if (todayDonate.contributor == null) {
+                                "무명"
+                            } else {
+                                "이름 : ${todayDonate.contributor.name} | 번호 : ${todayDonate.contributor.phoneNumber}"
+                            },
                             style = MaterialTheme.typography.h3,
                             color = LocalContentColor.current.copy(alpha = ContentAlpha.high),
                             modifier = Modifier
                         )
                         Text(
-                            "기부환산금액 : 10000원",
+                            "기부환산금액 : ${todayDonate.donate.price}원",
                             style = MaterialTheme.typography.body1,
                             color = LocalContentColor.current.copy(alpha = ContentAlpha.high),
                             modifier = Modifier
@@ -130,11 +139,3 @@ fun TodayDonation(
     }
 }
 
-//@Composable
-//fun d
-
-@Preview
-@Composable
-fun DonationContentPreview() {
-    DonationContent({})
-}

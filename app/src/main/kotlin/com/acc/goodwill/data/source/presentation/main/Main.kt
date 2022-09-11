@@ -8,6 +8,7 @@ import com.acc.goodwill.data.source.presentation.common.LocaleComposition
 import com.acc.goodwill.data.source.presentation.common.SettingViewModel
 import com.acc.goodwill.data.source.presentation.donation.AddContributorScreen
 import com.acc.goodwill.data.source.presentation.donation.AddDonationScreen
+import com.acc.goodwill.data.source.presentation.donation.DonationViewModel
 import com.acc.goodwill.data.source.presentation.home.HomeScreen
 import com.acc.goodwill.data.source.presentation.navigation.AddContributor
 import com.acc.goodwill.data.source.presentation.navigation.AddDonationRoute
@@ -18,9 +19,11 @@ import javax.inject.Inject
 class Main(private val appComponent: AppComponent) {
 
     @Inject lateinit var settingViewModel: SettingViewModel
+    @Inject lateinit var donationViewModel: DonationViewModel
 
     init {
         appComponent.inject(this)
+        donationViewModel.queryTodayDonation()
     }
 
     @Composable
@@ -32,15 +35,23 @@ class Main(private val appComponent: AppComponent) {
         val navigation = rememberNavigation(defaultRoute = MainScreen)
         val route by navigation.routeStack.collectAsState()
 
+        val todayDonations by donationViewModel.todayDonation.collectAsState()
+
         AppTheme(useDarkTheme = darkTheme) {
             CompositionLocalProvider(LocaleComposition provides selectedLocal) {
                 when (route) {
                     MainScreen -> stateHolder.SaveableStateProvider(Unit) {
-                        HomeScreen(appComponent).HomeScreen(navigateAddDonation = { navigation.navigate(AddDonationRoute) })
+                        HomeScreen(
+                            navigateAddDonation = { navigation.navigate(AddDonationRoute) },
+                            todayDonations
+                        )
                     }
                     AddDonationRoute -> {
                         AddDonationScreen(appComponent).AddDonationScreen(
-                            navigateBack = { navigation.popLast() },
+                            navigateBack = {
+                                navigation.popLast()
+                                donationViewModel.queryTodayDonation()
+                            },
                             navigateAddContributor = { navigation.navigate(AddContributor) }
                         )
                     }
