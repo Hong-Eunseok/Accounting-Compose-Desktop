@@ -12,12 +12,12 @@ import com.acc.features.main.ui.Main
 import com.acc.features.organization.create.presentation.ui.CreateOrganizationScreen
 import com.acc.features.organization.selection.ui.OrganizationSelectionScreen
 import com.acc.features.settings.presentation.ui.SettingsScreen
-import com.acc.goodwill.data.source.presentation.contributor.ContributorScreen
-import com.acc.goodwill.data.source.presentation.donation.AddDonationScreen
-import com.acc.goodwill.data.source.presentation.donation.DetailDonationScreen
 import com.acc.goodwill.di.GoodwillModule
-import com.acc.goodwill.data.source.presentation.donation.SearchContributorContent
-import com.acc.goodwill.data.source.presentation.setting.SettingScreen
+import com.acc.goodwill.presentation.contributor.ContributorScreen
+import com.acc.goodwill.presentation.donation.AddDonationScreen
+import com.acc.goodwill.presentation.donation.DetailDonationScreen
+import com.acc.goodwill.presentation.donation.SearchContributorContent
+import com.acc.goodwill.presentation.setting.SettingScreen
 import com.database.DatabaseModule
 import com.preferences.PreferencesModule
 import dagger.Component
@@ -40,7 +40,7 @@ interface AppComponent {
     fun inject(addPartnerScreen: AddPartnerScreen)
     fun inject(chartOfAccountsScreen: ChartOfAccountsScreen)
     fun inject(partnersScreen: PartnersScreen)
-    fun inject(main: com.acc.goodwill.data.source.presentation.main.Main)
+    fun inject(main: com.acc.goodwill.presentation.main.Main)
     fun inject(main: ContributorScreen)
     fun inject(main: SearchContributorContent)
     fun inject(main: AddDonationScreen)

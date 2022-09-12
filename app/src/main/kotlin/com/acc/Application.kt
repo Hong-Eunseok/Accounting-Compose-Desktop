@@ -29,7 +29,7 @@ fun main() {
             title = "Suwon Good Will Store made by eunseok"
         ) {
             if (test) {
-                com.acc.goodwill.data.source.presentation.main.Main(appComponent).Main()
+                com.acc.goodwill.presentation.main.Main(appComponent).Main()
             } else {
                 Main(appComponent).Main()
             }

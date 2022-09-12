@@ -1,4 +1,4 @@
-package com.acc.goodwill.data.source.presentation.donation
+package com.acc.goodwill.presentation.donation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,11 +13,13 @@ import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.common.ui.smallPadding
 import com.acc.di.AppComponent
-import com.acc.goodwill.data.source.presentation.navigation.*
 import com.acc.goodwill.domain.model.Contributor
-import com.acc.goodwill.domain.model.CreateContributorResult
 import com.acc.goodwill.domain.model.DatabaseResult
 import com.acc.goodwill.domain.model.Product
+import com.acc.goodwill.presentation.navigation.AddProduct
+import com.acc.goodwill.presentation.navigation.Confirm
+import com.acc.goodwill.presentation.navigation.DonationRoute
+import com.acc.goodwill.presentation.navigation.SearchContribute
 import com.navigation.rememberNavigation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

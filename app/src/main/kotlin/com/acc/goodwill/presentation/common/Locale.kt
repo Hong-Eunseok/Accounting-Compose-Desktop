@@ -1,4 +1,4 @@
-package com.acc.goodwill.data.source.presentation.common
+package com.acc.goodwill.presentation.common
 
 interface Locale {
     /** Home Menu **/

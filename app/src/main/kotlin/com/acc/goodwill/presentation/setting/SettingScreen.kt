@@ -1,4 +1,4 @@
-package com.acc.goodwill.data.source.presentation.setting
+package com.acc.goodwill.presentation.setting
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*

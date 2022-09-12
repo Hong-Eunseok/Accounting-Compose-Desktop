@@ -1,4 +1,4 @@
-package com.acc.goodwill.data.source.presentation.navigation
+package com.acc.goodwill.presentation.navigation
 
 import com.navigation.Route
 

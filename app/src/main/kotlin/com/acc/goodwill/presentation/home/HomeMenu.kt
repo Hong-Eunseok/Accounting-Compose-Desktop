@@ -1,4 +1,4 @@
-package com.acc.goodwill.data.source.presentation.home
+package com.acc.goodwill.presentation.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -8,13 +8,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.acc.goodwill.data.source.presentation.navigation.HomeDonation
-import com.acc.goodwill.data.source.presentation.navigation.HomeReport
-import com.acc.goodwill.data.source.presentation.navigation.HomeSearch
-import com.acc.goodwill.data.source.presentation.common.LocaleComposition
-import com.acc.goodwill.data.source.presentation.common.homeMenuPadding
-import com.acc.goodwill.data.source.presentation.navigation.HomeStatistics
+import com.acc.goodwill.presentation.common.LocaleComposition
+import com.acc.goodwill.presentation.common.homeMenuPadding
+import com.acc.goodwill.presentation.navigation.HomeReport
+import com.acc.goodwill.presentation.navigation.HomeSearch
+import com.acc.goodwill.presentation.navigation.HomeStatistics
 import com.navigation.Route
+import com.acc.goodwill.presentation.navigation.HomeDonation as HomeDonation1
 
 
 @Composable
@@ -37,7 +37,7 @@ fun HomeMenu(
         Column(modifier = Modifier.padding(homeMenuPadding)) {
             HomeMenuButton(
                 text = locale.donation,
-                selected = currentRoute is HomeDonation,
+                selected = currentRoute is HomeDonation1,
                 onClick = navigateDonation
             )
             HomeMenuButton(

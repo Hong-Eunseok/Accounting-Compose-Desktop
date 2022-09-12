@@ -1,4 +1,4 @@
-package com.acc.goodwill.data.source.presentation.setting
+package com.acc.goodwill.presentation.setting
 
 import com.acc.goodwill.data.source.ContributorDao
 import com.acc.goodwill.data.source.DonationDao

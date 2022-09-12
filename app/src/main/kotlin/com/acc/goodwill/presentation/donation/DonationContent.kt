@@ -1,4 +1,4 @@
-package com.acc.goodwill.data.source.presentation.donation
+package com.acc.goodwill.presentation.donation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

@@ -1,4 +1,4 @@
-package com.acc.goodwill.data.source.presentation.donation
+package com.acc.goodwill.presentation.donation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState

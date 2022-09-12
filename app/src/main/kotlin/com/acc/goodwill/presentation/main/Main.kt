@@ -1,23 +1,23 @@
-package com.acc.goodwill.data.source.presentation.main
+package com.acc.goodwill.presentation.main
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import com.acc.common.ui.AppTheme
 import com.acc.di.AppComponent
-import com.acc.goodwill.data.source.presentation.common.LocaleComposition
-import com.acc.goodwill.data.source.presentation.common.SettingViewModel
-import com.acc.goodwill.data.source.presentation.contributor.ContributorScreen
-import com.acc.goodwill.data.source.presentation.donation.AddDonationScreen
-import com.acc.goodwill.data.source.presentation.donation.DetailDonationScreen
-import com.acc.goodwill.data.source.presentation.donation.DonationViewModel
-import com.acc.goodwill.data.source.presentation.home.HomeScreen
-import com.acc.goodwill.data.source.presentation.navigation.AddContributor
-import com.acc.goodwill.data.source.presentation.navigation.AddDonationRoute
-import com.acc.goodwill.data.source.presentation.navigation.DetailDonationRoute
-import com.acc.goodwill.data.source.presentation.navigation.MainScreen
 import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.Donate
 import com.acc.goodwill.domain.model.rememberContributor
+import com.acc.goodwill.presentation.common.LocaleComposition
+import com.acc.goodwill.presentation.common.SettingViewModel
+import com.acc.goodwill.presentation.contributor.ContributorScreen
+import com.acc.goodwill.presentation.donation.AddDonationScreen
+import com.acc.goodwill.presentation.donation.DetailDonationScreen
+import com.acc.goodwill.presentation.donation.DonationViewModel
+import com.acc.goodwill.presentation.home.HomeScreen
+import com.acc.goodwill.presentation.navigation.AddContributor
+import com.acc.goodwill.presentation.navigation.AddDonationRoute
+import com.acc.goodwill.presentation.navigation.DetailDonationRoute
+import com.acc.goodwill.presentation.navigation.MainScreen
 import com.navigation.rememberNavigation
 import javax.inject.Inject
 

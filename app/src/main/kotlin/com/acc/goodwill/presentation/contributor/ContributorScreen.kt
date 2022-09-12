@@ -1,4 +1,4 @@
-package com.acc.goodwill.data.source.presentation.contributor
+package com.acc.goodwill.presentation.contributor
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -12,11 +12,10 @@ import com.acc.common.components.OptionButton
 import com.acc.common.components.RowTextField
 import com.acc.common.ui.largePadding
 import com.acc.di.AppComponent
-import com.acc.goodwill.data.source.presentation.donation.DonationViewModel
 import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.CreateContributorResult
 import com.acc.goodwill.domain.model.CreateContributorState
-import com.acc.goodwill.domain.model.rememberContributor
+import com.acc.goodwill.presentation.donation.DonationViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject

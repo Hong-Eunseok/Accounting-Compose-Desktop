@@ -10,12 +10,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 repositories {
     mavenCentral()
     google()
-    maven {
-        url = uri("https://repo.spring.io/release")
-    }
-    maven {
-        url = uri("https://repository.jboss.org/maven2")
-    }
+    maven { url = uri("https://repo.spring.io/release") }
+    maven { url = uri("https://repository.jboss.org/maven2") }
 }
 
 @Suppress("DSL_SCOPE_VIOLATION")
@@ -36,27 +32,13 @@ dependencies {
     implementation(project(":utils"))
     implementation(project(":preferences"))
     implementation(compose.desktop.currentOs)
-    implementation(libs.junit)
-//    implementation(libs.sqlite)
-    implementation(libs.testCoroutines)
-//    implementation(libs.bundles.exposed)
-
-    // SQLite Database & Exposed Library
-    implementation("org.xerial:sqlite-jdbc:3.36.0.3")
     implementation(libs.bundles.exposed)
-//    implementation("org.jetbrains.exposed:exposed-core:0.37.3")
-//    implementation("org.jetbrains.exposed:exposed-dao:0.37.3")
-//    implementation("org.jetbrains.exposed:exposed-jdbc:0.37.3")
-
+    implementation(libs.lGoodDatePicker)
 
 //    implementation(libs.decompose)
+    implementation(libs.junit)
+    implementation(libs.testCoroutines)
     testImplementation(libs.truth)
-    // https://mvnrepository.com/artifact/androidx.compose.ui/ui-tooling-preview
-//    runtimeOnly("androidx.compose.ui:ui-tooling-preview:1.3.0-beta01")
-
-//    runtimeOnly(libs.preview.tooling.preview)
-//    runtimeOnly(libs.preview.tooling)
-
 }
 
 compose.desktop {
@@ -67,7 +49,7 @@ compose.desktop {
 
             modules("java.sql")
 
-            packageName = "acc"
+            packageName = "goodwillstore"
             packageVersion = "1.0.0"
         }
     }
