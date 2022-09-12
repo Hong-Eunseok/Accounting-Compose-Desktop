@@ -6,6 +6,7 @@ import com.acc.goodwill.data.source.table.ProductTable
 import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.Product
 import com.acc.goodwill.domain.model.Donate
+import com.acc.goodwill.domain.model.Parsing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.jetbrains.exposed.sql.JoinType
@@ -60,22 +61,41 @@ import javax.inject.Singleton
         return launchResult.getCompletionExceptionOrNull()
     }
 
-    suspend fun addDonationOnlyAsync(
-        donation: Donate.Donation, createTime: LocalDateTime, contributorId: Long, fromType: Int
-    ) {
-        suspendedTransactionAsync(Dispatchers.IO) {
-            DonationTable.insert { table ->
+    @OptIn(ExperimentalCoroutinesApi::class)
+    suspend fun addParsingDonation(contributorId: Long, parsing: Parsing): Throwable? {
+        val launchResult = suspendedTransactionAsync(Dispatchers.IO) {
+            val donationEntityId = DonationTable.insertAndGetId { table ->
                 table[this.contributorId] = contributorId
-                table[this.total] = donation.total
-                table[this.total_error] = donation.error
-                table[this.total_correct] = donation.correct
-                table[this.price] = donation.price
-                table[this.fromType] = fromType
-                table[this.organization] = 0
-                table[this.member] = true
-                table[this.createdAt] = createTime
+                table[this.total] = parsing.donation.total
+                table[this.total_error] = parsing.donation.total_error
+                table[this.total_correct] = parsing.donation.total_correct
+                table[this.price] = parsing.donation.price
+                table[this.fromType] = parsing.donation.fromType
+                table[this.organization] = parsing.donation.organization
+                table[this.member] = parsing.donation.member
+                table[this.optionalParsingData] = parsing.donation.optional
+                table[this.createdAt] = parsing.createAt
             }
-        }.await()
+
+            val donationId = donationEntityId.value
+
+            parsing.products.forEach { product ->
+                ProductTable.insert { table ->
+                    table[this.contributorId] = contributorId
+                    table[this.donationId] = donationId
+                    table[this.category] = product.category
+                    table[this.label] = product.label
+                    table[this.total] = product.total
+                    table[this.error] = product.error
+                    table[this.correct] = product.correct
+                    table[this.price] = product.price
+                    table[this.transferPrice] = product.transferPrice
+                    table[this.createdAt] = parsing.createAt
+                }
+            }
+        }
+        launchResult.await()
+        return launchResult.getCompletionExceptionOrNull()
     }
 
     suspend fun queryTodayDonation(): List<Donate> {

@@ -15,4 +15,5 @@ object DonationTable : LongIdTable() {
     val organization = integer("organization").index()
     val member = bool("member").index()
     val createdAt = datetime("created_at")
+    val optionalParsingData = text("optional_parsing_data").nullable()
 }
