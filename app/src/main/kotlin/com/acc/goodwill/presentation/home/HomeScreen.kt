@@ -1,19 +1,21 @@
 package com.acc.goodwill.presentation.home
 
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.di.AppComponent
 import com.acc.goodwill.domain.model.Donate
 import com.acc.goodwill.presentation.donation.DonationContent
 import com.acc.goodwill.presentation.navigation.*
+import com.acc.goodwill.presentation.report.ReportContent
 import com.acc.goodwill.presentation.setting.SettingScreen
 import com.navigation.rememberNavigation
 
@@ -62,7 +64,7 @@ fun HomeScreen(
                         )
                         HomeSearch -> EmptyScreen()
                         HomeStatistics -> EmptyScreen()
-                        HomeReport -> EmptyScreen()
+                        HomeReport -> ReportContent()
                         HomeSetting -> SettingScreen(appComponent).SettingsScreen { navigation.popLast() }
                     }
                 }
@@ -71,6 +73,12 @@ fun HomeScreen(
     }
 }
 
+@Composable
+fun HomeContent(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxHeight().background(Color.Gray)) {
+        content()
+    }
+}
 
 @Composable
 fun EmptyScreen() {
