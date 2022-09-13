@@ -31,18 +31,6 @@ class CreateProductState {
         return validCustom == Validate.VALID
     }
 
-    val valid by derivedStateOf {
-        when {
-            selectedIndex == -1 -> Validate.CATEGORY
-            label.isEmpty() -> Validate.LABEL
-            total.isEmpty() -> Validate.TOTAL
-            error.isEmpty() -> Validate.ERROR
-            price.isEmpty() -> Validate.PRICE
-            total.toUInt() < error.toUInt() -> Validate.WRONG_TOTAL
-            else -> Validate.VALID
-        }
-    }
-
     fun toProduct(): Product {
         return Product(
             category = Product.CATEGORIES.indexOf(category),

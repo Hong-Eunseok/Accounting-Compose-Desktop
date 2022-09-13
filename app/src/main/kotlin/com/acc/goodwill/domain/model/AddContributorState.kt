@@ -16,13 +16,17 @@ class CreateContributorState {
     var registrationType by mutableStateOf(-1)
     var recommand by mutableStateOf("")
 
-    val valid by derivedStateOf {
-        when {
+    var validCustom by mutableStateOf(Validator.NAME_ERROR)
+
+    fun checkValid(name: String): Boolean {
+        validCustom = when {
             name.isEmpty() -> Validator.NAME_ERROR
             phoneNumberValidator() -> Validator.PHONE_NUMBER_ERROR
             registrationNumberValidator() -> Validator.REGISTRATION_NUMBER_ERROR
+            recommand.isEmpty() -> Validator.RECOMMEND
             else -> Validator.VALID
         }
+        return validCustom == Validator.VALID
     }
 
     fun init() {
@@ -40,7 +44,7 @@ class CreateContributorState {
         address = contributor.address.orEmpty()
         registrationNumber = contributor.registrationNumber.orEmpty()
         registrationType = contributor.registrationType
-        recommand = RECOMMAND[contributor.recommend]
+        recommand = RECOMMEND[contributor.recommend]
     }
 
     private fun phoneNumberValidator(): Boolean {
@@ -60,7 +64,7 @@ class CreateContributorState {
     }
 
     enum class Validator {
-        VALID, NAME_ERROR, PHONE_NUMBER_ERROR, REGISTRATION_NUMBER_ERROR
+        VALID, NAME_ERROR, PHONE_NUMBER_ERROR, REGISTRATION_NUMBER_ERROR, RECOMMEND
     }
 
     private fun isBisNum(): Boolean {
@@ -123,7 +127,7 @@ class CreateContributorState {
     }
 
     companion object {
-        val RECOMMAND = listOf("교인", "인터넷", "지인소개", "기타")
+        val RECOMMEND = listOf("교인", "인터넷", "지인소개", "기타")
     }
 }
 

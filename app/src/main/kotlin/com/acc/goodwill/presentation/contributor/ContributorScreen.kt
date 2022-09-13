@@ -7,10 +7,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.common.components.OptionButton
 import com.acc.common.components.RowTextField
+import com.acc.common.components.SwingsRowTextField
 import com.acc.common.ui.largePadding
+import com.acc.common.ui.mediumPadding
 import com.acc.di.AppComponent
 import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.CreateContributorResult
@@ -20,12 +23,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
+import javax.swing.JTextField
 
 
 class ContributorScreen(appComponent: AppComponent) {
 
     @Named("main") @Inject lateinit var mainScope: CoroutineScope
     @Inject lateinit var viewModel: DonationViewModel
+
+    private val nameTextField = JTextField("")
+    private val addressTextField = JTextField("")
+
     init {
         appComponent.inject(this)
     }
@@ -64,15 +72,10 @@ class ContributorScreen(appComponent: AppComponent) {
         ) {
             Box(modifier = Modifier.fillMaxSize().padding(largePadding)) {
                 Column {
-                    RowTextField(
-                        value = contributor.name,
-                        setValue = {
-                            contributor.name = it
-                        },
+                    SwingsRowTextField(
+                        nameTextField,
                         label = "이름",
-                        modifier = Modifier.padding(bottom = largePadding),
-                        deleteLastChar = { contributor.name = contributor.name.substring(0 until contributor.name.length - 1) },
-                        errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.NAME_ERROR }?.run { "이름을 입력하세요 (필수 입력)" }
+                        errorMessage = takeIf { contributor.validCustom == CreateContributorState.Validator.NAME_ERROR }?.run { "이름을 입력하세요 (필수 입력)" }
                     )
 
                     RowTextField(
@@ -82,7 +85,8 @@ class ContributorScreen(appComponent: AppComponent) {
                         },
                         label = "연락처",
                         modifier = Modifier.padding(bottom = largePadding),
-                        errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.PHONE_NUMBER_ERROR }?.run { "전화번호가 잘못 입력되었습니다." }
+                        errorMessage = takeIf { contributor.validCustom == CreateContributorState.Validator.PHONE_NUMBER_ERROR }?.run { "전화번호가 잘못 입력되었습니다." },
+                        focusChanged = { contributor.checkValid(nameTextField.text) }
                     )
 
                     RowTextField(
@@ -92,43 +96,52 @@ class ContributorScreen(appComponent: AppComponent) {
                         },
                         label = "주민/사업자 번호",
                         modifier = Modifier.padding(bottom = largePadding),
-                        errorMessage = takeIf { contributor.valid == CreateContributorState.Validator.REGISTRATION_NUMBER_ERROR }?.run { "주민/사업자 번호가 잘못입력하였습니다." }
+                        errorMessage = takeIf { contributor.validCustom == CreateContributorState.Validator.REGISTRATION_NUMBER_ERROR }?.run { "주민/사업자 번호가 잘못입력하였습니다." },
+                        focusChanged = { contributor.checkValid(nameTextField.text) }
                     )
 
-                    RowTextField(
-                        value = contributor.address,
-                        setValue = { contributor.address = it },
+                    SwingsRowTextField(
+                        addressTextField,
                         label = "주소",
-                        modifier = Modifier.padding(bottom = largePadding),
-                        deleteLastChar = { contributor.address = contributor.address.substring(0 until contributor.address.length - 1) }
                     )
 
                     Text(text = "가입경로", modifier = Modifier.padding(end = largePadding))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        CreateContributorState.RECOMMAND.forEach { text ->
+                        CreateContributorState.RECOMMEND.forEach { text ->
                             OptionButton(
                                 text = text,
                                 selectedOption = contributor.recommand,
-                                onClick = { contributor.recommand = text }
+                                onClick = {
+                                    contributor.recommand = text
+                                    contributor.checkValid(nameTextField.text)
+                                }
                             )
                         }
+                    }
+                    if (contributor.validCustom == CreateContributorState.Validator.RECOMMEND) {
+                        Text(
+                            text = "가입경로를 선택해주세요.",
+                            color = com.acc.common.ui.error,
+                            style = MaterialTheme.typography.caption,
+                            modifier = Modifier.padding(start = 140.dp, bottom = mediumPadding)
+                        )
                     }
 
                     Row {
                         Spacer(modifier = Modifier.weight(1f))
                         Button(
                             onClick = {
-                                if (modifyContributor == null) {
-                                    viewModel.addContributor(contributor)
-                                } else {
-                                    viewModel.modifyContributor(
-                                        contributor,
-                                        modifyContributor.primaryKey.value
-                                    )
+                                if (contributor.checkValid(nameTextField.text)) {
+                                    if (modifyContributor == null) {
+                                        viewModel.addContributor(contributor)
+                                    } else {
+                                        viewModel.modifyContributor(
+                                            contributor,
+                                            modifyContributor.primaryKey.value
+                                        )
+                                    }
                                 }
-
                             },
-                            enabled = contributor.valid == CreateContributorState.Validator.VALID,
                             modifier = Modifier.padding(horizontal = largePadding)
                         ) {
                             Text(registerString)

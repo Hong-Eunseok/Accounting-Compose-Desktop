@@ -40,7 +40,7 @@ class DonationViewModel @Inject constructor(
                 contributor.address,
                 contributor.registrationNumber,
                 contributor.registrationType,
-                CreateContributorState.RECOMMAND.indexOf(contributor.recommand)
+                CreateContributorState.RECOMMEND.indexOf(contributor.recommand)
             )
             _result.emit(CreateContributorResult.SUCCESS)
             println("addContributor success")
@@ -56,7 +56,7 @@ class DonationViewModel @Inject constructor(
                 contributor.address,
                 contributor.registrationNumber,
                 contributor.registrationType,
-                CreateContributorState.RECOMMAND.indexOf(contributor.recommand),
+                CreateContributorState.RECOMMEND.indexOf(contributor.recommand),
                 id
             )
             _result.emit(CreateContributorResult.SUCCESS)

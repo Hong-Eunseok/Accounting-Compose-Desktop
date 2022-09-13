@@ -187,7 +187,7 @@ fun ProductForm(addProduct: (Product) -> Unit) {
             setValue = { value -> if (value.length <= 9) product.price = value.filter { it.isDigit() } },
             label = "가격",
             modifier = Modifier.padding(bottom = largePadding),
-            errorMessage = takeIf { product.valid == CreateProductState.Validate.PRICE }
+            errorMessage = takeIf { product.validCustom == CreateProductState.Validate.PRICE }
                 ?.run { "가격을 입력해주세요." },
             enterAction = {
                 if (product.validCustom == CreateProductState.Validate.VALID) {
