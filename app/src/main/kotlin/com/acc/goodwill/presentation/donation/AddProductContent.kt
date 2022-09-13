@@ -13,16 +13,24 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.SwingPanel
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.common.components.AppRowActionsWithoutModify
 import com.acc.common.components.RowTextField
+import com.acc.common.components.SwingsRowTextField
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.mediumPadding
 import com.acc.goodwill.domain.model.CreateProductState
 import com.acc.goodwill.domain.model.Product
 import com.acc.goodwill.domain.model.rememberProduct
+import java.awt.Dimension
+import javax.swing.JPanel
+import javax.swing.JTextField
 
 @Composable
 fun AddProductContent(
@@ -81,10 +89,15 @@ fun AddProductContent(
     }
 }
 
+private val productTextField = JTextField("")
+
 @Composable
 fun ProductForm(addProduct: (Product) -> Unit) {
     var showCompanies by remember { mutableStateOf(false) }
     val product = rememberProduct()
+
+    val density = LocalDensity.current
+    val rgb: Int = MaterialTheme.colors.background.toArgb()
 
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -104,13 +117,20 @@ fun ProductForm(addProduct: (Product) -> Unit) {
                 }
                 DropdownMenu(
                     expanded = showCompanies,
-                    onDismissRequest = { showCompanies = false }
+                    onDismissRequest = { showCompanies = false },
+                    modifier = Modifier.padding(top = 80.dp)
                 ) {
                     Product.CATEGORIES.forEachIndexed { index, value ->
                         DropdownMenuItem(
                             onClick = {
                                 showCompanies = false
                                 product.setCategoryWithIndex(value, index)
+                                productTextField.text = if (index in 0..1) {
+                                    product.category
+                                } else {
+                                    ""
+                                }
+                                product.checkValid(productTextField.text)
                             }
                         ) {
                             Text(text = value)
@@ -119,15 +139,19 @@ fun ProductForm(addProduct: (Product) -> Unit) {
                 }
             }
         }
+        if (product.validCustom == CreateProductState.Validate.CATEGORY) {
+            Text(
+                text = "카테고리를 선택해주세요.",
+                color = com.acc.common.ui.error,
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(start = 140.dp, bottom = mediumPadding)
+            )
+        }
 
-        RowTextField(
-            value = product.label,
-            setValue = { product.label = it },
-            label = "기증품목",
-            modifier = Modifier.padding(bottom = largePadding),
-            errorMessage = takeIf { product.valid == CreateProductState.Validate.LABEL }
-                ?.run { "기증 품목을 입력해주세요." },
-            deleteLastChar = { product.label = product.label.substring(0 until product.label.length - 1) }
+        SwingsRowTextField(
+            productTextField,
+            "기증품목",
+            errorMessage = takeIf { product.validCustom == CreateProductState.Validate.LABEL }?.run { "기증 품목을 입력해주세요." }
         )
 
         RowTextField(
@@ -137,11 +161,12 @@ fun ProductForm(addProduct: (Product) -> Unit) {
             },
             label = "수량",
             modifier = Modifier.padding(bottom = largePadding),
-            errorMessage = when (product.valid) {
+            errorMessage = when (product.validCustom) {
                 CreateProductState.Validate.TOTAL -> "수량을 입력해주세요."
                 CreateProductState.Validate.WRONG_TOTAL -> "수량과 불량수를 확인해주세요."
                 else -> null
-            }
+            },
+            focusChanged = { product.checkValid(productTextField.text) }
         )
 
         RowTextField(
@@ -149,11 +174,12 @@ fun ProductForm(addProduct: (Product) -> Unit) {
             setValue = { value -> if (value.length <= 9) product.error = value.filter { it.isDigit() } },
             label = "불량",
             modifier = Modifier.padding(bottom = largePadding),
-            errorMessage = when (product.valid) {
+            errorMessage = when (product.validCustom) {
                 CreateProductState.Validate.ERROR -> "불량을 입력해주세요."
                 CreateProductState.Validate.WRONG_TOTAL -> "수량과 불량을 확인해주세요."
                 else -> null
-            }
+            },
+            focusChanged = { product.checkValid(productTextField.text) }
         )
 
         RowTextField(
@@ -164,19 +190,26 @@ fun ProductForm(addProduct: (Product) -> Unit) {
             errorMessage = takeIf { product.valid == CreateProductState.Validate.PRICE }
                 ?.run { "가격을 입력해주세요." },
             enterAction = {
-                if (product.valid == CreateProductState.Validate.VALID) {
+                if (product.validCustom == CreateProductState.Validate.VALID) {
                     addProduct(product.toProduct())
                     product.init()
                 }
-            }
+            },
+            focusChanged = { product.checkValid(productTextField.text) }
         )
 
         Spacer(modifier = Modifier.height(largePadding))
 
         Button(
-            onClick = { addProduct(product.toProduct()); product.init() },
+            onClick = {
+                product.label = productTextField.text
+                if (product.checkValid(productTextField.text)) {
+                    addProduct(product.toProduct())
+                    product.init()
+                    productTextField.text = ""
+                }
+            },
             modifier = Modifier.widthIn(min = 200.dp),
-            enabled = product.valid == CreateProductState.Validate.VALID
         ) {
             Text("추가")
         }
@@ -203,7 +236,7 @@ fun ProductResult(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(if (selectedIndex == index) MaterialTheme.colors.primary else Color.White)
+                    .background(Color.White)
                     .selectable(
                         selected = index == selectedIndex,
                         onClick = { setValue(index) }

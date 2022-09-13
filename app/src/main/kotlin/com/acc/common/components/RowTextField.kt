@@ -30,7 +30,8 @@ fun RowTextField(
     errorMessage: String? = null,
     modifier: Modifier = Modifier,
     deleteLastChar: () -> Unit = {},
-    enterAction: () -> Unit = {}
+    enterAction: () -> Unit = {},
+    focusChanged: () -> Unit = {},
 ) {
     var beforeText by remember { mutableStateOf("") }
 
@@ -69,6 +70,9 @@ fun RowTextField(
                             }
                         }
                         false
+                    }
+                    .onFocusChanged {
+                        focusChanged()
                     }
             )
         }

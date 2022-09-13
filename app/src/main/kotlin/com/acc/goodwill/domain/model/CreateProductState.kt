@@ -16,6 +16,21 @@ class CreateProductState {
     var price by mutableStateOf("")
     var selectedIndex by mutableStateOf(-1)
 
+    var validCustom by mutableStateOf(Validate.CATEGORY)
+
+    fun checkValid(label: String): Boolean {
+        validCustom = when {
+            selectedIndex == -1 -> Validate.CATEGORY
+            label.isEmpty() -> Validate.LABEL
+            total.isEmpty() -> Validate.TOTAL
+            error.isEmpty() -> Validate.ERROR
+            price.isEmpty() -> Validate.PRICE
+            total.toUInt() < error.toUInt() -> Validate.WRONG_TOTAL
+            else -> Validate.VALID
+        }
+        return validCustom == Validate.VALID
+    }
+
     val valid by derivedStateOf {
         when {
             selectedIndex == -1 -> Validate.CATEGORY
@@ -50,11 +65,6 @@ class CreateProductState {
     fun setCategoryWithIndex(category: String, index: Int) {
         this.category = category
         selectedIndex = index
-        if (category == "도서") {
-            label = "도서"
-        } else if (category == "의류") {
-            label = "의류"
-        }
     }
 
     enum class Validate {
