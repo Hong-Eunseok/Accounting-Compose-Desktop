@@ -16,17 +16,26 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.SwingPanel
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.*
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.common.ui.*
 import com.acc.di.AppComponent
 import com.acc.goodwill.domain.model.Contributor
+import java.awt.Dimension
 import javax.inject.Inject
+import javax.swing.JPanel
+import javax.swing.JTextField
+
 
 class SearchContributorContent(appComponent: AppComponent) {
     @Inject lateinit var viewModel: DonationViewModel
+
+    private val searchFiled: JTextField = JTextField("")
 
     init {
         appComponent.inject(this)
@@ -41,10 +50,9 @@ class SearchContributorContent(appComponent: AppComponent) {
         searchResult: List<Contributor>,
         searchKeyword: (String) -> Unit
     ) {
-
-        var keyword by remember { mutableStateOf("") }
+        val rgb: Int = MaterialTheme.colors.background.toArgb()
         var selectedIndex by remember { mutableStateOf(-1) }
-
+        val density = LocalDensity.current
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
@@ -68,34 +76,37 @@ class SearchContributorContent(appComponent: AppComponent) {
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    BasicTextField(
-                        value = keyword,
-                        onValueChange = { keyword = it },
-                        enabled = true,
-                        singleLine = true,
-                        textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colors.onBackground),
+                    Box(
                         modifier = Modifier
-                            .border(
-                                width = 1.25.dp,
-                                color = MaterialTheme.colors.primary.copy(alpha = 0.7f),
-                                shape = RoundedCornerShape(4.dp)
-                            )
-                            .padding(smallPadding)
-                            .weight(0.3f)
-                            .onKeyEvent { keyEvent ->
-                                if (keyEvent.key != Key.Enter) return@onKeyEvent false
-                                if (keyEvent.type == KeyEventType.KeyUp && keyword.isNotEmpty()) {
-                                    searchKeyword(keyword)
-                                    true
-                                } else {
-                                    false
+                            .fillMaxWidth(0.8f)
+                            .height(40.dp)
+                            .onSizeChanged {
+                                var width: Int
+                                var height: Int
+                                with(density) {
+                                    width = it.width.toDp().value.toInt()
+                                    height = it.height.toDp().value.toInt()
+                                }
+                                searchFiled.preferredSize = Dimension(width, height)
+                            }
+                    ) {
+                        SwingPanel(
+                            factory = {
+                                JPanel().apply {
+                                    background = java.awt.Color(rgb)
+                                    add(searchFiled.apply {
+                                        addActionListener {
+                                            if (searchFiled.text.isNotEmpty()) searchKeyword(searchFiled.text)
+                                        }
+                                    })
                                 }
                             }
-                    )
+                        )
+                    }
+
                     Spacer(modifier = Modifier.width(smallerPadding))
                     Button(
-                        onClick = { searchKeyword(keyword) },
-                        enabled = keyword.isNotEmpty()
+                        onClick = { if (searchFiled.text.isNotEmpty()) searchKeyword(searchFiled.text) },
                     ) {
                         Text("검색")
                     }
