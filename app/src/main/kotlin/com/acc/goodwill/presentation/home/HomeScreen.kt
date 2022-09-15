@@ -64,7 +64,7 @@ fun HomeScreen(
                         )
                         HomeSearch -> EmptyScreen()
                         HomeStatistics -> EmptyScreen()
-                        HomeReport -> ReportContent()
+                        HomeReport -> ReportContent(appComponent).ReportContent()
                         HomeSetting -> SettingScreen(appComponent).SettingsScreen { navigation.popLast() }
                     }
                 }

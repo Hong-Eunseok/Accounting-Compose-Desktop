@@ -34,6 +34,7 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(libs.bundles.exposed)
     implementation(libs.lGoodDatePicker)
+    implementation(libs.excelkt)
 
 //    implementation(libs.decompose)
     implementation(libs.junit)

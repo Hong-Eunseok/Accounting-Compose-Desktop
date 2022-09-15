@@ -2,6 +2,7 @@ package com.acc.goodwill.presentation.report
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -11,84 +12,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.SwingPanel
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
+import com.acc.di.AppComponent
 import java.awt.BorderLayout
 import java.awt.Dimension
+import javax.inject.Inject
 import javax.swing.JPanel
 import javax.swing.JTextField
 
-val test = JTextField("")
-@Composable
-fun ReportContent() {
-    val rgb: Int = MaterialTheme.colors.background.toArgb()
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background),
-    ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+class ReportContent(appComponent: AppComponent) {
+
+    @Inject lateinit var reportViewModel: ReportViewModel
+
+    init {
+        appComponent.inject(this)
+    }
+
+    @Composable
+    fun ReportContent() {
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background),
         ) {
-            Text("hello report")
-            Box(
-                contentAlignment = Alignment.BottomEnd,
-                modifier = Modifier.fillMaxWidth().height(40.dp)
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(
-                    modifier = Modifier.width(100.dp).height(40.dp)
+                Button(
+                    onClick = { reportViewModel.makeMonthReport() }
                 ) {
-                    SwingPanel(
-                        factory = {
-                            JPanel().apply {
-                                background = java.awt.Color(rgb)
-                                add(
-                                    test.apply { preferredSize = Dimension(100, 40) },
-                                    BorderLayout.EAST
-                                )
-                            }
-                        }
-                    )
-            }
-
-
-
-
-//                SwingPanel(
-////                    factory = {
-////                        JPanel().apply {
-//////                            val datePicker1 = DatePicker()
-//////                            datePicker1.addDateChangeListener { println(datePicker1.date) }
-////                            val jtextFiled1 = JTextField("")
-//////                            val jtextFiled2 = JTextField("")
-////                            jtextFiled1.preferredSize = Dimension(100, 40)
-//////                            jtextFiled2.preferredSize = Dimension(100, 50)
-//////                            jtextFiled2.addActionListener {
-//////                                println(jtextFiled2.text)
-//////                            }
-////                            add(jtextFiled1, BorderLayout.CENTER)
-//////                            add(jtextFiled2)
-////                        }
-////                    },
-//                    factory = {
-//                        ComposePanel().apply {
-//                            setContent {
-//                                Box {
-//
-//                                }
-//                            }
-//                            val jtextFiled1 = JTextField("")
-//                            jtextFiled1.preferredSize = Dimension(100, 40)
-//                            add(jtextFiled1, BorderLayout.CENTER)
-//                        }
-//                    },
-//                )
+                    Text("click")
+                }
             }
 
         }
-
-
-
     }
+
 }
 
 /** initializeComponents, This creates the user interface for the basic demo.  */

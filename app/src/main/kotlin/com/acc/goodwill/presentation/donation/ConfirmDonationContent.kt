@@ -16,6 +16,7 @@ import com.acc.common.components.CheckButton
 import com.acc.common.components.OptionButton
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.mediumPadding
+import com.acc.goodwill.domain.model.Donate
 import com.acc.goodwill.domain.model.Product
 
 @Composable
@@ -25,8 +26,8 @@ fun ConfirmDonationContent(
     navigateConfirm: (Triple<Int, Int, Boolean>) -> Unit
 ) {
 
-    val from = listOf("기증", "수거", "기타")
-    val organization = listOf("개인", "단체")
+    val from = Donate.FROM_TYPE
+    val organization = Donate.ORGANIZATION
     val (selectedFrom, onFromSelected) = remember { mutableStateOf(from[0]) }
     val (selectedOrganization, onOrganizationSelected) = remember { mutableStateOf(organization[0]) }
     val (checked, onChecked) = remember { mutableStateOf(true) }

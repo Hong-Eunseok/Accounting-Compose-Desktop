@@ -3,10 +3,8 @@ package com.acc.goodwill.data.source
 import com.acc.goodwill.data.source.table.ContributorTable
 import com.acc.goodwill.data.source.table.DonationTable
 import com.acc.goodwill.data.source.table.ProductTable
-import com.acc.goodwill.domain.model.Contributor
-import com.acc.goodwill.domain.model.Product
-import com.acc.goodwill.domain.model.Donate
-import com.acc.goodwill.domain.model.Parsing
+import com.acc.goodwill.domain.model.*
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.jetbrains.exposed.sql.JoinType
@@ -15,6 +13,7 @@ import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import java.time.LocalDateTime
+import java.util.Calendar
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -106,13 +105,69 @@ import javax.inject.Singleton
         println("queryTodayDonation before $before")
         println("queryTodayDonation after $after")
 
-        val data = suspendedTransactionAsync(Dispatchers.IO) {
-            DonationTable.join(ContributorTable, JoinType.LEFT, DonationTable.contributorId, ContributorTable.id)
+        val data = queryDonationBetweenAsync(before, after)
+        val result = data.await()
+        println("queryTodayDonation result count ${result.size}")
+        return result
+    }
+
+    suspend fun queryProducts(donationId: Long): List<Product> {
+        val data = queryProductsAsync(donationId)
+        val result = data.await()
+        println("queryTodayDonation result count ${result.size}")
+        return result
+    }
+
+    suspend fun queryMonth(): List<ExcelData> {
+        val now = LocalDateTime.now()
+        val cal = Calendar.getInstance()
+        cal.getActualMaximum(Calendar.DAY_OF_MONTH)
+        val monthBegin = now.withMonth(8).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
+        val monthAfter = now.withMonth(9).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
+        println("month begin $monthBegin")
+        println("month after $monthAfter")
+        val data = queryDonationBetweenAsync(monthBegin, monthAfter)
+
+        val donation = data.await()
+
+        return donation.map {
+            val products = queryProductsAsync(it.donateId.value)
+            ExcelData(it, products.await())
+        }
+    }
+
+    private suspend fun queryProductsAsync(donationId: Long): Deferred<List<Product>> {
+        return suspendedTransactionAsync(Dispatchers.IO) {
+            ProductTable.select {
+                ProductTable.donationId eq donationId
+            }.map {
+                Product(
+                    category = it[ProductTable.category],
+                    label = it[ProductTable.label],
+                    total = it[ProductTable.total].toUInt(),
+                    error = it[ProductTable.error].toUInt(),
+                    price = it[ProductTable.price],
+                    correct = it[ProductTable.correct].toUInt(),
+                    transferPrice = it[ProductTable.transferPrice]
+                )
+            }
+        }
+    }
+
+    private suspend fun queryDonationBetweenAsync(
+        before: LocalDateTime,
+        after: LocalDateTime
+    ): Deferred<List<Donate>> {
+        return suspendedTransactionAsync(Dispatchers.IO) {
+            DonationTable
+                .join(ContributorTable, JoinType.LEFT, DonationTable.contributorId, ContributorTable.id)
                 .select {
                     DonationTable.createdAt.between(before, after)
                 }
+                .orderBy(DonationTable.createdAt)
                 .map {
                     Donate(
+                        donateId = it[DonationTable.id],
                         contributor = if (it[DonationTable.contributorId] == -1L) {
                             null
                         } else {
@@ -130,36 +185,16 @@ import javax.inject.Singleton
                             error = it[DonationTable.total_error],
                             correct = it[DonationTable.total_correct],
                             price = it[DonationTable.price],
+                            createAt = it[DonationTable.createdAt],
+                            optionParsingData = it[DonationTable.optionalParsingData],
+                            organization = it[DonationTable.organization],
+                            member = it[DonationTable.member],
+                            fromType = it[DonationTable.fromType]
                         ),
                         primaryKey = it[DonationTable.id]
                     )
                 }
         }
-
-        val result = data.await()
-        println("queryTodayDonation result count ${result.size}")
-        return result
-    }
-
-    suspend fun queryProducts(donationId: Long): List<Product> {
-        val data = suspendedTransactionAsync(Dispatchers.IO) {
-            ProductTable.select {
-                ProductTable.donationId eq donationId
-            }.map {
-                Product(
-                    category = it[ProductTable.category],
-                    label = it[ProductTable.label],
-                    total = it[ProductTable.total].toUInt(),
-                    error = it[ProductTable.error].toUInt(),
-                    price = it[ProductTable.price],
-                    correct = it[ProductTable.correct].toUInt(),
-                    transferPrice = it[ProductTable.transferPrice]
-                )
-            }
-        }
-        val result = data.await()
-        println("queryTodayDonation result count ${result.size}")
-        return result
     }
 
 }
