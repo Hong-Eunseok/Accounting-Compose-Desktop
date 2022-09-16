@@ -24,6 +24,7 @@ fun HomeScreen(
     appComponent: AppComponent,
     navigateAddDonation: () -> Unit,
     navigateDetailDonation: (Donate) -> Unit,
+    navigateSetting: () -> Unit,
     todayDonations: List<Donate>
 ) {
 
@@ -37,7 +38,7 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text(text = "수원굿윌스토어", style = MaterialTheme.typography.h3) },
                 actions = {
-                    IconButton(onClick = { navigation.navigate(HomeSetting) }) { AppIcon(imageVector = Icons.Default.Settings) }
+                    IconButton(onClick = { navigateSetting() }) { AppIcon(imageVector = Icons.Default.Settings) }
                 }
             )
         }
@@ -65,7 +66,6 @@ fun HomeScreen(
                         HomeSearch -> EmptyScreen()
                         HomeStatistics -> EmptyScreen()
                         HomeReport -> ReportContent(appComponent).ReportContent()
-                        HomeSetting -> SettingScreen(appComponent).SettingsScreen { navigation.popLast() }
                     }
                 }
             }

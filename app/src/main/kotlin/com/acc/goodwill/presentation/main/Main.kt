@@ -14,10 +14,8 @@ import com.acc.goodwill.presentation.donation.AddDonationScreen
 import com.acc.goodwill.presentation.donation.DetailDonationScreen
 import com.acc.goodwill.presentation.donation.DonationViewModel
 import com.acc.goodwill.presentation.home.HomeScreen
-import com.acc.goodwill.presentation.navigation.AddContributor
-import com.acc.goodwill.presentation.navigation.AddDonationRoute
-import com.acc.goodwill.presentation.navigation.DetailDonationRoute
-import com.acc.goodwill.presentation.navigation.MainScreen
+import com.acc.goodwill.presentation.navigation.*
+import com.acc.goodwill.presentation.setting.SettingScreen
 import com.navigation.rememberNavigation
 import javax.inject.Inject
 
@@ -57,6 +55,9 @@ class Main(private val appComponent: AppComponent) {
                                 mainDonate = it
                                 navigation.navigate(DetailDonationRoute)
                             },
+                            navigateSetting = {
+                                navigation.navigate(HomeSetting)
+                            },
                             todayDonations
                         )
                     }
@@ -89,6 +90,7 @@ class Main(private val appComponent: AppComponent) {
                         },
                         mainDonate
                     )
+                    HomeSetting -> SettingScreen(appComponent).SettingsScreen { navigation.popLast() }
                 }
 
             }

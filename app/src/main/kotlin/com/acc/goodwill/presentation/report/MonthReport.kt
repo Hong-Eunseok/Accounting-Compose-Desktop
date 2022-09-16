@@ -90,7 +90,7 @@ fun Sheet.weeklyReport(
             calendar.set(donation.createAt.year, donation.createAt.monthValue - 1, donation.createAt.dayOfMonth)
             val before = lastWeek.getAndSet(calendar.get(Calendar.WEEK_OF_YEAR))
             if (before != -1 && lastWeek.get() != before) {
-                sumTitle(lastRow, indexWeek, priceStyle)
+                sumTitle(lastRow, indexWeek, priceStyle, before)
             }
 
             val index = indexWeek.incrementAndGet()
@@ -102,7 +102,7 @@ fun Sheet.weeklyReport(
     }
 
     if (lastWeek.get() != -1) {
-        sumTitle(lastRow, indexWeek, priceStyle)
+        sumTitle(lastRow, indexWeek, priceStyle, lastWeek.get())
     }
 
 }
@@ -110,7 +110,8 @@ fun Sheet.weeklyReport(
 private fun Sheet.sumTitle(
     lastRow: AtomicInteger,
     indexWeek: AtomicInteger,
-    priceStyle: XSSFCellStyle
+    priceStyle: XSSFCellStyle,
+    week: Int
 ) {
     val sumRow = lastRow.addAndGet(indexWeek.get() + 1)
     xssfSheet.addMergedRegion(CellRangeAddress(sumRow, sumRow, 0, 9))
@@ -118,7 +119,7 @@ private fun Sheet.sumTitle(
         init = {
             xssfRow.rowNum = sumRow
             cell(
-                "${indexWeek}주차 최종합계",
+                "${week}주차 최종합계",
                 createCellStyle {
                     setFont(
                         createFont {

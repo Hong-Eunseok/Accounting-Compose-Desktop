@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.acc.common.components.AppIcon
 import com.acc.di.AppComponent
 import com.acc.goodwill.domain.model.SnackbarResult
@@ -74,12 +75,13 @@ class ReportContent(appComponent: AppComponent) {
                         onDismissRequest = { showCompanies = false },
                         modifier = Modifier
                     ) {
-                        years.forEachIndexed { index, value ->
+                        years.forEach { value ->
                             DropdownMenuItem(
                                 onClick = {
                                     selectedYear = value
                                     showCompanies = false
-                                }
+                                },
+                                modifier = Modifier.background(if (value == selectedYear) MaterialTheme.colors.primary.copy(alpha = 0.8f) else Color.White)
                             ) {
                                 Text(text = value)
                             }
