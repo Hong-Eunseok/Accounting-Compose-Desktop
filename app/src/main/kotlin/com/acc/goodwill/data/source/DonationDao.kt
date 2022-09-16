@@ -118,22 +118,36 @@ import javax.inject.Singleton
         return result
     }
 
-    suspend fun queryMonth(): List<ExcelData> {
-        val now = LocalDateTime.now()
-        val cal = Calendar.getInstance()
-        cal.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val monthBegin = now.withMonth(8).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
-        val monthAfter = now.withMonth(9).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0)
-        println("month begin $monthBegin")
-        println("month after $monthAfter")
-        val data = queryDonationBetweenAsync(monthBegin, monthAfter)
-
-        val donation = data.await()
-
-        return donation.map {
-            val products = queryProductsAsync(it.donateId.value)
-            ExcelData(it, products.await())
+    suspend fun queryMonths(year: Int): List<MonthlyStatics> {
+        val results = mutableListOf<MonthlyStatics>()
+        for (i in 1..12) {
+            val (before, after) = betweenDate(year, i)
+            println("between date $before ~ $after")
+            results.add(
+                MonthlyStatics(
+                    i,
+                    queryDonationBetweenAsync(before, after).await().map {
+                        DonationStatics(it, queryProductsAsync(it.donateId.value).await())
+                    }
+                )
+            )
         }
+        return results
+    }
+
+    private fun betweenDate(
+        year: Int,
+        month: Int,
+        now: LocalDateTime = LocalDateTime.now()
+    ): Pair<LocalDateTime, LocalDateTime> {
+        val calendar = Calendar.getInstance()
+        calendar.set(year, month - 1, 1)
+        val endDay: Int = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        println("month : $month endDay : $endDay")
+        return now.withYear(year).withMonth(month).withDayOfMonth(1)
+            .withHour(0).withMinute(0).withSecond(0).withNano(0) to
+                now.withYear(year).withMonth(month).withDayOfMonth(endDay)
+                    .withHour(23).withMinute(59).withSecond(0).withNano(0)
     }
 
     private suspend fun queryProductsAsync(donationId: Long): Deferred<List<Product>> {

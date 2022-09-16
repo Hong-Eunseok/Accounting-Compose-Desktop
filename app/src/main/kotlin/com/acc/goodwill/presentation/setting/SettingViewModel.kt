@@ -2,10 +2,10 @@ package com.acc.goodwill.presentation.setting
 
 import com.acc.goodwill.data.source.ContributorDao
 import com.acc.goodwill.data.source.DonationDao
-import com.acc.goodwill.domain.model.Contributor
-import com.acc.goodwill.domain.model.Donate
-import com.acc.goodwill.domain.model.Parsing
+import com.acc.goodwill.domain.model.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
@@ -23,6 +23,9 @@ class SettingViewModel @Inject constructor(
     private val contributorDao: ContributorDao,
     private val donationDao: DonationDao
 ) {
+
+    private val _result: MutableStateFlow<SnackbarResult> = MutableStateFlow(SnackbarResult.IDLE)
+    val result: StateFlow<SnackbarResult> = _result
 
     fun fileOpen(path: String, year: Int) {
         println("fileOpen start $year!!!!")
@@ -57,6 +60,7 @@ class SettingViewModel @Inject constructor(
                 }
                 donationDao.addParsingDonation(contributorId, parsing)
             }
+            _result.emit(SnackbarResult.SUCCESS)
         }
         println("fileOpen end $year!!!!")
     }

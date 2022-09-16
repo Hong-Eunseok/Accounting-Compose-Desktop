@@ -2,26 +2,32 @@ package com.acc.goodwill.presentation.report
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.SwingPanel
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.dp
+import com.acc.common.components.AppIcon
 import com.acc.di.AppComponent
-import java.awt.BorderLayout
-import java.awt.Dimension
+import com.acc.goodwill.domain.model.SnackbarResult
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
-import javax.swing.JPanel
-import javax.swing.JTextField
 
 class ReportContent(appComponent: AppComponent) {
 
     @Inject lateinit var reportViewModel: ReportViewModel
+
+    private val years: List<String> by lazy {
+        val year = LocalDateTime.now().year
+        mutableListOf<String>().apply {
+            for (i in 1..10) add("${year - i}")
+            for (i in 0..20) add("${year + i}")
+        }.also {
+            it.sort()
+        }
+    }
 
     init {
         appComponent.inject(this)
@@ -29,22 +35,70 @@ class ReportContent(appComponent: AppComponent) {
 
     @Composable
     fun ReportContent() {
+        var showCompanies by remember { mutableStateOf(false) }
+        var selectedYear by remember { mutableStateOf("${LocalDateTime.now().year}") }
+        val coroutineScope = rememberCoroutineScope()
+        val scaffoldState = rememberScaffoldState()
+        val result by reportViewModel.result.collectAsState()
+
+        when (result) {
+            SnackbarResult.SUCCESS -> "성공하였습니다."
+            SnackbarResult.FAILED -> "실패하였습니다."
+            else -> null
+        }?.let { message ->
+            coroutineScope.launch {
+                scaffoldState.snackbarHostState.showSnackbar(message)
+                reportViewModel.idleSnackbar()
+            }
+        }
+
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background),
+            scaffoldState = scaffoldState
         ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Column {
+                Box {
+                    OutlinedButton(
+                        onClick = { showCompanies = true },
+                        modifier = Modifier.fillMaxWidth(0.5f)
+                    ) {
+                        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier) {
+                            Text(text = selectedYear)
+                            AppIcon(imageVector = if (showCompanies) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown)
+                        }
+                    }
+                    DropdownMenu(
+                        expanded = showCompanies,
+                        onDismissRequest = { showCompanies = false },
+                        modifier = Modifier
+                    ) {
+                        years.forEachIndexed { index, value ->
+                            DropdownMenuItem(
+                                onClick = {
+                                    selectedYear = value
+                                    showCompanies = false
+                                }
+                            ) {
+                                Text(text = value)
+                            }
+                        }
+                    }
+                }
+
                 Button(
-                    onClick = { reportViewModel.makeMonthReport() }
+                    onClick = { reportViewModel.makeMonthReport(selectedYear.toInt()) }
                 ) {
-                    Text("click")
+                    Text("기증 품목 보고서")
+                }
+
+                Button(
+                    onClick = { }
+                ) {
+                    Text("월별 기증 명단")
                 }
             }
-
         }
     }
 

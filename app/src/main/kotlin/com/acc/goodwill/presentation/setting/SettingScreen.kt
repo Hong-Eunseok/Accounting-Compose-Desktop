@@ -9,6 +9,8 @@ import androidx.compose.ui.window.AwtWindow
 import com.acc.common.components.AppIcon
 import com.acc.common.components.AppTextField
 import com.acc.di.AppComponent
+import com.acc.goodwill.domain.model.SnackbarResult
+import kotlinx.coroutines.launch
 import java.awt.FileDialog
 import java.awt.Frame
 import javax.inject.Inject
@@ -23,11 +25,25 @@ class SettingScreen(appComponent: AppComponent) {
 
     @Composable
     fun SettingsScreen(
-        navigateBack: () -> Unit
+        navigateBack: () -> Unit,
     ) {
+        val coroutineScope = rememberCoroutineScope()
+        val scaffoldState = rememberScaffoldState()
         var year by remember { mutableStateOf("2022") }
         var isFileChooserOpen by remember { mutableStateOf(false) }
         var filePath by remember { mutableStateOf("") }
+        val result by viewModel.result.collectAsState()
+
+        when (result) {
+            SnackbarResult.SUCCESS -> "성공하였습니다."
+            SnackbarResult.FAILED -> "실패하였습니다."
+            else -> null
+        }?.let { message ->
+            coroutineScope.launch {
+                scaffoldState.snackbarHostState.showSnackbar(message)
+                navigateBack()
+            }
+        }
 
         Scaffold(
             topBar = {
@@ -40,6 +56,7 @@ class SettingScreen(appComponent: AppComponent) {
                     }
                 )
             },
+            scaffoldState = scaffoldState
         ) {
             Column {
                 AppTextField(
