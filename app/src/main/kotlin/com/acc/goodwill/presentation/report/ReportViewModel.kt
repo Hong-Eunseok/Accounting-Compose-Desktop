@@ -22,12 +22,54 @@ class ReportViewModel @Inject constructor(
     @Named("io") private val ioCoroutineScope: CoroutineScope
 ) {
 
+    private val staticsHeader = listOf(
+        "NO",
+        "순번",
+        "날짜",
+        "성명",
+        "핸드폰번호",
+        "주소",
+        "기증품목 / 수량",
+        "개인/기관 (교)",
+        "발행여부",
+        "기증통로",
+        "합계",
+        "불량",
+        "양품",
+        "합계금액",
+        "의류",
+        "불량",
+        "양품",
+        "생활",
+        "유아",
+        "불량",
+        "양품",
+        "완구/문구",
+        "불량",
+        "양품",
+        "도서",
+        "불량",
+        "양품",
+        "가구",
+        "가전",
+        "불량",
+        "양품",
+        "주방",
+        "기타",
+        "불량",
+        "양품"
+    )
+
+    private val monthHeader = listOf(
+        "월", "명", "총수량", "불량", "양품", "합계금액", "의류", "불량", "양품", "생활", "유아", "불량", "양품", "완구/문구", "불량", "양품", "도서", "불량", "양품", "가구", "가전", "불량", "양품", "주방", "기타", "불량", "양품"
+    )
+
     private val _result: MutableStateFlow<SnackbarResult> = MutableStateFlow(SnackbarResult.IDLE)
     val result: StateFlow<SnackbarResult> = _result
 
     fun makeMonthReport(year: Int) {
         ioCoroutineScope.launch {
-            writeExcelMain(donationDao.queryMonths(year))
+            writeExcelMain(donationDao.queryMonths(year), year)
         }
     }
 
@@ -35,28 +77,35 @@ class ReportViewModel @Inject constructor(
         _result.emit(SnackbarResult.IDLE)
     }
 
-    private suspend fun writeExcelMain(results: List<MonthlyStatics>) {
+    private suspend fun writeExcelMain(results: List<MonthlyStatics>, year: Int) {
         val path = System.getProperty("user.home") + "\\Documents\\"
         val testFile = File("test.xlsx")
         if (testFile.isFile) testFile.delete()
         workbook {
             sheet("월별기증품목합계") {
                 title("월별기증품목관리")
-                header()
+                header(staticsHeader)
                 monthReport(results)
             }
 
             sheet("주별기증품목합계") {
                 title("주별기증품목관리")
-                header()
+                header(staticsHeader)
                 weeklyReport(results)
             }
+
+            sheet("월별전체합계") {
+                title("월별전체합계")
+                header(monthHeader)
+                totalReport(results, year)
+            }
+
         }.write("${path}report_${System.currentTimeMillis()}.xlsx")
         _result.emit(SnackbarResult.SUCCESS)
         println("finished!")
     }
 
-    fun Sheet.title(content: String) {
+    private fun Sheet.title(content: String) {
         xssfSheet.addMergedRegion(CellRangeAddress(0, 1, 0, 15))
         row {
             cell(
@@ -75,44 +124,7 @@ class ReportViewModel @Inject constructor(
         }
     }
 
-    fun Sheet.header() {
-        val headings = listOf(
-            "NO",
-            "순번",
-            "날짜",
-            "성명",
-            "핸드폰번호",
-            "주소",
-            "기증품목 / 수량",
-            "개인/기관 (교)",
-            "발행여부",
-            "기증통로",
-            "합계",
-            "불량",
-            "양품",
-            "합계금액",
-            "의류",
-            "불량",
-            "양품",
-            "생활",
-            "유아",
-            "불량",
-            "양품",
-            "완구/문구",
-            "불량",
-            "양품",
-            "도서",
-            "불량",
-            "양품",
-            "가구",
-            "가전",
-            "불량",
-            "양품",
-            "주방",
-            "기타",
-            "불량",
-            "양품"
-        )
+    private fun Sheet.header(headings: List<String>) {
         row(
             style = createCellStyle {
                 setFont(createFont {
@@ -126,6 +138,10 @@ class ReportViewModel @Inject constructor(
                 headings.forEach { cell(it) }
             }
         )
+    }
+
+    private fun Sheet.totalHeader() {
+
     }
 
 }

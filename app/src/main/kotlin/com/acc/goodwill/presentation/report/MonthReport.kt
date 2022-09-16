@@ -107,6 +107,93 @@ fun Sheet.weeklyReport(
 
 }
 
+fun Sheet.totalReport(
+    results: List<MonthlyStatics>,
+    year: Int
+) {
+    val priceStyle = createCellStyle {
+        dataFormat = xssfWorkbook.creationHelper.createDataFormat().getFormat("#,##0")
+    }
+
+    results.forEachIndexed { index, month ->
+        row(init = {
+            xssfRow.rowNum = 5 + index
+            cell("${month.month}월말 기증 전체 합계")
+            if (month.statics.isNotEmpty()) {
+                cell(month.statics.size)
+                cell(month.statics.sumOf { it.donation.donate.total })
+                cell(month.statics.sumOf { it.donation.donate.error })
+                cell(month.statics.sumOf { it.donation.donate.correct })
+                cell(month.statics.sumOf { it.donation.donate.price }.toLong())
+
+                val products = month.statics.map { it.products }.flatten()
+                // "의류", "불량", "양품"
+                cell(products.filter { it.category == 0 }.sumOf { it.total }.toLong())
+                cell(products.filter { it.category == 0 }.sumOf { it.error }.toLong())
+                cell(products.filter { it.category == 0 }.sumOf { it.correct }.toLong())
+                // "생활", "유아", "불량", "양품"
+                cell(products.filter { it.category == 2 }.sumOf { it.total }.toLong())
+                cell(products.filter { it.category == 3 }.sumOf { it.total }.toLong())
+                cell(products.filter { it.category == 2 || it.category == 3 }.sumOf { it.error }.toLong())
+                cell(products.filter { it.category == 2 || it.category == 3 }.sumOf { it.correct }.toLong())
+                // "완구/문구", "불량", "양품"
+                cell(products.filter { it.category == 4 }.sumOf { it.total }.toLong())
+                cell(products.filter { it.category == 4 }.sumOf { it.error }.toLong())
+                cell(products.filter { it.category == 4 }.sumOf { it.correct }.toLong())
+                // "도서", "불량", "양품"
+                cell(products.filter { it.category == 1 }.sumOf { it.total }.toLong())
+                cell(products.filter { it.category == 1 }.sumOf { it.error }.toLong())
+                cell(products.filter { it.category == 1 }.sumOf { it.correct }.toLong())
+                // "가구", "가전", "불량", "양품"
+                cell(products.filter { it.category == 5 }.sumOf { it.total }.toLong())
+                cell(products.filter { it.category == 6 }.sumOf { it.total }.toLong())
+                cell(products.filter { it.category == 5 || it.category == 6 }.sumOf { it.error }.toLong())
+                cell(products.filter { it.category == 5 || it.category == 6 }.sumOf { it.correct }.toLong())
+                // "주방", "기타", "불량", "양품"
+                cell(products.filter { it.category == 7 }.sumOf { it.total }.toLong())
+                cell(products.filter { it.category == 8 }.sumOf { it.total }.toLong())
+                cell(products.filter { it.category == 7 || it.category == 8 }.sumOf { it.error }.toLong())
+                cell(products.filter { it.category == 7 || it.category == 8 }.sumOf { it.correct }.toLong())
+            }
+        })
+    }
+    row(init = {
+        xssfRow.rowNum = 5 + results.size
+        cell("${year}년 기증 전체 합계")
+        val columnName = listOf(
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "J",
+            "K",
+            "L",
+            "M",
+            "N",
+            "O",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "T",
+            "U",
+            "V",
+            "W",
+            "X",
+            "Y",
+            "Z",
+            "AA",
+        )
+        columnName.forEach {
+            cell(Formula("SUM(${it}6:${it}17)"), priceStyle)
+        }
+    })
+}
+
 private fun Sheet.sumTitle(
     lastRow: AtomicInteger,
     indexWeek: AtomicInteger,
