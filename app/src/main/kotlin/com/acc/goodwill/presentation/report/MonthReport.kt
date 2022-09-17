@@ -1,14 +1,11 @@
 package com.acc.goodwill.presentation.report
 
 import com.acc.goodwill.domain.model.*
-import io.github.evanrupert.excelkt.ExcelElement
 import io.github.evanrupert.excelkt.Formula
 import io.github.evanrupert.excelkt.Row
 import io.github.evanrupert.excelkt.Sheet
 import org.apache.poi.ss.usermodel.BorderStyle
-import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.HorizontalAlignment
-import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import java.time.LocalDateTime
@@ -59,6 +56,12 @@ fun Sheet.monthReport(
         )
         lastRow.incrementAndGet()
     }
+    xssfSheet.autoSizeColumn(0)
+    xssfSheet.autoSizeColumn(1)
+    xssfSheet.autoSizeColumn(2)
+    xssfSheet.setColumnWidth(4, ((xssfSheet.getColumnWidth(4) / 4f) * 6).toInt())
+    xssfSheet.setColumnWidth(5, xssfSheet.getColumnWidth(5) * 4)
+    xssfSheet.setColumnWidth(6, xssfSheet.getColumnWidth(6) * 4)
 }
 
 fun Sheet.weeklyReport(
@@ -94,6 +97,12 @@ fun Sheet.weeklyReport(
         sumTitle(lastRow, indexWeek, reportCellStyle, lastWeek.get())
     }
 
+    xssfSheet.autoSizeColumn(0)
+    xssfSheet.autoSizeColumn(1)
+    xssfSheet.autoSizeColumn(2)
+    xssfSheet.setColumnWidth(4, ((xssfSheet.getColumnWidth(4) / 4f) * 6).toInt())
+    xssfSheet.setColumnWidth(5, xssfSheet.getColumnWidth(5) * 4)
+    xssfSheet.setColumnWidth(6, xssfSheet.getColumnWidth(6) * 4)
 }
 
 fun Sheet.title(content: String) {
@@ -156,57 +165,55 @@ fun Sheet.header(headings: List<String>, reportCellStyle: ReportCellStyle) {
 
 fun Sheet.totalReport(
     results: List<MonthlyStatics>,
-    year: Int
+    year: Int,
+    reportCellStyle: ReportCellStyle
 ) {
-    val priceStyle = createCellStyle {
-        dataFormat = xssfWorkbook.creationHelper.createDataFormat().getFormat("#,##0")
-    }
-
     results.forEachIndexed { index, month ->
         row(init = {
             xssfRow.rowNum = 5 + index
-            cell("${month.month}월말 기증 전체 합계")
+            cell("${month.month}월말 기증 전체 합계", reportCellStyle.headerStyle)
             if (month.statics.isNotEmpty()) {
-                cell(month.statics.size)
-                cell(month.statics.sumOf { it.donation.donate.total })
-                cell(month.statics.sumOf { it.donation.donate.error })
-                cell(month.statics.sumOf { it.donation.donate.correct })
-                cell(month.statics.sumOf { it.donation.donate.price }.toLong())
+                cell(month.statics.size, reportCellStyle.sumStyle)
+                cell(month.statics.sumOf { it.donation.donate.total }, reportCellStyle.sumStyle)
+                cell(month.statics.sumOf { it.donation.donate.error }, reportCellStyle.sumStyle)
+                cell(month.statics.sumOf { it.donation.donate.correct }, reportCellStyle.sumStyle)
+                cell(month.statics.sumOf { it.donation.donate.price }.toLong(), reportCellStyle.sumStyle)
 
                 val products = month.statics.map { it.products }.flatten()
                 // "의류", "불량", "양품"
-                cell(products.filter { it.category == 0 }.sumOf { it.total }.toLong())
-                cell(products.filter { it.category == 0 }.sumOf { it.error }.toLong())
-                cell(products.filter { it.category == 0 }.sumOf { it.correct }.toLong())
+                cell(products.filter { it.category == 0 }.sumOf { it.total }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 0 }.sumOf { it.error }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 0 }.sumOf { it.correct }.toLong(), reportCellStyle.sumStyle)
                 // "생활", "유아", "불량", "양품"
-                cell(products.filter { it.category == 2 }.sumOf { it.total }.toLong())
-                cell(products.filter { it.category == 3 }.sumOf { it.total }.toLong())
-                cell(products.filter { it.category == 2 || it.category == 3 }.sumOf { it.error }.toLong())
-                cell(products.filter { it.category == 2 || it.category == 3 }.sumOf { it.correct }.toLong())
+                cell(products.filter { it.category == 2 }.sumOf { it.total }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 3 }.sumOf { it.total }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 2 || it.category == 3 }.sumOf { it.error }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 2 || it.category == 3 }.sumOf { it.correct }.toLong(), reportCellStyle.sumStyle)
                 // "완구/문구", "불량", "양품"
-                cell(products.filter { it.category == 4 }.sumOf { it.total }.toLong())
-                cell(products.filter { it.category == 4 }.sumOf { it.error }.toLong())
-                cell(products.filter { it.category == 4 }.sumOf { it.correct }.toLong())
+                cell(products.filter { it.category == 4 }.sumOf { it.total }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 4 }.sumOf { it.error }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 4 }.sumOf { it.correct }.toLong(), reportCellStyle.sumStyle)
                 // "도서", "불량", "양품"
-                cell(products.filter { it.category == 1 }.sumOf { it.total }.toLong())
-                cell(products.filter { it.category == 1 }.sumOf { it.error }.toLong())
-                cell(products.filter { it.category == 1 }.sumOf { it.correct }.toLong())
+                cell(products.filter { it.category == 1 }.sumOf { it.total }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 1 }.sumOf { it.error }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 1 }.sumOf { it.correct }.toLong(), reportCellStyle.sumStyle)
                 // "가구", "가전", "불량", "양품"
-                cell(products.filter { it.category == 5 }.sumOf { it.total }.toLong())
-                cell(products.filter { it.category == 6 }.sumOf { it.total }.toLong())
-                cell(products.filter { it.category == 5 || it.category == 6 }.sumOf { it.error }.toLong())
-                cell(products.filter { it.category == 5 || it.category == 6 }.sumOf { it.correct }.toLong())
+                cell(products.filter { it.category == 5 }.sumOf { it.total }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 6 }.sumOf { it.total }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 5 || it.category == 6 }.sumOf { it.error }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 5 || it.category == 6 }.sumOf { it.correct }.toLong(), reportCellStyle.sumStyle)
                 // "주방", "기타", "불량", "양품"
-                cell(products.filter { it.category == 7 }.sumOf { it.total }.toLong())
-                cell(products.filter { it.category == 8 }.sumOf { it.total }.toLong())
-                cell(products.filter { it.category == 7 || it.category == 8 }.sumOf { it.error }.toLong())
-                cell(products.filter { it.category == 7 || it.category == 8 }.sumOf { it.correct }.toLong())
+                cell(products.filter { it.category == 7 }.sumOf { it.total }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 8 }.sumOf { it.total }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 7 || it.category == 8 }.sumOf { it.error }.toLong(), reportCellStyle.sumStyle)
+                cell(products.filter { it.category == 7 || it.category == 8 }.sumOf { it.correct }.toLong(), reportCellStyle.sumStyle)
             }
         })
     }
     row(init = {
         xssfRow.rowNum = 5 + results.size
-        cell("${year}년 기증 전체 합계")
+        xssfRow.heightInPoints = 24f
+        cell("${year}년 기증 전체 합계", reportCellStyle.totalContentStyle)
         val columnName = listOf(
             "B",
             "C",
@@ -236,9 +243,11 @@ fun Sheet.totalReport(
             "AA",
         )
         columnName.forEach {
-            cell(Formula("SUM(${it}6:${it}17)"), priceStyle)
+            cell(Formula("SUM(${it}6:${it}17)"), reportCellStyle.totalContentStyle)
         }
     })
+    xssfSheet.setColumnWidth(0, xssfSheet.getColumnWidth(0) * 3)
+    xssfSheet.setColumnWidth(5, xssfSheet.getColumnWidth(5) * 3)
 }
 
 private fun Sheet.sumTitle(
@@ -304,7 +313,7 @@ private fun Row.writeDonationCell(
     cell(donation.createAt, reportCellStyle.dateStyle)
     cell(contributor?.name?.ifEmpty { "무명" } ?: "무명", reportCellStyle.normalStyle)
     cell(contributor?.phoneNumber.orEmpty(), reportCellStyle.normalStyle)
-    cell(contributor?.address.orEmpty(), reportCellStyle.normalStyle)
+    cell(contributor?.address.orEmpty(), reportCellStyle.planeStyle)
 
     val productString = products.mapNotNull {
         buildString {
@@ -317,9 +326,9 @@ private fun Row.writeDonationCell(
         }.takeIf { it.isNotEmpty() }
     }.joinToString(" ").trim()
     if (productString.isNotEmpty()) {
-        cell(productString, reportCellStyle.normalStyle)
+        cell(productString, reportCellStyle.planeStyle)
     } else {
-        cell(donation.optionParsingData.orEmpty(), reportCellStyle.normalStyle)
+        cell(donation.optionParsingData.orEmpty(), reportCellStyle.planeStyle)
     }
     val org = buildString {
         append(Donate.ORGANIZATION[donation.organization])

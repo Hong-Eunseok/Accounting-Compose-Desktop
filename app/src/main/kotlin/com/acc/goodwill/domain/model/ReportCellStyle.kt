@@ -4,6 +4,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle
 
 data class ReportCellStyle(
     val normalStyle: XSSFCellStyle,
+    val planeStyle: XSSFCellStyle,
     val dateStyle: XSSFCellStyle,
     val normalPriceStyle: XSSFCellStyle,
     val totalTitleStyle: XSSFCellStyle,

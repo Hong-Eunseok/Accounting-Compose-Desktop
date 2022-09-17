@@ -83,6 +83,7 @@ class ReportViewModel @Inject constructor(
     private fun Sheet.createCellStyles(): ReportCellStyle {
         return ReportCellStyle(
             normalStyle = cellStyle(),
+            planeStyle = cellStyle(alignment = HorizontalAlignment.GENERAL),
             dateStyle = cellStyle(format = "mm/dd"),
             normalPriceStyle = cellStyle(format = "#,##0"),
             totalTitleStyle = cellStyle(
@@ -145,10 +146,10 @@ class ReportViewModel @Inject constructor(
                 val reportStyle = createCellStyles()
                 title("월별전체합계")
                 header(monthHeader, reportStyle)
-                totalReport(results, year)
+                totalReport(results, year, reportStyle)
             }
 
-        }.write("${path}report_${System.currentTimeMillis()}.xlsx")
+        }.write("${path}${year} 기증품목관리보고서${System.currentTimeMillis()}.xlsx")
         _result.emit(SnackbarResult.SUCCESS)
         println("finished!")
     }
