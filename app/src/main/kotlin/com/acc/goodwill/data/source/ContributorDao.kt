@@ -62,8 +62,21 @@ import javax.inject.Singleton
         registrationNumber: String?,
         registrationType: Int,
         join: Int,
-        createTime: LocalDateTime = LocalDateTime.now()
+        createTime: LocalDateTime = LocalDateTime.now(),
+        search: Boolean = false
     ): Long {
+        if (search) {
+            searchContributorByName(name).firstOrNull {
+                phoneNumber == it.phoneNumber
+            }?.run {
+                return primaryKey.value
+            }
+
+            if (phoneNumber?.isNotEmpty() == true) {
+                searchContributorByPhoneNumber(phoneNumber).firstOrNull()?.run { return primaryKey.value }
+            }
+        }
+
         val launch = suspendedTransactionAsync(Dispatchers.IO) {
             ContributorTable.insertAndGetId {
                 it[this.name] = name
@@ -79,6 +92,44 @@ import javax.inject.Singleton
         }
         launch.await()
         return launch.getCompleted().value
+    }
+
+    private suspend fun searchContributorByName(keyword: String): List<Contributor> {
+        val data = suspendedTransactionAsync(Dispatchers.IO) {
+            ContributorTable.select {
+                name eq keyword
+            }.map {
+                Contributor(
+                    it[name],
+                    it[ContributorTable.id],
+                    it[phoneNumber],
+                    it[address],
+                    it[registrationNumber],
+                    it[recommend],
+                    it[registrationType]
+                )
+            }
+        }
+        return data.await()
+    }
+
+    private suspend fun searchContributorByPhoneNumber(keyword: String): List<Contributor> {
+        val data = suspendedTransactionAsync(Dispatchers.IO) {
+            ContributorTable.select {
+                phoneNumber eq keyword
+            }.map {
+                Contributor(
+                    it[name],
+                    it[ContributorTable.id],
+                    it[phoneNumber],
+                    it[address],
+                    it[registrationNumber],
+                    it[recommend],
+                    it[registrationType]
+                )
+            }
+        }
+        return data.await()
     }
 
     suspend fun modifyContributor(

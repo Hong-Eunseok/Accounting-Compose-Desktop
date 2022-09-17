@@ -59,21 +59,17 @@ class SettingScreen(appComponent: AppComponent) {
             scaffoldState = scaffoldState
         ) {
             Column {
-                AppTextField(
-                    year,
-                    { year = it },
-                    "날짜입력"
-                )
+                Text("선택된 경로 : ${filePath.ifEmpty { "아직 선택하지 않았습니다." }}")
                 Button(
                     onClick = { isFileChooserOpen = !isFileChooserOpen }
                 ) {
                     Text("파일 열기")
                 }
                 Button(
-                    onClick = { viewModel.fileOpen(filePath, year.toInt()) },
+                    onClick = { viewModel.fileOpen(filePath) },
                     enabled = filePath.isNotEmpty()
                 ) {
-                    Text("시작")
+                    Text("기부자료 저장하기")
                 }
             }
         }
