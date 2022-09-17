@@ -20,6 +20,8 @@ import java.sql.Connection
 
 fun main() {
     val test = true
+    // 옛날기기...
+    System.setProperty("skiko.renderApi", "OPENGL")
     initializeConnection()
     val appComponent: AppComponent = DaggerAppComponent.create()
     application {
