@@ -2,7 +2,9 @@ package com.acc.goodwill.presentation.report
 
 import com.acc.goodwill.data.source.DonationDao
 import com.acc.goodwill.domain.model.MonthlyStatics
+import com.acc.goodwill.domain.model.ReportCellStyle
 import com.acc.goodwill.domain.model.SnackbarResult
+import io.github.evanrupert.excelkt.ExcelElement
 import io.github.evanrupert.excelkt.Sheet
 import io.github.evanrupert.excelkt.workbook
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +15,6 @@ import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.IndexedColors
-import org.apache.poi.ss.util.CellRangeAddress
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
@@ -79,28 +80,71 @@ class ReportViewModel @Inject constructor(
         _result.emit(SnackbarResult.IDLE)
     }
 
+    private fun Sheet.createCellStyles(): ReportCellStyle {
+        return ReportCellStyle(
+            normalStyle = cellStyle(),
+            dateStyle = cellStyle(format = "mm/dd"),
+            normalPriceStyle = cellStyle(format = "#,##0"),
+            totalTitleStyle = cellStyle(
+                bold = true,
+                heightInPoints = 20f,
+                indexColor = IndexedColors.LIGHT_YELLOW
+            ),
+            totalContentStyle = cellStyle(
+                bold = true,
+                heightInPoints = 14f,
+                indexColor = IndexedColors.LIGHT_YELLOW,
+                format = "#,##0"
+            ),
+            sumStyle = cellStyle(
+                bold = true,
+                indexColor = IndexedColors.TAN,
+                format = "#,##0"
+            ),
+            itemCountStyle = cellStyle(
+                indexColor = IndexedColors.PALE_BLUE,
+            ),
+            correctItemStyle = cellStyle(
+                bold = true,
+                indexColor = IndexedColors.LIGHT_TURQUOISE,
+            ),
+            boldStyle = cellStyle(bold = true),
+            categoryStyle = cellStyle(
+                bold = true,
+                indexColor = IndexedColors.PALE_BLUE,
+            ),
+            headerStyle = cellStyle(
+                bold = true,
+                indexColor = IndexedColors.LIGHT_CORNFLOWER_BLUE,
+            ),
+        )
+    }
+
     private suspend fun writeExcelMain(results: List<MonthlyStatics>, year: Int) {
         val path = System.getProperty("user.home") + "\\Documents\\"
         val testFile = File("test.xlsx")
         if (testFile.isFile) testFile.delete()
         workbook {
             sheet("월별기증품목합계") {
+                val reportStyle = createCellStyles()
                 title("월별기증품목관리")
-                header(year)
-                header(staticsHeader)
-                monthReport(results)
+                header(year, reportStyle)
+                header(staticsHeader, reportStyle)
+                monthReport(results, reportStyle)
             }
 
             sheet("주별기증품목합계") {
+                val reportStyle = createCellStyles()
                 title("주별기증품목관리")
-                header(year)
-                header(staticsHeader)
-                weeklyReport(results)
+                header(year, reportStyle)
+                header(staticsHeader, reportStyle)
+                weeklyReport(results, reportStyle)
             }
 
             sheet("월별전체합계") {
+                val reportStyle = createCellStyles()
                 title("월별전체합계")
-                header(monthHeader)
+                header(monthHeader, reportStyle)
                 totalReport(results, year)
             }
 
@@ -111,6 +155,34 @@ class ReportViewModel @Inject constructor(
 
 }
 
+private fun ExcelElement.cellStyle(
+    bold: Boolean = false,
+    alignment: HorizontalAlignment = HorizontalAlignment.CENTER,
+    heightInPoints: Float = 11f,
+    indexColor: IndexedColors? = null,
+    format: String? = null,
+    borderStyle: BorderStyle = BorderStyle.THIN
+) = createCellStyle {
+    setFont(
+        createFont {
+            this.bold = bold
+            this.fontHeightInPoints = heightInPoints.toInt().toShort()
+        }
+    )
+    this.alignment = alignment
+    if (indexColor != null) {
+        fillForegroundColor = indexColor.index
+        fillPattern = FillPatternType.THICK_FORWARD_DIAG
+    }
+    borderTop = borderStyle
+    borderLeft = borderStyle
+    borderBottom = borderStyle
+    borderRight= borderStyle
+
+    if (format != null) {
+        dataFormat = xssfWorkbook.creationHelper.createDataFormat().getFormat(format)
+    }
+}
 
 
 
