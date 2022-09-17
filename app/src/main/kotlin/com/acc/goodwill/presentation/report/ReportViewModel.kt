@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.FillPatternType
 import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.IndexedColors
@@ -69,6 +70,7 @@ class ReportViewModel @Inject constructor(
 
     fun makeMonthReport(year: Int) {
         ioCoroutineScope.launch {
+            _result.emit(SnackbarResult.PROCESSING)
             writeExcelMain(donationDao.queryMonths(year), year)
         }
     }
@@ -84,12 +86,14 @@ class ReportViewModel @Inject constructor(
         workbook {
             sheet("월별기증품목합계") {
                 title("월별기증품목관리")
+                header(year)
                 header(staticsHeader)
                 monthReport(results)
             }
 
             sheet("주별기증품목합계") {
                 title("주별기증품목관리")
+                header(year)
                 header(staticsHeader)
                 weeklyReport(results)
             }
@@ -103,45 +107,6 @@ class ReportViewModel @Inject constructor(
         }.write("${path}report_${System.currentTimeMillis()}.xlsx")
         _result.emit(SnackbarResult.SUCCESS)
         println("finished!")
-    }
-
-    private fun Sheet.title(content: String) {
-        xssfSheet.addMergedRegion(CellRangeAddress(0, 1, 0, 15))
-        row {
-            cell(
-                content,
-                createCellStyle {
-                    setFont(
-                        createFont {
-                            bold = true
-                            fontHeightInPoints = 36
-                        }
-                    )
-                    alignment = HorizontalAlignment.CENTER
-                }
-            )
-            xssfRow.heightInPoints = 36f
-        }
-    }
-
-    private fun Sheet.header(headings: List<String>) {
-        row(
-            style = createCellStyle {
-                setFont(createFont {
-                    bold = true
-                    fontHeightInPoints = 11
-                })
-                alignment = HorizontalAlignment.CENTER
-            },
-            init = {
-                xssfRow.rowNum = 4
-                headings.forEach { cell(it) }
-            }
-        )
-    }
-
-    private fun Sheet.totalHeader() {
-
     }
 
 }
@@ -158,7 +123,7 @@ fun Sheet.customersHeader() {
             color = IndexedColors.PINK.index
         })
 
-        fillPattern = FillPatternType.SOLID_FOREGROUND
+        fillPattern = FillPatternType.NO_FILL
         fillForegroundColor = IndexedColors.AQUA.index
     }
 

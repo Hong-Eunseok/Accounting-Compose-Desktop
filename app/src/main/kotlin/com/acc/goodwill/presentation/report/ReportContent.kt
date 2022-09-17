@@ -37,7 +37,7 @@ class ReportContent(appComponent: AppComponent) {
     @Composable
     fun ReportContent() {
         var showCompanies by remember { mutableStateOf(false) }
-        var selectedYear by remember { mutableStateOf("${LocalDateTime.now().year}") }
+        var selectedYear by remember { mutableStateOf(/** TODO: "${LocalDateTime.now().year}" **/ "2019") }
         val coroutineScope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState()
         val result by reportViewModel.result.collectAsState()
@@ -45,6 +45,7 @@ class ReportContent(appComponent: AppComponent) {
         when (result) {
             SnackbarResult.SUCCESS -> "성공하였습니다."
             SnackbarResult.FAILED -> "실패하였습니다."
+            SnackbarResult.PROCESSING -> "만드는 중입니다."
             else -> null
         }?.let { message ->
             coroutineScope.launch {
@@ -90,7 +91,8 @@ class ReportContent(appComponent: AppComponent) {
                 }
 
                 Button(
-                    onClick = { reportViewModel.makeMonthReport(selectedYear.toInt()) }
+                    onClick = { reportViewModel.makeMonthReport(selectedYear.toInt()) },
+                    enabled = result == SnackbarResult.IDLE
                 ) {
                     Text("기증 품목 보고서")
                 }

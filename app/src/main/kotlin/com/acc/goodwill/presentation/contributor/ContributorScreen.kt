@@ -48,6 +48,11 @@ class ContributorScreen(appComponent: AppComponent) {
         val result by viewModel.result.collectAsState()
         val registerString = if (modifyContributor == null) "등록" else "수정"
 
+        if (modifyContributor != null) {
+            nameTextField.text = modifyContributor.name
+            addressTextField.text = modifyContributor.address
+        }
+
         when (result) {
             CreateContributorResult.SUCCESS -> "${registerString}에 성공하였습니다."
             CreateContributorResult.ERROR -> "${registerString}에 실패하였습니다."
