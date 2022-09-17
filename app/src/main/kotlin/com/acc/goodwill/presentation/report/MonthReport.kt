@@ -62,7 +62,7 @@ fun Sheet.monthReport(
     xssfSheet.setColumnWidth(4, ((xssfSheet.getColumnWidth(4) / 4f) * 6).toInt())
     xssfSheet.setColumnWidth(5, xssfSheet.getColumnWidth(5) * 4)
     xssfSheet.setColumnWidth(6, xssfSheet.getColumnWidth(6) * 4)
-    xssfSheet.setColumnWidth(13, xssfSheet.getColumnWidth(13) * 3)
+    xssfSheet.setColumnWidth(13, xssfSheet.getColumnWidth(13) * 2)
 }
 
 fun Sheet.weeklyReport(
@@ -104,7 +104,7 @@ fun Sheet.weeklyReport(
     xssfSheet.setColumnWidth(4, ((xssfSheet.getColumnWidth(4) / 4f) * 6).toInt())
     xssfSheet.setColumnWidth(5, xssfSheet.getColumnWidth(5) * 4)
     xssfSheet.setColumnWidth(6, xssfSheet.getColumnWidth(6) * 4)
-    xssfSheet.setColumnWidth(13, xssfSheet.getColumnWidth(13) * 3)
+    xssfSheet.setColumnWidth(13, xssfSheet.getColumnWidth(13) * 2)
 }
 
 fun Sheet.title(content: String) {
