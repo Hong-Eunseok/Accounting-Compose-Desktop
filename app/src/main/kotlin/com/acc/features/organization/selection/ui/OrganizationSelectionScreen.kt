@@ -25,7 +25,7 @@ class OrganizationSelectionScreen(appComponent: AppComponent) {
     lateinit var viewModel: OrganizationSelectionViewModel
 
     init {
-        appComponent.inject(this)
+//        appComponent.inject(this)
     }
 
     @Composable

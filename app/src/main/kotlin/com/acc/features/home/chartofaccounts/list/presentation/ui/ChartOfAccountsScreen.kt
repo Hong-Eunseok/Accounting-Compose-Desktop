@@ -29,7 +29,7 @@ import javax.inject.Inject
 class ChartOfAccountsScreen(appComponent: AppComponent) {
 
     init {
-        appComponent.inject(this)
+//        appComponent.inject(this)
     }
 
     @Inject lateinit var viewModel: ChartOfAccountsViewModel

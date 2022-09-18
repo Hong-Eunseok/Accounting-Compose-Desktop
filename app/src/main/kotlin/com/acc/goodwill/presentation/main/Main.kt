@@ -48,8 +48,7 @@ class Main(private val appComponent: AppComponent) {
             CompositionLocalProvider(LocaleComposition provides selectedLocal) {
                 when (route) {
                     MainScreen -> stateHolder.SaveableStateProvider(Unit) {
-                        HomeScreen(
-                            appComponent,
+                        HomeScreen(appComponent).HomeScreen(
                             navigateAddDonation = { navigation.navigate(AddDonationRoute) },
                             navigateDetailDonation = {
                                 mainDonate = it

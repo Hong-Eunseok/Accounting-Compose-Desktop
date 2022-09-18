@@ -6,7 +6,6 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.acc.di.AppComponent
 import com.acc.di.DaggerAppComponent
-import com.acc.features.main.ui.Main
 import com.acc.goodwill.data.source.table.ContributorTable
 import com.acc.goodwill.data.source.table.DonationTable
 import com.acc.goodwill.data.source.table.ProductTable
@@ -16,7 +15,6 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 import java.sql.Connection
-
 
 fun main() {
     val test = true
@@ -30,11 +28,7 @@ fun main() {
             state = rememberWindowState(width = 1000.dp, height = 1000.dp),
             title = "Suwon Good Will Store made by eunseok"
         ) {
-            if (test) {
-                com.acc.goodwill.presentation.main.Main(appComponent).Main()
-            } else {
-                Main(appComponent).Main()
-            }
+            com.acc.goodwill.presentation.main.Main(appComponent).Main()
         }
     }
 }

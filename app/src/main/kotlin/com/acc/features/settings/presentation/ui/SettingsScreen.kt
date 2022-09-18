@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 class SettingsScreen(appComponent: AppComponent) {
     init {
-        appComponent.inject(this)
+//        appComponent.inject(this)
     }
 
     @Inject lateinit var settingsViewModel: SettingsViewModel

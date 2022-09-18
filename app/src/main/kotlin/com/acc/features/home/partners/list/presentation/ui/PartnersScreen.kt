@@ -29,7 +29,7 @@ import javax.inject.Inject
 class PartnersScreen(appComponent: AppComponent) {
 
     init {
-        appComponent.inject(this)
+//        appComponent.inject(this)
     }
 
     @Inject lateinit var viewModel: PartnersViewModel

@@ -27,7 +27,7 @@ class AddChartOfAccountScreen(appComponent: AppComponent) {
     @Inject lateinit var viewModel: AddChartOfAccountsViewModel
 
     init {
-        appComponent.inject(this)
+//        appComponent.inject(this)
     }
 
     @Composable

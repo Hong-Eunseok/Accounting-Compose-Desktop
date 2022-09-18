@@ -26,7 +26,7 @@ class AddExpenseScreen(appComponent: AppComponent) {
     lateinit var viewModel: AddExpenseViewModel
 
     init {
-        appComponent.inject(this)
+//        appComponent.inject(this)
     }
 
     @Composable
