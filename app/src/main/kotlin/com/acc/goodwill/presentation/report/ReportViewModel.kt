@@ -2,20 +2,17 @@ package com.acc.goodwill.presentation.report
 
 import com.acc.goodwill.data.source.DonationDao
 import com.acc.goodwill.domain.model.MonthlyStatics
+import com.acc.goodwill.domain.model.PeopleCellStyle
 import com.acc.goodwill.domain.model.ReportCellStyle
 import com.acc.goodwill.domain.model.SnackbarResult
-import io.github.evanrupert.excelkt.ExcelElement
 import io.github.evanrupert.excelkt.Sheet
 import io.github.evanrupert.excelkt.workbook
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.apache.poi.ss.usermodel.BorderStyle
 import org.apache.poi.ss.usermodel.FillPatternType
-import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.IndexedColors
-import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -23,6 +20,8 @@ class ReportViewModel @Inject constructor(
     private val donationDao: DonationDao,
     @Named("io") private val ioCoroutineScope: CoroutineScope
 ) {
+
+    private val path = System.getProperty("user.home") + "\\Documents\\"
 
     private val staticsHeader = listOf(
         "NO",
@@ -76,58 +75,22 @@ class ReportViewModel @Inject constructor(
         }
     }
 
+    fun makePeopleReport(year: Int) {
+        ioCoroutineScope.launch {
+            _result.emit(SnackbarResult.PROCESSING)
+            writePeopleReport(donationDao.queryMonths(year), year)
+        }
+    }
+
     suspend fun idleSnackbar() {
         _result.emit(SnackbarResult.IDLE)
     }
 
-    private fun Sheet.createCellStyles(): ReportCellStyle {
-        return ReportCellStyle(
-            normalStyle = cellStyle(),
-            planeStyle = cellStyle(alignment = HorizontalAlignment.GENERAL),
-            dateStyle = cellStyle(format = "mm/dd"),
-            normalPriceStyle = cellStyle(format = "#,##0"),
-            totalTitleStyle = cellStyle(
-                bold = true,
-                heightInPoints = 20f,
-                indexColor = IndexedColors.LIGHT_YELLOW
-            ),
-            totalContentStyle = cellStyle(
-                bold = true,
-                heightInPoints = 14f,
-                indexColor = IndexedColors.LIGHT_YELLOW,
-                format = "#,##0"
-            ),
-            sumStyle = cellStyle(
-                bold = true,
-                indexColor = IndexedColors.TAN,
-                format = "#,##0"
-            ),
-            itemCountStyle = cellStyle(
-                indexColor = IndexedColors.PALE_BLUE,
-            ),
-            correctItemStyle = cellStyle(
-                bold = true,
-                indexColor = IndexedColors.LIGHT_TURQUOISE,
-            ),
-            boldStyle = cellStyle(bold = true),
-            categoryStyle = cellStyle(
-                bold = true,
-                indexColor = IndexedColors.PALE_BLUE,
-            ),
-            headerStyle = cellStyle(
-                bold = true,
-                indexColor = IndexedColors.LIGHT_CORNFLOWER_BLUE,
-            ),
-        )
-    }
-
     private suspend fun writeExcelMain(results: List<MonthlyStatics>, year: Int) {
-        val path = System.getProperty("user.home") + "\\Documents\\"
-        val testFile = File("test.xlsx")
-        if (testFile.isFile) testFile.delete()
+
         workbook {
+            val reportStyle = ReportCellStyle.instance(this)
             sheet("월별기증품목합계") {
-                val reportStyle = createCellStyles()
                 title("월별기증품목관리")
                 header(year, reportStyle)
                 header(staticsHeader, reportStyle)
@@ -135,7 +98,6 @@ class ReportViewModel @Inject constructor(
             }
 
             sheet("주별기증품목합계") {
-                val reportStyle = createCellStyles()
                 title("주별기증품목관리")
                 header(year, reportStyle)
                 header(staticsHeader, reportStyle)
@@ -143,7 +105,6 @@ class ReportViewModel @Inject constructor(
             }
 
             sheet("월별전체합계") {
-                val reportStyle = createCellStyles()
                 title("월별전체합계")
                 header(monthHeader, reportStyle)
                 totalReport(results, year, reportStyle)
@@ -151,41 +112,24 @@ class ReportViewModel @Inject constructor(
 
         }.write("${path}${year} 기증품목관리보고서${System.currentTimeMillis()}.xlsx")
         _result.emit(SnackbarResult.SUCCESS)
-        println("finished!")
+    }
+
+    private suspend fun writePeopleReport(results: List<MonthlyStatics>, year: Int) {
+        workbook {
+            val reportStyle = PeopleCellStyle.instance(this)
+            results.forEach { month ->
+                sheet("${month.month}월 기증 명단") {
+                    peopleTitle(year, month.month, reportStyle)
+                    goodwillstoreHeader(reportStyle)
+                    peopleHeader(reportStyle)
+                    writhePeopleContent(month.statics, reportStyle)
+                }
+            }
+        }.write("${path}${year} 기증 명단 보고서_${System.currentTimeMillis()}.xlsx")
+        _result.emit(SnackbarResult.SUCCESS)
     }
 
 }
-
-private fun ExcelElement.cellStyle(
-    bold: Boolean = false,
-    alignment: HorizontalAlignment = HorizontalAlignment.CENTER,
-    heightInPoints: Float = 11f,
-    indexColor: IndexedColors? = null,
-    format: String? = null,
-    borderStyle: BorderStyle = BorderStyle.THIN
-) = createCellStyle {
-    setFont(
-        createFont {
-            this.bold = bold
-            this.fontHeightInPoints = heightInPoints.toInt().toShort()
-        }
-    )
-    this.alignment = alignment
-    if (indexColor != null) {
-        fillForegroundColor = indexColor.index
-        fillPattern = FillPatternType.THICK_FORWARD_DIAG
-    }
-    borderTop = borderStyle
-    borderLeft = borderStyle
-    borderBottom = borderStyle
-    borderRight= borderStyle
-
-    if (format != null) {
-        dataFormat = xssfWorkbook.creationHelper.createDataFormat().getFormat(format)
-    }
-}
-
-
 
 fun Sheet.customersHeader() {
     val headings = listOf("Id", "Name", "Address", "Age")

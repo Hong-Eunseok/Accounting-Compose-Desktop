@@ -31,6 +31,6 @@ data class Donate(
         )
 
         val FROM_TYPE = listOf("기증", "수거", "기타")
-        val ORGANIZATION = listOf("개인", "단체")
+        val ORGANIZATION = listOf("개인", "기관")
     }
 }

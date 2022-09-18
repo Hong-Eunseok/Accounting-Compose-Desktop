@@ -98,7 +98,8 @@ class ReportContent(appComponent: AppComponent) {
                 }
 
                 Button(
-                    onClick = { }
+                    onClick = { reportViewModel.makePeopleReport(selectedYear.toInt()) },
+                    enabled = result == SnackbarResult.IDLE
                 ) {
                     Text("월별 기증 명단")
                 }
