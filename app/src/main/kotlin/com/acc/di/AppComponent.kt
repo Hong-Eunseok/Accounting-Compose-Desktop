@@ -5,7 +5,7 @@ import com.acc.features.di.FeaturesModule
 import com.acc.goodwill.di.GoodwillModule
 import com.acc.goodwill.presentation.contributor.ContributorScreen
 import com.acc.goodwill.presentation.donation.AddDonationScreen
-import com.acc.goodwill.presentation.donation.DetailDonationScreen
+import com.acc.goodwill.presentation.contributor.DetailContributorScreen
 import com.acc.goodwill.presentation.donation.SearchContributorContent
 import com.acc.goodwill.presentation.home.HomeScreen
 import com.acc.goodwill.presentation.report.ReportContent
@@ -27,7 +27,7 @@ interface AppComponent {
     fun inject(main: ContributorScreen)
     fun inject(main: SearchContributorContent)
     fun inject(main: AddDonationScreen)
-    fun inject(main: DetailDonationScreen)
+    fun inject(main: DetailContributorScreen)
     fun inject(main: SettingScreen)
     fun inject(main: ReportContent)
     fun inject(main: HomeScreen)

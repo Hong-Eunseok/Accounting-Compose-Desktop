@@ -11,7 +11,7 @@ import com.acc.goodwill.presentation.common.LocaleComposition
 import com.acc.goodwill.presentation.common.SettingViewModel
 import com.acc.goodwill.presentation.contributor.ContributorScreen
 import com.acc.goodwill.presentation.donation.AddDonationScreen
-import com.acc.goodwill.presentation.donation.DetailDonationScreen
+import com.acc.goodwill.presentation.contributor.DetailContributorScreen
 import com.acc.goodwill.presentation.donation.DonationViewModel
 import com.acc.goodwill.presentation.home.HomeScreen
 import com.acc.goodwill.presentation.navigation.*
@@ -42,7 +42,7 @@ class Main(private val appComponent: AppComponent) {
 
         val contributor = rememberContributor()
         var mainContributor by remember { mutableStateOf(Contributor.INIT) }
-        var mainDonate by remember { mutableStateOf(Donate.INIT) }
+        var detailContributor by remember { mutableStateOf(Contributor.INIT) }
 
         AppTheme(useDarkTheme = darkTheme) {
             CompositionLocalProvider(LocaleComposition provides selectedLocal) {
@@ -50,12 +50,12 @@ class Main(private val appComponent: AppComponent) {
                     MainScreen -> stateHolder.SaveableStateProvider(Unit) {
                         HomeScreen(appComponent).HomeScreen(
                             navigateAddDonation = { navigation.navigate(AddDonationRoute) },
-                            navigateDetailDonation = {
-                                mainDonate = it
-                                navigation.navigate(DetailDonationRoute)
-                            },
                             navigateSetting = {
                                 navigation.navigate(HomeSetting)
+                            },
+                            navigateDetailContributor = {
+                                detailContributor = it
+                                navigation.navigate(DetailContributorRoute)
                             },
                             todayDonations
                         )
@@ -82,14 +82,14 @@ class Main(private val appComponent: AppComponent) {
                         contributor = contributor,
                         modifyContributor = if (mainContributor == Contributor.INIT) null else mainContributor,
                     )
-                    DetailDonationRoute -> DetailDonationScreen(appComponent).DetailDonationScreen(
+                    HomeSetting -> SettingScreen(appComponent).SettingsScreen { navigation.popLast() }
+                    DetailContributorRoute -> DetailContributorScreen(appComponent).DetailDonationScreen(
                         navigateBack = {
-                            mainDonate = Donate.INIT
+                            detailContributor = Contributor.INIT
                             navigation.popLast()
                         },
-                        mainDonate
+                        detailContributor
                     )
-                    HomeSetting -> SettingScreen(appComponent).SettingsScreen { navigation.popLast() }
                 }
 
             }

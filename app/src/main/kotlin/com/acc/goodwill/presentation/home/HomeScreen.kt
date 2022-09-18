@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.acc.common.components.AppIcon
 import com.acc.di.AppComponent
+import com.acc.goodwill.domain.model.Contributor
 import com.acc.goodwill.domain.model.Donate
 import com.acc.goodwill.presentation.donation.DonationContent
 import com.acc.goodwill.presentation.donation.DonationViewModel
@@ -33,13 +34,14 @@ class HomeScreen(private val appComponent: AppComponent) {
     @Composable
     fun HomeScreen(
         navigateAddDonation: () -> Unit,
-        navigateDetailDonation: (Donate) -> Unit,
         navigateSetting: () -> Unit,
+        navigateDetailContributor: (Contributor) -> Unit,
         todayDonations: List<Donate>
     ) {
 
         val navigation = rememberNavigation(defaultRoute = HomeDonation)
         val route by navigation.routeStack.collectAsState()
+        val searchResult by viewModel.searchResult.collectAsState()
 
         println("HomeScreen size : ${todayDonations.size}")
 
@@ -69,11 +71,15 @@ class HomeScreen(private val appComponent: AppComponent) {
                     HomeContent(modifier = Modifier.weight(3f)) {
                         when (route) {
                             HomeDonation -> DonationContent(
-                                navigateDetailDonation = navigateDetailDonation,
+                                navigateDetailDonation = { it.contributor?.let { contributor -> navigateDetailContributor(contributor) } },
                                 navigateAddDonation = navigateAddDonation,
                                 todayDonations = todayDonations
                             )
-                            HomeSearch -> SearchContent({}, listOf())
+                            HomeSearch -> SearchContent(
+                                searchKeyword = viewModel::searchContributor,
+                                selectedContributor = { navigateDetailContributor(it) },
+                                searchResults = searchResult
+                            )
                             HomeStatistics -> EmptyScreen()
                             HomeReport -> ReportContent(appComponent).ReportContent()
                         }

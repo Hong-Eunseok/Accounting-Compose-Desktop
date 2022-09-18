@@ -3,8 +3,6 @@ package com.acc.goodwill.presentation.search
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,12 +11,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.acc.common.components.AppIcon
 import com.acc.common.ui.largePadding
 import com.acc.common.ui.smallerPadding
-import com.acc.di.AppComponent
 import com.acc.goodwill.domain.model.Contributor
-import com.sun.java.accessibility.util.AWTEventMonitor.addActionListener
+import com.acc.goodwill.presentation.common.SearchContributorResultUI
 import java.awt.Color
 import java.awt.Dimension
 import javax.swing.JPanel
@@ -29,6 +25,7 @@ private val searchFiled: JTextField = JTextField("")
 @Composable
 fun SearchContent(
     searchKeyword: (String) -> Unit,
+    selectedContributor: (Contributor) -> Unit,
     searchResults: List<Contributor>
 ) {
     val rgb: Int = MaterialTheme.colors.background.toArgb()
@@ -81,6 +78,10 @@ fun SearchContent(
                 text = "이름 또는 번호로 검색하기",
                 style = MaterialTheme.typography.caption,
             )
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            SearchContributorResultUI(searchResults, selectedContributor)
         }
     }
 }
