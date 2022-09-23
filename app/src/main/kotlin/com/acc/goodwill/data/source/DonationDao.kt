@@ -7,10 +7,7 @@ import com.acc.goodwill.domain.model.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import java.time.LocalDateTime
 import java.util.Calendar
@@ -135,6 +132,14 @@ import javax.inject.Singleton
         return results
     }
 
+    suspend fun queryDonationByContributeIdAsync(contributorId: Long): ContributorSearchResult {
+        return ContributorSearchResult(
+            queryDonationByContributorIdAsync(contributorId).await().map {
+                DonationStatics(it, queryProductsAsync(it.donateId.value).await())
+            }
+        )
+    }
+
     private fun betweenDate(
         year: Int,
         month: Int,
@@ -179,6 +184,48 @@ import javax.inject.Singleton
                     DonationTable.createdAt.between(before, after)
                 }
                 .orderBy(DonationTable.createdAt)
+                .map {
+                    Donate(
+                        donateId = it[DonationTable.id],
+                        contributor = if (it[DonationTable.contributorId] == -1L) {
+                            null
+                        } else {
+                            Contributor(
+                                name = it[ContributorTable.name],
+                                primaryKey = it[ContributorTable.id],
+                                phoneNumber = it[ContributorTable.phoneNumber],
+                                address = it[ContributorTable.address],
+                                registrationNumber = it[ContributorTable.registrationNumber],
+                                recommend = it[ContributorTable.recommend]
+                            )
+                        },
+                        donate = Donate.Donation(
+                            total = it[DonationTable.total],
+                            error = it[DonationTable.total_error],
+                            correct = it[DonationTable.total_correct],
+                            price = it[DonationTable.price],
+                            createAt = it[DonationTable.createdAt],
+                            optionParsingData = it[DonationTable.optionalParsingData],
+                            organization = it[DonationTable.organization],
+                            member = it[DonationTable.member],
+                            fromType = it[DonationTable.fromType]
+                        ),
+                        primaryKey = it[DonationTable.id]
+                    )
+                }
+        }
+    }
+
+    private suspend fun queryDonationByContributorIdAsync(
+        contributorId: Long
+    ): Deferred<List<Donate>> {
+        return suspendedTransactionAsync(Dispatchers.IO) {
+            DonationTable
+                .join(ContributorTable, JoinType.LEFT, DonationTable.contributorId, ContributorTable.id)
+                .select {
+                    DonationTable.contributorId eq contributorId
+                }
+                .orderBy(DonationTable.createdAt, SortOrder.DESC)
                 .map {
                     Donate(
                         donateId = it[DonationTable.id],

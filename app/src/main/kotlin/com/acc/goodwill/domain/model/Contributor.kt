@@ -19,5 +19,6 @@ data class Contributor(
     companion object {
         val UNKNOWN: Contributor = Contributor("무명", phoneNumber = "")
         val INIT: Contributor = Contributor("초기화", EntityID(-2, ContributorTable), recommend = -1)
+        val RECOMMEND = listOf("교인", "인터넷", "지인소개", "기타")
     }
 }

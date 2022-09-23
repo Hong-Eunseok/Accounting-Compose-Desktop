@@ -44,7 +44,7 @@ class CreateContributorState {
         address = contributor.address.orEmpty()
         registrationNumber = contributor.registrationNumber.orEmpty()
         registrationType = contributor.registrationType
-        recommand = RECOMMEND[contributor.recommend]
+        recommand = Contributor.RECOMMEND[contributor.recommend]
     }
 
     private fun phoneNumberValidator(): Boolean {
@@ -124,10 +124,6 @@ class CreateContributorState {
         return (strRsdnNum.substring(12, 13).toFloat() == (11 - (sum % 11)) % 10).also {
             if (it) registrationType = 0
         }
-    }
-
-    companion object {
-        val RECOMMEND = listOf("교인", "인터넷", "지인소개", "기타")
     }
 }
 

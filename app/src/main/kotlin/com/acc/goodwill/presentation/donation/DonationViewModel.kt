@@ -29,8 +29,8 @@ class DonationViewModel @Inject constructor(
     private val _todayDonation: MutableStateFlow<List<Donate>> = MutableStateFlow(listOf())
     val todayDonation = _todayDonation.asStateFlow()
 
-    private val _productResult: MutableStateFlow<List<Product>> = MutableStateFlow(listOf())
-    val productResult = _productResult.asStateFlow()
+    private val _searchContributorResult: MutableStateFlow<ContributorSearchResult> = MutableStateFlow(ContributorSearchResult(listOf()))
+    val searchContributorResult = _searchContributorResult.asStateFlow()
 
     fun addContributor(contributor: CreateContributorState) {
         ioCoroutineScope.launch {
@@ -40,7 +40,7 @@ class DonationViewModel @Inject constructor(
                 contributor.address,
                 contributor.registrationNumber,
                 contributor.registrationType,
-                CreateContributorState.RECOMMEND.indexOf(contributor.recommand)
+                Contributor.RECOMMEND.indexOf(contributor.recommand)
             )
             _result.emit(CreateContributorResult.SUCCESS)
             println("addContributor success")
@@ -56,7 +56,7 @@ class DonationViewModel @Inject constructor(
                 contributor.address,
                 contributor.registrationNumber,
                 contributor.registrationType,
-                CreateContributorState.RECOMMEND.indexOf(contributor.recommand),
+                Contributor.RECOMMEND.indexOf(contributor.recommand),
                 id
             )
             _result.emit(CreateContributorResult.SUCCESS)
@@ -101,9 +101,9 @@ class DonationViewModel @Inject constructor(
         }
     }
 
-    fun queryProduct(donationId: Long) {
+    fun queryContributorAndProduct(contributorId: Long) {
         ioCoroutineScope.launch {
-            _productResult.emit(donationDao.queryProducts(donationId))
+            _searchContributorResult.emit(donationDao.queryDonationByContributeIdAsync(contributorId))
         }
     }
 
