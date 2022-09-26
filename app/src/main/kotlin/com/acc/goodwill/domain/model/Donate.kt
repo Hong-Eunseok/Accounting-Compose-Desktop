@@ -2,6 +2,7 @@ package com.acc.goodwill.domain.model
 
 import com.acc.goodwill.data.source.table.DonationTable
 import org.jetbrains.exposed.dao.id.EntityID
+import java.text.DecimalFormat
 import java.time.LocalDateTime
 
 
@@ -22,7 +23,6 @@ data class Donate(
         val member: Boolean,
         val fromType: Int,
     )
-
     companion object {
         val INIT: Donate = Donate(
             EntityID(0, DonationTable),
@@ -32,5 +32,7 @@ data class Donate(
 
         val FROM_TYPE = listOf("기증", "수거", "기타")
         val ORGANIZATION = listOf("개인", "기관")
+
+        val format = DecimalFormat("#,###")
     }
 }
